@@ -1,0 +1,2565 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+CAUTION: Do not modify this file unless you know what you are doing.
+ Unexpected results may occur if the code is changed deliberately.
+-->
+<dbmodel pgmodeler-ver="1.0.2" use-changelog="false" last-position="634,913" last-zoom="0.95" max-obj-count="172"
+	 default-schema="parqueadero" default-owner="parkud_db_admin"
+	 layers="Default layer"
+	 active-layers="0"
+	 layer-name-colors="#000000"
+	 layer-rect-colors="#b4b4b4"
+	 show-layer-names="false" show-layer-rects="false">
+<role name="parkud_db_admin"
+ createrole="true"
+ login="true"
+ password="20181020027">
+	<comment> <![CDATA[El administrador de la base de datos de PAR-KUD.]]> </comment>
+</role>
+
+<role name="admin_role">
+	<comment> <![CDATA[Rol de administrador en la base de datos.]]> </comment>
+</role>
+
+<role name="user_role">
+	<comment> <![CDATA[Rol de un usuario del sistema. ]]> </comment>
+</role>
+
+<role name="manage_account_user"
+ createrole="true"
+ login="true"
+ password="CA1234">
+	<comment> <![CDATA[Usuario utilizado solo para crear o eliminar las cuentas de los clientes con el rol user_role. No puede acceder a ninguna tabla y su única función es ejecutar un procedimiento de creación de usuario.]]> </comment>
+</role>
+
+<role name="super_admin_role"
+ createrole="true"
+ bypassrls="true">
+	<comment> <![CDATA[Rol de súper administrador en la base de datos.]]> </comment>
+</role>
+
+<role name="operador_role">
+	<comment> <![CDATA[Rol de operador en la base de datos.]]> </comment>
+</role>
+
+<database name="parkud_dbpg" is-template="false" allow-conns="true">
+	<role name="parkud_db_admin"/>
+	<comment> <![CDATA[Base de datos relacional encargada de almacenar el sistema transaccional del SI de parqueaderos de PAR-KUD.]]> </comment>
+</database>
+
+<schema name="public" layers="0" fill-color="#e1e1e1" sql-disabled="true">
+</schema>
+
+<schema name="parqueadero" layers="0" rect-visible="true" fill-color="#e1e1e1">
+	<role name="parkud_db_admin"/>
+	<comment> <![CDATA[Esquema principal del SI de parqueaderos.]]> </comment>
+</schema>
+
+<schema name="auditoria" layers="0" fill-color="#e1e1e1">
+	<role name="parkud_db_admin"/>
+	<comment> <![CDATA[Esquema de auditoría de la BD de parqueaderos. ]]> </comment>
+</schema>
+
+<table name="pais" layers="0" collapse-mode="2" max-obj-count="2" z-value="0">
+	<schema name="parqueadero"/>
+	<role name="parkud_db_admin"/>
+	<comment> <![CDATA[Tabla que almacena los países en que PAR-KUD tiene sucursales de parqueaderos.]]> </comment>
+	<position x="3020" y="460"/>
+	<column name="k_pais" not-null="true">
+		<type name="varchar" length="3"/>
+		<comment> <![CDATA[Clave primaria de la tabla País, utilizando el estándar ISO 3166-1 alpha-3.]]> </comment>
+	</column>
+	<column name="nombre_pais" not-null="true">
+		<type name="varchar" length="100"/>
+		<comment> <![CDATA[Nombre del país.]]> </comment>
+	</column>
+	<constraint name="pais_pk" type="pk-constr" table="parqueadero.pais">
+		<columns names="k_pais" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="departamento" layers="0" collapse-mode="2" max-obj-count="3" z-value="0">
+	<schema name="parqueadero"/>
+	<role name="parkud_db_admin"/>
+	<comment> <![CDATA[Los diferentes departamentos, estados, provincias, en los que se divide un país.]]> </comment>
+	<position x="2600" y="420"/>
+	<column name="k_departamento" not-null="true">
+		<type name="varchar" length="5"/>
+		<comment> <![CDATA[Clave primaria de la tabla Departamento.]]> </comment>
+	</column>
+	<column name="nombre_departamento" not-null="true">
+		<type name="varchar" length="100"/>
+		<comment> <![CDATA[Nombre del departamento, estado, provincia, entre otros.]]> </comment>
+	</column>
+	<constraint name="departamento_pk" type="pk-constr" table="parqueadero.departamento">
+		<columns names="k_departamento" ref-type="src-columns"/>
+	</constraint>
+
+	<customidxs object-type="column">
+		<object name="k_pais" index="1"/>
+	</customidxs>
+
+	<customidxs object-type="constraint">
+		<object name="pais_fk" index="1"/>
+	</customidxs>
+</table>
+
+<table name="ciudad" layers="0" collapse-mode="2" max-obj-count="3" z-value="0">
+	<schema name="parqueadero"/>
+	<role name="parkud_db_admin"/>
+	<comment> <![CDATA[Nombre de las diferentes ciudades, municipios, entre otros que un departamento puede tener.]]> </comment>
+	<position x="2220" y="420"/>
+	<column name="k_ciudad" not-null="true">
+		<type name="varchar" length="5"/>
+		<comment> <![CDATA[Clave primaria de la tabla Ciudad.]]> </comment>
+	</column>
+	<column name="nombre_ciudad" not-null="true">
+		<type name="varchar" length="100"/>
+		<comment> <![CDATA[Nombre de la ciudad, municipio, entre otros.]]> </comment>
+	</column>
+	<constraint name="ciudad_pk" type="pk-constr" table="parqueadero.ciudad">
+		<columns names="k_ciudad" ref-type="src-columns"/>
+	</constraint>
+
+	<customidxs object-type="column">
+		<object name="k_departamento" index="1"/>
+	</customidxs>
+
+	<customidxs object-type="constraint">
+		<object name="departamento_fk" index="1"/>
+	</customidxs>
+</table>
+
+<relationship name="se_divide" type="rel1n" layers="0"
+	 src-col-pattern="{sc}"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
+	 src-table="parqueadero.pais"
+	 dst-table="parqueadero.departamento"
+	 src-required="true" dst-required="false">
+	<line>
+		<position x="3020" y="520"/>
+	<position x="2920" y="520"/>
+	</line>
+</relationship>
+
+<relationship name="contiene" type="rel1n" layers="0"
+	 src-col-pattern="{sc}"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
+	 src-table="parqueadero.departamento"
+	 dst-table="parqueadero.ciudad"
+	 src-required="true" dst-required="false">
+	<line>
+		<position x="2600" y="520"/>
+	<position x="2500" y="520"/>
+	</line>
+</relationship>
+
+<table name="sucursal" layers="0" collapse-mode="2" max-obj-count="6" z-value="0">
+	<schema name="parqueadero"/>
+	<role name="parkud_db_admin"/>
+	<comment> <![CDATA[Las diferentes sucursales con las que PAR-KUD cuenta.]]> </comment>
+	<position x="1240" y="220"/>
+	<column name="k_sucursal" not-null="true">
+		<type name="integer" length="0"/>
+		<comment> <![CDATA[Clave primaria de la tabla Sucursal.]]> </comment>
+	</column>
+	<column name="nombre_sucursal" not-null="true">
+		<type name="varchar" length="50"/>
+		<comment> <![CDATA[El nombre de la sucursal.]]> </comment>
+	</column>
+	<column name="tipo_sucursal" not-null="true">
+		<type name="varchar" length="13"/>
+		<comment> <![CDATA[Determina el tipo de sucursal.]]> </comment>
+	</column>
+	<column name="tiempo_gracia_previo" not-null="true">
+		<type name="numeric" length="3"/>
+		<comment> <![CDATA[El tiempo de gracia previo a la reserva en minutos que un administrador determina para una sucursal.]]> </comment>
+	</column>
+	<column name="tiempo_gracia_pos" not-null="true">
+		<type name="numeric" length="3"/>
+		<comment> <![CDATA[El tiempo de gracia pos a la reserva en minutos que un administrador determina para una sucursal.]]> </comment>
+	</column>
+	<constraint name="sucursal_pk" type="pk-constr" table="parqueadero.sucursal">
+		<columns names="k_sucursal" ref-type="src-columns"/>
+	</constraint>
+	<constraint name="tipo_sucursal_ck" type="ck-constr" table="parqueadero.sucursal">
+			<expression> <![CDATA[tipo_sucursal in ('Cubierta', 'Semicubierta', 'Descubierta')]]> </expression>
+		<comment> <![CDATA[Verifica que el tipo de sucursal se ajuste a las reglas de negocio.]]> </comment>
+	</constraint>
+</table>
+
+<table name="reserva" layers="0" collapse-mode="2" rls-enabled="true" max-obj-count="18" z-value="0">
+	<schema name="parqueadero"/>
+	<role name="parkud_db_admin"/>
+	<comment> <![CDATA[Las diferentes reservas que un cliente puede hacer de un parqueadero.]]> </comment>
+	<position x="520" y="680"/>
+	<column name="k_reserva" not-null="true">
+		<type name="bigint" length="0"/>
+		<comment> <![CDATA[Clave primaria de la tabla Parqueadero.]]> </comment>
+	</column>
+	<column name="fecha_reserva" not-null="true">
+		<type name="timestamp" length="0"/>
+		<comment> <![CDATA[Hora y fecha en que el usuario realizó la reserva.]]> </comment>
+	</column>
+	<column name="fecha_inicio_reserva" not-null="true">
+		<type name="timestamp" length="0"/>
+		<comment> <![CDATA[Hora y fecha en que la reserva comienza.]]> </comment>
+	</column>
+	<column name="puntos_usados" not-null="true">
+		<type name="numeric" length="8"/>
+		<comment> <![CDATA[La cantidad de puntos que un cliente usó en una reserva.]]> </comment>
+	</column>
+	<column name="esta_activa" not-null="true">
+		<type name="boolean" length="0"/>
+		<comment> <![CDATA[Booleano que determina si la reserva está activa o no.]]> </comment>
+	</column>
+	<column name="fecha_salida_vehiculo">
+		<type name="timestamp" length="0"/>
+		<comment> <![CDATA[Índica cuando el vehículo sale de la sucursal.]]> </comment>
+	</column>
+	<column name="valor_reserva">
+		<type name="numeric" length="7" precision="1"/>
+		<comment> <![CDATA[Determina el valor total de la reserva.]]> </comment>
+	</column>
+	<column name="puntos_acumulados">
+		<type name="numeric" length="8"/>
+		<comment> <![CDATA[La cantidad de puntos que el cliente acumuló en la reserva.]]> </comment>
+	</column>
+	<column name="observaciones_reserva">
+		<type name="varchar" length="500"/>
+		<comment> <![CDATA[Observaciones generales de la reserva.]]> </comment>
+	</column>
+	<constraint name="reserva_pk" type="pk-constr" table="parqueadero.reserva">
+		<columns names="k_reserva" ref-type="src-columns"/>
+	</constraint>
+	<constraint name="valor_reserva_ck" type="ck-constr" table="parqueadero.reserva">
+			<expression> <![CDATA[valor_reserva > 0]]> </expression>
+		<comment> <![CDATA[Verifica que el valor de la reserva es un número positivo.]]> </comment>
+	</constraint>
+	<constraint name="fecha_reserva_ck" type="ck-constr" table="parqueadero.reserva">
+			<expression> <![CDATA[fecha_inicio_reserva < fecha_salida_vehiculo]]> </expression>
+		<comment> <![CDATA[Verifica que las fechas de la reserva sean consistentes.]]> </comment>
+	</constraint>
+
+	<customidxs object-type="column">
+		<object name="k_cliente" index="1"/>
+		<object name="k_fidelizacion" index="3"/>
+		<object name="k_promocion" index="2"/>
+		<object name="k_slot_parqueadero" index="5"/>
+		<object name="k_sucursal" index="4"/>
+		<object name="k_tarjeta_pago" index="6"/>
+	</customidxs>
+
+	<customidxs object-type="constraint">
+		<object name="cliente_fk" index="1"/>
+		<object name="fidelizacion_cliente_fk" index="3"/>
+		<object name="promocion_fk" index="2"/>
+		<object name="slot_parqueadero_fk" index="6"/>
+		<object name="tarjeta_pago_fk" index="7"/>
+	</customidxs>
+</table>
+
+<sequence name="reserva_sq" cycle="true" start="1" increment="1" min-value="0" max-value="9223372036854775807" cache="1" owner-col="parqueadero.reserva.k_reserva">
+	<schema name="parqueadero"/>
+	<role name="parkud_db_admin"/>
+	<comment> <![CDATA[Secuencia de clave primaria de la tabla Reserva.]]> </comment>
+</sequence>
+
+<table name="slot_parqueadero" layers="0" collapse-mode="2" max-obj-count="4" z-value="0">
+	<schema name="parqueadero"/>
+	<role name="parkud_db_admin"/>
+	<comment> <![CDATA[Los diferentes parqueaderos que se encuentran en una sucursal.]]> </comment>
+	<position x="960" y="760"/>
+	<column name="k_slot_parqueadero" not-null="true">
+		<type name="varchar" length="5"/>
+		<comment> <![CDATA[Residuo de la tabla Parqueadero.]]> </comment>
+	</column>
+	<column name="es_cubierto" not-null="true">
+		<type name="boolean" length="0"/>
+		<comment> <![CDATA[Determina si el parqueadero es cubierto o no.]]> </comment>
+	</column>
+	<column name="tipo_parqueadero" not-null="true">
+		<type name="varchar" length="9"/>
+		<comment> <![CDATA[Determina qué vehículo puede guardarse en el parqueadero.]]> </comment>
+	</column>
+	<constraint name="parqueadero_pk" type="pk-constr" table="parqueadero.slot_parqueadero">
+		<columns names="k_slot_parqueadero" ref-type="src-columns"/>
+	</constraint>
+	<constraint name="tipo_parqueadero_ck" type="ck-constr" table="parqueadero.slot_parqueadero">
+			<expression> <![CDATA[tipo_parqueadero in ('SUV', 'Automóvil', 'Moto')]]> </expression>
+		<comment> <![CDATA[Verifica que el tipo de parqueadero esté dentro de los valores establecidos en las reglas de negocio.]]> </comment>
+	</constraint>
+
+	<customidxs object-type="column">
+		<object name="k_sucursal" index="1"/>
+	</customidxs>
+
+	<customidxs object-type="constraint">
+		<object name="sucursal_fk" index="1"/>
+	</customidxs>
+</table>
+
+<relationship name="sucursal_has_many_parqueadero" type="rel1n" layers="0"
+	 src-col-pattern="{sc}"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
+	 src-table="parqueadero.sucursal"
+	 dst-table="parqueadero.slot_parqueadero"
+	 src-required="true" dst-required="false"
+	 identifier="true"
+/>
+
+<table name="cliente" layers="0" collapse-mode="2" rls-enabled="true" max-obj-count="10" z-value="0">
+	<schema name="parqueadero"/>
+	<role name="parkud_db_admin"/>
+	<comment> <![CDATA[Los clientes que reservan parqueaderos en el sistema.]]> </comment>
+	<position x="960" y="1580"/>
+	<column name="k_cliente" not-null="true">
+		<type name="integer" length="0"/>
+		<comment> <![CDATA[Clave primaria de la tabla Cliente.]]> </comment>
+	</column>
+	<column name="tipo_identificacion_cliente" not-null="true">
+		<type name="varchar" length="3"/>
+		<comment> <![CDATA[Determina el tipo de identificación del cliente.]]> </comment>
+	</column>
+	<column name="numero_identificacion_cliente" not-null="true">
+		<type name="varchar" length="12"/>
+		<comment> <![CDATA[Número de identificación del cliente.]]> </comment>
+	</column>
+	<column name="nombre1_cliente" not-null="true">
+		<type name="varchar" length="50"/>
+		<comment> <![CDATA[Primer nombre del cliente.]]> </comment>
+	</column>
+	<column name="nombre2_cliente">
+		<type name="varchar" length="50"/>
+		<comment> <![CDATA[Segundo nombre del cliente.]]> </comment>
+	</column>
+	<column name="apellido1_cliente" not-null="true">
+		<type name="varchar" length="50"/>
+		<comment> <![CDATA[Primer apellido del cliente.]]> </comment>
+	</column>
+	<column name="apellido2_cliente">
+		<type name="varchar" length="50"/>
+		<comment> <![CDATA[Segundo apellido del cliente.]]> </comment>
+	</column>
+	<column name="telefono_cliente" not-null="true">
+		<type name="numeric" length="10"/>
+		<comment> <![CDATA[Número de teléfono o celular del cliente.]]> </comment>
+	</column>
+	<column name="correo_cliente" not-null="true">
+		<type name="bytea" length="200"/>
+		<comment> <![CDATA[Dirección de correo electrónico del cliente encriptada.]]> </comment>
+	</column>
+	<constraint name="cliente_pk" type="pk-constr" table="parqueadero.cliente">
+		<columns names="k_cliente" ref-type="src-columns"/>
+	</constraint>
+	<constraint name="tipo_id_cliente_uq" type="uq-constr" table="parqueadero.cliente">
+		<columns names="tipo_identificacion_cliente,numero_identificacion_cliente" ref-type="src-columns"/>
+		<comment> <![CDATA[Verifica que el número de documento del cliente sea único respecto a su tipo de documento.]]> </comment>
+	</constraint>
+	<constraint name="tipo_id_cliente_ck" type="ck-constr" table="parqueadero.cliente">
+			<expression> <![CDATA[tipo_identificacion_cliente in ('CC', 'CE', 'PAP')]]> </expression>
+		<comment> <![CDATA[Verifica que el tipo de identificación es válido de acuerdo a la normatividad colombiana.]]> </comment>
+	</constraint>
+	<constraint name="telefono_cliente_uq" type="uq-constr" table="parqueadero.cliente">
+		<columns names="telefono_cliente" ref-type="src-columns"/>
+		<comment> <![CDATA[Verifica que el número de teléfono de un cliente no se repita.]]> </comment>
+	</constraint>
+	<constraint name="correo_cliente_uq" type="uq-constr" table="parqueadero.cliente">
+		<columns names="correo_cliente" ref-type="src-columns"/>
+		<comment> <![CDATA[Verifica que el correo de un cliente no se repita.]]> </comment>
+	</constraint>
+</table>
+
+<relationship name="hace" type="rel1n" layers="0"
+	 src-col-pattern="{sc}"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
+	 src-table="parqueadero.cliente"
+	 dst-table="parqueadero.reserva"
+	 src-required="true" dst-required="false">
+	<label ref-type="name-label">
+		<position x="0" y="0"/>
+	</label>
+</relationship>
+
+<sequence name="cliente_sq" cycle="true" start="1" increment="1" min-value="0" max-value="2147483647" cache="1" owner-col="parqueadero.cliente.k_cliente">
+	<schema name="parqueadero"/>
+	<role name="parkud_db_admin"/>
+	<comment> <![CDATA[Consecutivo de la clave primaria de la tabla Cliente.]]> </comment>
+</sequence>
+
+<table name="direccion" layers="0" collapse-mode="2" max-obj-count="7" z-value="0">
+	<schema name="parqueadero"/>
+	<role name="parkud_db_admin"/>
+	<comment> <![CDATA[Índica la dirección en la que una sucursal se encuentra.]]> </comment>
+	<position x="1800" y="360"/>
+	<column name="k_direccion" not-null="true">
+		<type name="integer" length="0"/>
+		<comment> <![CDATA[Clave primaria de la tabla Dirección.]]> </comment>
+	</column>
+	<column name="nombre_direccion" not-null="true">
+		<type name="varchar" length="200"/>
+		<comment> <![CDATA[El nombre de la dirección con calle, carrera, diagonal, transversal, entre otros.]]> </comment>
+	</column>
+	<column name="edificio_direccion" not-null="true">
+		<type name="varchar" length="200"/>
+		<comment> <![CDATA[Indica el edificio, centro comercial, entre otros establecimientos en la que la sucursal se encuentra establecida.]]> </comment>
+	</column>
+	<column name="codigo_postal" not-null="true">
+		<type name="varchar" length="6"/>
+		<comment> <![CDATA[El código postal de la dirección. ]]> </comment>
+	</column>
+	<constraint name="direccion_pk" type="pk-constr" table="parqueadero.direccion">
+		<columns names="k_direccion" ref-type="src-columns"/>
+	</constraint>
+
+	<customidxs object-type="column">
+		<object name="k_ciudad" index="1"/>
+		<object name="k_sucursal" index="2"/>
+	</customidxs>
+
+	<customidxs object-type="constraint">
+		<object name="ciudad_fk" index="1"/>
+		<object name="direccion_uq" index="3"/>
+		<object name="sucursal_fk" index="2"/>
+	</customidxs>
+</table>
+
+<relationship name="ciudad_dir" type="rel1n" layers="0"
+	 src-col-pattern="{sc}"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
+	 src-table="parqueadero.ciudad"
+	 dst-table="parqueadero.direccion"
+	 src-required="true" dst-required="false">
+	<line>
+		<position x="2220" y="520"/>
+	<position x="2100" y="520"/>
+	</line>
+</relationship>
+
+<relationship name="ubica" type="rel11" layers="0"
+	 src-col-pattern="{sc}"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
+	 src-table="parqueadero.sucursal"
+	 dst-table="parqueadero.direccion"
+	 src-required="true" dst-required="false">
+	<line>
+		<position x="1540" y="420"/>
+	<position x="1800" y="420"/>
+	</line>
+</relationship>
+
+<table name="tarifa_minuto" layers="0" collapse-mode="2" max-obj-count="12" z-value="0">
+	<schema name="parqueadero"/>
+	<role name="parkud_db_admin"/>
+	<comment> <![CDATA[Tarifa cobrada por minuto en una sucursal.]]> </comment>
+	<position x="3320" y="120"/>
+	<column name="k_tarifa_minuto" not-null="true">
+		<type name="integer" length="0"/>
+		<comment> <![CDATA[Clave primaria de la tabla Tarifa Minuto]]> </comment>
+	</column>
+	<column name="valor_minuto_suv" not-null="true">
+		<type name="numeric" length="5" precision="1"/>
+		<comment> <![CDATA[Valor a pagar por vehículo de tipo SUV. Si es cero significa que la sucursal no tiene parqueaderos de este tipo.]]> </comment>
+	</column>
+	<column name="valor_minuto_auto" not-null="true">
+		<type name="numeric" length="5" precision="1"/>
+		<comment> <![CDATA[Valor a pagar por vehículo de tipo automóvil. Si es cero significa que la sucursal no tiene parqueaderos de este tipo.]]> </comment>
+	</column>
+	<column name="valor_minuto_moto" not-null="true">
+		<type name="numeric" length="5" precision="1"/>
+		<comment> <![CDATA[Valor a pagar por vehículo de tipo moto. Si es cero significa que la sucursal no tiene parqueaderos de este tipo.]]> </comment>
+	</column>
+	<column name="adicion_parq_cubierto" not-null="true">
+		<type name="numeric" length="5" precision="1"/>
+		<comment> <![CDATA[Valor adicional a pagar por parqueaderos cubiertos. ]]> </comment>
+	</column>
+	<column name="valor_multa_cancelacion" not-null="true">
+		<type name="numeric" length="6" precision="1"/>
+		<comment> <![CDATA[El valor a pagar por cancelar una reserva.]]> </comment>
+	</column>
+	<column name="fecha_inicio_tarifa" not-null="true">
+		<type name="timestamp" length="0"/>
+		<comment> <![CDATA[Fecha de inicio en que la tarifa se encuentra activa.]]> </comment>
+	</column>
+	<column name="fecha_fin_tarifa">
+		<type name="timestamp" length="0"/>
+		<comment> <![CDATA[Indica la fecha final en que la tarifa se encuentra activa. ]]> </comment>
+	</column>
+	<column name="esta_activa" not-null="true">
+		<type name="boolean" length="0"/>
+		<comment> <![CDATA[Determina si la tarifa actual se encuentra activa o no.]]> </comment>
+	</column>
+	<constraint name="tarifa_minuto_pk" type="pk-constr" table="parqueadero.tarifa_minuto">
+		<columns names="k_tarifa_minuto" ref-type="src-columns"/>
+	</constraint>
+	<constraint name="valor_tarifa_ck" type="ck-constr" table="parqueadero.tarifa_minuto">
+			<expression> <![CDATA[valor_minuto_suv >= 0 and valor_minuto_auto >= 0 and valor_minuto_moto >= 0]]> </expression>
+		<comment> <![CDATA[Verifica que los valores por tarifa de cada tipo de vehículo son números positivos.]]> </comment>
+	</constraint>
+	<constraint name="fecha_tarifa_ck" type="ck-constr" table="parqueadero.tarifa_minuto">
+			<expression> <![CDATA[fecha_inicio_tarifa < fecha_fin_tarifa]]> </expression>
+		<comment> <![CDATA[Verifica que las fechas de las tarifas sean consistentes.]]> </comment>
+	</constraint>
+
+	<customidxs object-type="column">
+		<object name="k_sucursal" index="1"/>
+	</customidxs>
+
+	<customidxs object-type="constraint">
+		<object name="sucursal_fk" index="1"/>
+	</customidxs>
+</table>
+
+<relationship name="cobra" type="rel1n" layers="0"
+	 src-col-pattern="{sc}"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
+	 src-table="parqueadero.sucursal"
+	 dst-table="parqueadero.tarifa_minuto"
+	 src-required="true" dst-required="false">
+	<line>
+		<position x="1540" y="320"/>
+	<position x="3320" y="320"/>
+	</line>
+</relationship>
+
+<table name="horario_sucursal" layers="0" collapse-mode="2" max-obj-count="8" z-value="0">
+	<schema name="parqueadero"/>
+	<role name="parkud_db_admin"/>
+	<comment> <![CDATA[Determina el horario de una sucursal. El horario puede variar todos los días.]]> </comment>
+	<position x="1540" y="760"/>
+	<column name="k_horario_sucursal" not-null="true">
+		<type name="integer" length="0"/>
+		<comment> <![CDATA[Residuo de la tabla Horario Sucursal.]]> </comment>
+	</column>
+	<column name="hora_abierto_sucursal">
+		<type name="time" length="0"/>
+		<comment> <![CDATA[Índica la hora en que la sucursal abre. Si ese día atienden 24/7 este valor será nulo.]]> </comment>
+	</column>
+	<column name="hora_cerrado_sucursal">
+		<type name="time" length="0"/>
+		<comment> <![CDATA[Índica la hora en que la sucursal abre. Si ese día atienden 24/7 este valor será nulo.]]> </comment>
+	</column>
+	<column name="es_horario_completo" not-null="true">
+		<type name="boolean" length="0"/>
+		<comment> <![CDATA[Determina si para un día de la semana atienden 24/7.]]> </comment>
+	</column>
+	<column name="es_cerrado_completo" not-null="true">
+		<type name="boolean" length="0"/>
+		<comment> <![CDATA[Determina si para un día de la semana la sucursal no abre. ]]> </comment>
+	</column>
+	<constraint name="horario_sucursal_pk" type="pk-constr" table="parqueadero.horario_sucursal">
+		<columns names="k_horario_sucursal" ref-type="src-columns"/>
+	</constraint>
+
+	<customidxs object-type="column">
+		<object name="k_dia_semana" index="2"/>
+		<object name="k_sucursal" index="1"/>
+	</customidxs>
+
+	<customidxs object-type="constraint">
+		<object name="dia_semana_fk" index="2"/>
+		<object name="sucursal_fk" index="1"/>
+	</customidxs>
+</table>
+
+<table name="dia_semana" layers="0" collapse-mode="2" max-obj-count="2" z-value="0">
+	<schema name="parqueadero"/>
+	<role name="parkud_db_admin"/>
+	<comment> <![CDATA[Almacena el día de la semana.]]> </comment>
+	<position x="2220" y="720"/>
+	<column name="k_dia_semana" not-null="true">
+		<type name="varchar" length="9"/>
+		<comment> <![CDATA[Clave primaria de la tabla Día Semana. También almacena el día de la semana.]]> </comment>
+	</column>
+	<constraint name="dia_semana_pk" type="pk-constr" table="parqueadero.dia_semana">
+		<columns names="k_dia_semana" ref-type="src-columns"/>
+	</constraint>
+	<constraint name="dia_semana_ck" type="ck-constr" table="parqueadero.dia_semana">
+			<expression> <![CDATA[k_dia_semana in ('Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo')]]> </expression>
+		<comment> <![CDATA[Verifica que solo se puedan almacenar los días de la semana.]]> </comment>
+	</constraint>
+</table>
+
+<relationship name="sucursal_hora" type="rel1n" layers="0"
+	 src-col-pattern="{sc}"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
+	 src-table="parqueadero.sucursal"
+	 dst-table="parqueadero.horario_sucursal"
+	 src-required="true" dst-required="false"
+	 identifier="true"
+/>
+
+<relationship name="dia_horario_suc" type="rel1n" layers="0"
+	 src-col-pattern="{sc}"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
+	 src-table="parqueadero.dia_semana"
+	 dst-table="parqueadero.horario_sucursal"
+	 src-required="true" dst-required="false">
+	<line>
+		<position x="2220" y="820"/>
+	<position x="1860" y="820"/>
+	</line>
+</relationship>
+
+<table name="horario_empleado" layers="0" collapse-mode="2" max-obj-count="7" z-value="0">
+	<schema name="parqueadero"/>
+	<role name="parkud_db_admin"/>
+	<comment> <![CDATA[Almacena el horario de un empleado por día.]]> </comment>
+	<position x="2200" y="920"/>
+	<column name="k_horario_empleado" not-null="true">
+		<type name="integer" length="0"/>
+		<comment> <![CDATA[Discriminante de la tabla Horario Empleado]]> </comment>
+	</column>
+	<column name="hora_entrada">
+		<type name="time" length="0"/>
+		<comment> <![CDATA[Determina la hora de entrada al turno. Si es nulo es porque es el día libre del empleado.]]> </comment>
+	</column>
+	<column name="hora_salida">
+		<type name="time" length="0"/>
+		<comment> <![CDATA[Determina la hora de salida al turno. Si es nulo es porque es el día libre del empleado.]]> </comment>
+	</column>
+	<column name="es_dia_descanso" not-null="true">
+		<type name="boolean" length="0"/>
+		<comment> <![CDATA[Determina si es el día de descanso del empleado.]]> </comment>
+	</column>
+	<constraint name="horario_empleado_pk" type="pk-constr" table="parqueadero.horario_empleado">
+		<columns names="k_horario_empleado" ref-type="src-columns"/>
+	</constraint>
+
+	<customidxs object-type="column">
+		<object name="k_dia_semana" index="2"/>
+		<object name="k_empleado" index="1"/>
+	</customidxs>
+
+	<customidxs object-type="constraint">
+		<object name="dia_semana_fk" index="1"/>
+		<object name="empleado_fk" index="2"/>
+	</customidxs>
+</table>
+
+<table name="empleado" layers="0" collapse-mode="2" rls-enabled="true" max-obj-count="10" z-value="0">
+	<schema name="parqueadero"/>
+	<role name="parkud_db_admin"/>
+	<comment> <![CDATA[Empleado que trabaja en una o varias sucursales.]]> </comment>
+	<position x="1420" y="1180"/>
+	<column name="k_empleado" not-null="true">
+		<type name="integer" length="0"/>
+		<comment> <![CDATA[Clave primaria de la tabla Empleado.]]> </comment>
+	</column>
+	<column name="tipo_identificacion_empleado" not-null="true">
+		<type name="varchar" length="3"/>
+		<comment> <![CDATA[Determina el tipo de identificación del empleado, CC, PPT, PEP o CE.]]> </comment>
+	</column>
+	<column name="numero_identificacion_emp" not-null="true">
+		<type name="varchar" length="12"/>
+		<comment> <![CDATA[El número de identificación del empleado.]]> </comment>
+	</column>
+	<column name="nombre1_empleado" not-null="true">
+		<type name="varchar" length="50"/>
+		<comment> <![CDATA[Primer nombre del empleado.]]> </comment>
+	</column>
+	<column name="nombre2_empleado">
+		<type name="varchar" length="50"/>
+		<comment> <![CDATA[Segundo nombre del empleado.]]> </comment>
+	</column>
+	<column name="apellido1_empleado" not-null="true">
+		<type name="varchar" length="50"/>
+		<comment> <![CDATA[Primer apellido del empleado.]]> </comment>
+	</column>
+	<column name="apellido2_empleado">
+		<type name="varchar" length="50"/>
+		<comment> <![CDATA[Segundo apellido del empleado.]]> </comment>
+	</column>
+	<column name="telefono_empleado" not-null="true">
+		<type name="numeric" length="10"/>
+		<comment> <![CDATA[Número de celular del empleado.]]> </comment>
+	</column>
+	<column name="correo_empleado" not-null="true">
+		<type name="bytea" length="200"/>
+		<comment> <![CDATA[Correo electrónico del empleado.]]> </comment>
+	</column>
+	<constraint name="empleado_pk" type="pk-constr" table="parqueadero.empleado">
+		<columns names="k_empleado" ref-type="src-columns"/>
+	</constraint>
+	<constraint name="tipo_id_empleado_uq" type="uq-constr" table="parqueadero.empleado">
+		<columns names="tipo_identificacion_empleado,numero_identificacion_emp" ref-type="src-columns"/>
+		<comment> <![CDATA[Verifica que el número de documento del empleado sea único respecto a su tipo de documento.]]> </comment>
+	</constraint>
+	<constraint name="tipo_id_empleado_ck" type="ck-constr" table="parqueadero.empleado">
+			<expression> <![CDATA[tipo_identificacion_empleado in ('PEP', 'CE', 'CC', 'PPT')]]> </expression>
+		<comment> <![CDATA[Verifica que el tipo de identificación es válido de acuerdo a la normatividad colombiana.]]> </comment>
+	</constraint>
+	<constraint name="telefono_empleado_uq" type="uq-constr" table="parqueadero.empleado">
+		<columns names="telefono_empleado" ref-type="src-columns"/>
+		<comment> <![CDATA[Verifica que el número de teléfono de un empleado no se repita.]]> </comment>
+	</constraint>
+	<constraint name="correo_empleado_uq" type="uq-constr" table="parqueadero.empleado">
+		<columns names="correo_empleado" ref-type="src-columns"/>
+		<comment> <![CDATA[Verifica que el correo de un empleado no se repita.]]> </comment>
+	</constraint>
+</table>
+
+<table name="trabaja" layers="0" collapse-mode="2" max-obj-count="3" z-value="0">
+	<schema name="parqueadero"/>
+	<role name="parkud_db_admin"/>
+	<comment> <![CDATA[Tabla de rompimiento entre Empleado y Sucursal.]]> </comment>
+	<position x="1280" y="780"/>
+
+	<customidxs object-type="column">
+		<object name="k_empleado" index="1"/>
+		<object name="k_sucursal" index="0"/>
+	</customidxs>
+
+	<customidxs object-type="constraint">
+		<object name="empleado_fk" index="2"/>
+		<object name="sucursal_fk" index="1"/>
+		<object name="trabaja_pk" index="0"/>
+	</customidxs>
+</table>
+
+<relationship name="sucursal_trabaja" type="rel1n" layers="0"
+	 src-col-pattern="{sc}"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
+	 src-table="parqueadero.sucursal"
+	 dst-table="parqueadero.trabaja"
+	 src-required="true" dst-required="false"
+	 identifier="true"
+>
+	<line>
+		<position x="1400" y="440"/>
+	<position x="1400" y="780"/>
+	</line>
+</relationship>
+
+<relationship name="empleado_trabaja" type="rel1n" layers="0"
+	 src-col-pattern="{sc}"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
+	 src-table="parqueadero.empleado"
+	 dst-table="parqueadero.trabaja"
+	 src-required="true" dst-required="false"
+	 identifier="true"
+>
+	<line>
+		<position x="1480" y="1180"/>
+	<position x="1480" y="940"/>
+	</line>
+</relationship>
+
+<relationship name="dia_horario_emp" type="rel1n" layers="0"
+	 src-col-pattern="{sc}"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
+	 src-table="parqueadero.dia_semana"
+	 dst-table="parqueadero.horario_empleado"
+	 src-required="true" dst-required="false">
+	<line>
+		<position x="2360" y="840"/>
+	<position x="2360" y="920"/>
+	</line>
+</relationship>
+
+<table name="cargo" layers="0" collapse-mode="2" max-obj-count="1" z-value="0">
+	<schema name="parqueadero"/>
+	<role name="parkud_db_admin"/>
+	<comment> <![CDATA[Los diferentes cargos que una sucursal tiene.]]> </comment>
+	<position x="2720" y="1320"/>
+	<column name="k_nombre_cargo" not-null="true">
+		<type name="varchar" length="30"/>
+		<comment> <![CDATA[Nombre del cargo.]]> </comment>
+	</column>
+	<constraint name="cargo_pk" type="pk-constr" table="parqueadero.cargo">
+		<columns names="k_nombre_cargo" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="ejerce" layers="0" collapse-mode="2" max-obj-count="6" z-value="0">
+	<schema name="parqueadero"/>
+	<role name="parkud_db_admin"/>
+	<comment> <![CDATA[Tabla de rompimiento entre Cargo y Empleado.]]> </comment>
+	<position x="2220" y="1240"/>
+	<column name="fecha_inicio_cargo" not-null="true">
+		<type name="date" length="0"/>
+		<comment> <![CDATA[Fecha de inicio del cargo.]]> </comment>
+	</column>
+	<column name="fecha_fin_cargo">
+		<type name="date" length="0"/>
+		<comment> <![CDATA[Fecha final del cargo.]]> </comment>
+	</column>
+	<column name="es_cargo_activo" not-null="true">
+		<type name="boolean" length="0"/>
+		<comment> <![CDATA[Determina si es el cargo es el que actualmente está desempeñando el empleado.]]> </comment>
+	</column>
+	<constraint name="fecha_ejerce_ck" type="ck-constr" table="parqueadero.ejerce">
+			<expression> <![CDATA[fecha_inicio_cargo < fecha_fin_cargo]]> </expression>
+		<comment> <![CDATA[Verifica que las fechas de ejercer un cargo sean consistentes.]]> </comment>
+	</constraint>
+
+	<customidxs object-type="column">
+		<object name="k_empleado" index="0"/>
+		<object name="k_nombre_cargo" index="1"/>
+	</customidxs>
+
+	<customidxs object-type="constraint">
+		<object name="cargo_fk" index="1"/>
+		<object name="ejerce_pk" index="0"/>
+		<object name="empleado_fk" index="2"/>
+	</customidxs>
+</table>
+
+<relationship name="cargo_ejerce" type="rel1n" layers="0"
+	 src-col-pattern="{sc}"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
+	 src-table="parqueadero.cargo"
+	 dst-table="parqueadero.ejerce"
+	 src-required="true" dst-required="false"
+	 identifier="true"
+>
+	<line>
+		<position x="2720" y="1360"/>
+	<position x="2520" y="1360"/>
+	</line>
+	<label ref-type="name-label">
+		<position x="0" y="0"/>
+	</label>
+</relationship>
+
+<relationship name="empleado_ejerce" type="rel1n" layers="0"
+	 src-col-pattern="{sc}"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
+	 src-table="parqueadero.empleado"
+	 dst-table="parqueadero.ejerce"
+	 src-required="true" dst-required="false"
+	 identifier="true"
+>
+	<line>
+		<position x="1800" y="1380"/>
+	<position x="2220" y="1380"/>
+	</line>
+</relationship>
+
+<table name="promocion" layers="0" collapse-mode="2" max-obj-count="7" z-value="0">
+	<schema name="parqueadero"/>
+	<role name="parkud_db_admin"/>
+	<comment> <![CDATA[Promociones de puntos de fidelización que una sucursal puede ofrecer.]]> </comment>
+	<position x="520" y="200"/>
+	<column name="k_promocion" not-null="true">
+		<type name="integer" length="0"/>
+		<comment> <![CDATA[Clave primaria de la tabla Promoción.]]> </comment>
+	</column>
+	<column name="fecha_promocion" not-null="true">
+		<type name="timestamp" length="0"/>
+		<comment> <![CDATA[Fecha en que la promoción fue creada.]]> </comment>
+	</column>
+	<column name="fecha_activa_desde" not-null="true">
+		<type name="timestamp" length="0"/>
+		<comment> <![CDATA[Indica la fecha de inicio en que la promoción tiene validez.]]> </comment>
+	</column>
+	<column name="fecha_activa_hasta" not-null="true">
+		<type name="timestamp" length="0"/>
+		<comment> <![CDATA[Indica hasta cuando la promoción tiene validez.]]> </comment>
+	</column>
+	<column name="descripcion_promocion" not-null="true">
+		<type name="varchar" length="500"/>
+		<comment> <![CDATA[Breve descripción de la promoción.]]> </comment>
+	</column>
+	<constraint name="promocion_pk" type="pk-constr" table="parqueadero.promocion">
+		<columns names="k_promocion" ref-type="src-columns"/>
+	</constraint>
+	<constraint name="fecha_promocion_ck" type="ck-constr" table="parqueadero.promocion">
+			<expression> <![CDATA[fecha_activa_desde < fecha_activa_hasta]]> </expression>
+		<comment> <![CDATA[Verifica que las fechas de una promoción sean consistentes.]]> </comment>
+	</constraint>
+
+	<customidxs object-type="column">
+		<object name="k_sucursal" index="1"/>
+	</customidxs>
+
+	<customidxs object-type="constraint">
+		<object name="sucursal_fk" index="1"/>
+	</customidxs>
+</table>
+
+<relationship name="promo_sucursal" type="rel1n" layers="0"
+	 src-col-pattern="{sc}"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
+	 src-table="parqueadero.sucursal"
+	 dst-table="parqueadero.promocion"
+	 src-required="true" dst-required="false">
+	<line>
+		<position x="1240" y="340"/>
+	<position x="840" y="340"/>
+	</line>
+</relationship>
+
+<table name="promocion_por_tiempo" layers="0" collapse-mode="2" max-obj-count="8" z-value="0">
+	<schema name="parqueadero"/>
+	<role name="parkud_db_admin"/>
+	<comment> <![CDATA[Promoción que da puntos de fidelización por tiempo reservado.
+]]> </comment>
+	<position x="40" y="340"/>
+	<column name="puntos_por_minuto" not-null="true">
+		<type name="numeric" length="8"/>
+		<comment> <![CDATA[Indica cuántos puntos por minuto otorga la promoción.]]> </comment>
+	</column>
+	<column name="adicion_minutos_suv" not-null="true">
+		<type name="numeric" length="8"/>
+		<comment> <![CDATA[Indica la adición de puntos por minuto correspondiente por parquear usando un SUV.]]> </comment>
+	</column>
+	<column name="adicion_minutos_auto" not-null="true">
+		<type name="numeric" length="8"/>
+		<comment> <![CDATA[Indica la adición de puntos por minuto correspondiente por parquear usando un auto.]]> </comment>
+	</column>
+	<column name="adicion_minutos_moto" not-null="true">
+		<type name="numeric" length="8"/>
+		<comment> <![CDATA[Indica la adición de puntos por minuto correspondiente por parquear usando una moto.]]> </comment>
+	</column>
+	<column name="adicion_parq_cubierto" not-null="true">
+		<type name="numeric" length="8"/>
+		<comment> <![CDATA[Indica la adición de puntos por minuto correspondiente por parquear en un slot cubierto.]]> </comment>
+	</column>
+	<column name="adicion_parq_descubierto" not-null="true">
+		<type name="numeric" length="8"/>
+		<comment> <![CDATA[Indica la adición de puntos por minuto correspondiente por parquear en un slot descubierto.]]> </comment>
+	</column>
+
+	<customidxs object-type="column">
+		<object name="k_promocion" index="0"/>
+	</customidxs>
+
+	<customidxs object-type="constraint">
+		<object name="promocion_fk" index="1"/>
+		<object name="promocion_por_tiempo_pk" index="0"/>
+	</customidxs>
+</table>
+
+<relationship name="promocion_por_tiempo_has_one_promocion" type="rel11" layers="0"
+	 src-col-pattern="{sc}"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
+	 src-table="parqueadero.promocion"
+	 dst-table="parqueadero.promocion_por_tiempo"
+	 src-required="true" dst-required="false"
+	 identifier="true"
+>
+	<line>
+		<position x="520" y="400"/>
+	<position x="380" y="400"/>
+	</line>
+</relationship>
+
+<table name="promocion_por_reserva" layers="0" collapse-mode="2" max-obj-count="8" z-value="0">
+	<schema name="parqueadero"/>
+	<role name="parkud_db_admin"/>
+	<comment> <![CDATA[Promoción que da puntos de fidelización por reservar un parqueadero.]]> </comment>
+	<position x="40" y="60"/>
+	<column name="puntos_por_reserva" not-null="true">
+		<type name="numeric" length="8"/>
+		<comment> <![CDATA[Los puntos acumulados por reservar.]]> </comment>
+	</column>
+	<column name="adicion_reserva_suv" not-null="true">
+		<type name="numeric" length="8"/>
+		<comment> <![CDATA[Indica la adición correspondiente por reservar usando un SUV.]]> </comment>
+	</column>
+	<column name="adicion_reserva_auto" not-null="true">
+		<type name="numeric" length="8"/>
+		<comment> <![CDATA[Indica la adición correspondiente por reservar usando un automóvil.]]> </comment>
+	</column>
+	<column name="adicion_reserva_moto" not-null="true">
+		<type name="numeric" length="8"/>
+		<comment> <![CDATA[Indica la adición correspondiente por reservar usando una moto.]]> </comment>
+	</column>
+	<column name="adicion_parq_cubierto" not-null="true">
+		<type name="numeric" length="8"/>
+		<comment> <![CDATA[Indica la adición correspondiente por reservar en un slot cubierto.]]> </comment>
+	</column>
+	<column name="adicion_parq_descubierto" not-null="true">
+		<type name="numeric" length="8"/>
+		<comment> <![CDATA[Indica la adición correspondiente por reservar en un slot descubierto.]]> </comment>
+	</column>
+
+	<customidxs object-type="column">
+		<object name="k_promocion" index="0"/>
+	</customidxs>
+
+	<customidxs object-type="constraint">
+		<object name="promocion_fk" index="1"/>
+		<object name="promocion_por_reserva_pk" index="0"/>
+	</customidxs>
+</table>
+
+<relationship name="promocion_por_reserva_has_one_promocion" type="rel11" layers="0"
+	 src-col-pattern="{sc}"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
+	 src-table="parqueadero.promocion"
+	 dst-table="parqueadero.promocion_por_reserva"
+	 src-required="true" dst-required="false"
+	 identifier="true"
+>
+	<line>
+		<position x="520" y="260"/>
+	<position x="380" y="260"/>
+	</line>
+</relationship>
+
+<table name="tarjeta_pago" layers="0" collapse-mode="2" rls-enabled="true" max-obj-count="10" z-value="0">
+	<schema name="parqueadero"/>
+	<role name="parkud_db_admin"/>
+	<comment> <![CDATA[Las diferentes tarjetas que un cliente puede tener asociadas.]]> </comment>
+	<position x="1000" y="1020"/>
+	<column name="k_tarjeta_pago" not-null="true">
+		<type name="integer" length="0"/>
+		<comment> <![CDATA[Clave primaria de la tabla Tarjeta Pago.]]> </comment>
+	</column>
+	<column name="nombre_duenio_tarjeta" not-null="true">
+		<type name="bytea" length="50"/>
+		<comment> <![CDATA[El nombre que aparece en la tarjeta.]]> </comment>
+	</column>
+	<column name="apellido_duenio_tarjeta" not-null="true">
+		<type name="bytea" length="0"/>
+		<comment> <![CDATA[El apellido que aparece en la tarjeta. ]]> </comment>
+	</column>
+	<column name="numero_tarjeta" not-null="true">
+		<type name="bytea" length="0"/>
+		<comment> <![CDATA[El número de la tarjeta, encriptado.]]> </comment>
+	</column>
+	<column name="ultimos_cuatro_digitos" not-null="true">
+		<type name="bytea" length="0"/>
+		<comment> <![CDATA[Los últimos cuatro dígitos de la tarjeta, encriptados.]]> </comment>
+	</column>
+	<column name="mes_vencimiento" not-null="true">
+		<type name="bytea" length="2"/>
+		<comment> <![CDATA[El mes en que vence la tarjeta, encriptado.]]> </comment>
+	</column>
+	<column name="anio_vencimiento" not-null="true">
+		<type name="bytea" length="0"/>
+		<comment> <![CDATA[El año en que vence la tarjeta, encriptado.]]> </comment>
+	</column>
+	<column name="tipo_tarjeta" not-null="true">
+		<type name="bytea" length="10"/>
+		<comment> <![CDATA[Determina si la tarjeta es Mastercard, Visa, Discover, Amex, Diners, entre otros.]]> </comment>
+	</column>
+	<constraint name="tarjeta_pago_pk" type="pk-constr" table="parqueadero.tarjeta_pago">
+		<columns names="k_tarjeta_pago" ref-type="src-columns"/>
+	</constraint>
+
+	<customidxs object-type="column">
+		<object name="k_cliente" index="1"/>
+	</customidxs>
+
+	<customidxs object-type="constraint">
+		<object name="cliente_fk" index="1"/>
+	</customidxs>
+</table>
+
+<relationship name="cliente_tarjeta" type="rel1n" layers="0"
+	 src-col-pattern="{sc}"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
+	 src-table="parqueadero.cliente"
+	 dst-table="parqueadero.tarjeta_pago"
+	 src-required="true" dst-required="false"/>
+
+<table name="vehiculo" layers="0" collapse-mode="2" rls-enabled="true" max-obj-count="12" z-value="0">
+	<schema name="parqueadero"/>
+	<role name="parkud_db_admin"/>
+	<comment> <![CDATA[Los vehículos que un cliente parquea en una sucursal.]]> </comment>
+	<position x="480" y="1840"/>
+	<column name="k_vehiculo" not-null="true">
+		<type name="integer" length="0"/>
+		<comment> <![CDATA[Clave primaria de la tabla Vehículo.]]> </comment>
+	</column>
+	<column name="placa_vehiculo" not-null="true">
+		<type name="varchar" length="7"/>
+		<comment> <![CDATA[Placa del vehículo.]]> </comment>
+	</column>
+	<column name="nombre1_propietario" not-null="true">
+		<type name="varchar" length="0"/>
+		<comment> <![CDATA[Primer nombre de la persona que aparece en la tarjeta de propiedad del vehículo.]]> </comment>
+	</column>
+	<column name="nombre2_propietario">
+		<type name="varchar" length="50"/>
+		<comment> <![CDATA[Segundo nombre de la persona que aparece en la tarjeta de propiedad del vehículo.]]> </comment>
+	</column>
+	<column name="apellido1_propietario" not-null="true">
+		<type name="varchar" length="50"/>
+		<comment> <![CDATA[Primer apellido de la persona que aparece en la tarjeta de propiedad del vehículo.]]> </comment>
+	</column>
+	<column name="apellido2_propietario">
+		<type name="varchar" length="50"/>
+		<comment> <![CDATA[Segundo apellido de la persona que aparece en la tarjeta de propiedad del vehículo.]]> </comment>
+	</column>
+	<column name="tipo_vehiculo" not-null="true">
+		<type name="varchar" length="10"/>
+		<comment> <![CDATA[Determina el tipo de vehículo: SUV, automóvil o moto.]]> </comment>
+	</column>
+	<column name="color_vehiculo" not-null="true">
+		<type name="varchar" length="20"/>
+		<comment> <![CDATA[Determina el color del vehículo.]]> </comment>
+	</column>
+	<constraint name="vehiculo_pk" type="pk-constr" table="parqueadero.vehiculo">
+		<columns names="k_vehiculo" ref-type="src-columns"/>
+	</constraint>
+	<constraint name="tipo_vehiculo_ck" type="ck-constr" table="parqueadero.vehiculo">
+			<expression> <![CDATA[tipo_vehiculo in ('SUV', 'Automóvil', 'Moto')]]> </expression>
+		<comment> <![CDATA[Verifica que el tipo de vehículo se corresponde con las reglas de negocio.]]> </comment>
+	</constraint>
+
+	<customidxs object-type="column">
+		<object name="k_cliente" index="2"/>
+		<object name="k_marca_vehiculo" index="1"/>
+	</customidxs>
+
+	<customidxs object-type="constraint">
+		<object name="cliente_fk" index="2"/>
+		<object name="marca_vehiculo_fk" index="1"/>
+	</customidxs>
+</table>
+
+<table name="marca_vehiculo" layers="0" collapse-mode="2" max-obj-count="1" z-value="0">
+	<schema name="parqueadero"/>
+	<role name="parkud_db_admin"/>
+	<comment> <![CDATA[Tabla que almacena las principales marcas de vehículos en el mundo.]]> </comment>
+	<position x="500" y="2420"/>
+	<column name="k_marca_vehiculo" not-null="true">
+		<type name="varchar" length="40"/>
+		<comment> <![CDATA[Clave primaria de la tabla Marca Vehículo, se corresponde con el nombre de la marca.]]> </comment>
+	</column>
+	<constraint name="marca_vehiculo_pk" type="pk-constr" table="parqueadero.marca_vehiculo">
+		<columns names="k_marca_vehiculo" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<relationship name="marca_vehiculo_has_many_vehiculo" type="rel1n" layers="0"
+	 src-col-pattern="{sc}"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
+	 src-table="parqueadero.marca_vehiculo"
+	 dst-table="parqueadero.vehiculo"
+	 src-required="true" dst-required="false">
+	<line>
+		<position x="640" y="2420"/>
+	<position x="640" y="2300"/>
+	</line>
+</relationship>
+
+<relationship name="cliente_has_many_vehiculo" type="rel1n" layers="0"
+	 src-col-pattern="{sc}"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
+	 src-table="parqueadero.cliente"
+	 dst-table="parqueadero.vehiculo"
+	 src-required="true" dst-required="false">
+	<line>
+		<position x="960" y="1940"/>
+	<position x="800" y="1940"/>
+	</line>
+</relationship>
+
+<index name="depto_pais_ixfk" table="parqueadero.departamento"
+	 concurrent="false" unique="false" fast-update="false" buffering="false"
+	 index-type="btree" factor="0">
+	<comment> <![CDATA[Índice de la llave foránea de la tabla País.]]> </comment>
+		<idxelement use-sorting="true" nulls-first="false" asc-order="true">
+			<column name="k_pais"/>
+		</idxelement>
+</index>
+
+<index name="ciudad_dpto_ixkf" table="parqueadero.ciudad"
+	 concurrent="false" unique="false" fast-update="false" buffering="false"
+	 index-type="btree" factor="0">
+	<comment> <![CDATA[Índice de la llave foránea de la tabla Departamento.]]> </comment>
+		<idxelement use-sorting="true" nulls-first="false" asc-order="true">
+			<column name="k_departamento"/>
+		</idxelement>
+</index>
+
+<index name="tarifa_sucursal_ixfk" table="parqueadero.tarifa_minuto"
+	 concurrent="false" unique="false" fast-update="false" buffering="false"
+	 index-type="btree" factor="0">
+	<comment> <![CDATA[Índice de la llave foránea de la tabla Sucursal.]]> </comment>
+		<idxelement use-sorting="true" nulls-first="false" asc-order="true">
+			<column name="k_sucursal"/>
+		</idxelement>
+</index>
+
+<index name="horario_sucursal_dia_ixfk" table="parqueadero.horario_sucursal"
+	 concurrent="false" unique="false" fast-update="false" buffering="false"
+	 index-type="btree" factor="0">
+	<comment> <![CDATA[Índice de la llave foránea de la tabla Día Semana.]]> </comment>
+		<idxelement use-sorting="true" nulls-first="false" asc-order="true">
+			<column name="k_dia_semana"/>
+		</idxelement>
+</index>
+
+<index name="horario_emp_dia_ixfk" table="parqueadero.horario_empleado"
+	 concurrent="false" unique="false" fast-update="false" buffering="false"
+	 index-type="btree" factor="0">
+	<comment> <![CDATA[Índice de la llave foránea de la tabla Día Semana.]]> </comment>
+		<idxelement use-sorting="true" nulls-first="false" asc-order="true">
+			<column name="k_dia_semana"/>
+		</idxelement>
+</index>
+
+<index name="promocion_sucursal_ixfk" table="parqueadero.promocion"
+	 concurrent="false" unique="false" fast-update="false" buffering="false"
+	 index-type="btree" factor="0">
+	<comment> <![CDATA[Índice de la llave foránea de la tabla Sucursal.]]> </comment>
+		<idxelement use-sorting="true" nulls-first="false" asc-order="true">
+			<column name="k_sucursal"/>
+		</idxelement>
+</index>
+
+<index name="marca_vehiculo_ixkf" table="parqueadero.vehiculo"
+	 concurrent="false" unique="false" fast-update="false" buffering="false"
+	 index-type="btree" factor="0">
+	<comment> <![CDATA[Índice de la llave foránea de la tabla Marca Vehículo.]]> </comment>
+		<idxelement use-sorting="true" nulls-first="false" asc-order="true">
+			<column name="k_marca_vehiculo"/>
+		</idxelement>
+</index>
+
+<index name="vehiculo_cliente_ixfk" table="parqueadero.vehiculo"
+	 concurrent="false" unique="false" fast-update="false" buffering="false"
+	 index-type="btree" factor="0">
+	<comment> <![CDATA[Índice de la llave foránea de la tabla Cliente.]]> </comment>
+		<idxelement use-sorting="true" nulls-first="false" asc-order="true">
+			<column name="k_cliente"/>
+		</idxelement>
+</index>
+
+<index name="tarjeta_cliente_ixfk" table="parqueadero.tarjeta_pago"
+	 concurrent="false" unique="false" fast-update="false" buffering="false"
+	 index-type="btree" factor="0">
+	<comment> <![CDATA[Índice de la llave foránea de la tabla Cliente.]]> </comment>
+		<idxelement use-sorting="true" nulls-first="false" asc-order="true">
+			<column name="k_cliente"/>
+		</idxelement>
+</index>
+
+<index name="direccion_sucursal_ixfk" table="parqueadero.direccion"
+	 concurrent="false" unique="false" fast-update="false" buffering="false"
+	 index-type="btree" factor="0">
+	<comment> <![CDATA[Índice de la llave foránea de la tabla Sucursal.]]> </comment>
+		<idxelement use-sorting="true" nulls-first="false" asc-order="true">
+			<column name="k_sucursal"/>
+		</idxelement>
+</index>
+
+<index name="direccion_ciudad_ixfk" table="parqueadero.direccion"
+	 concurrent="false" unique="false" fast-update="false" buffering="false"
+	 index-type="btree" factor="0">
+	<comment> <![CDATA[Índice de la llave foránea de la tabla Ciudad.]]> </comment>
+		<idxelement use-sorting="true" nulls-first="false" asc-order="true">
+			<column name="k_ciudad"/>
+		</idxelement>
+</index>
+
+<table name="fidelizacion_cliente" layers="0" collapse-mode="2" rls-enabled="true" max-obj-count="7" z-value="0">
+	<schema name="parqueadero"/>
+	<role name="parkud_db_admin"/>
+	<comment> <![CDATA[Almacena los datos de fidelización de un cliente.]]> </comment>
+	<position x="360" y="1520"/>
+	<column name="k_fidelizacion" not-null="true">
+		<type name="integer" length="0"/>
+		<comment> <![CDATA[Clave primaria de la tabla Fidelización Cliente.]]> </comment>
+	</column>
+	<column name="cantidad_puntos" not-null="true">
+		<type name="numeric" length="8"/>
+		<comment> <![CDATA[Determina la cantidad de puntos que el cliente tiene.]]> </comment>
+	</column>
+	<column name="fecha_inicio_puntaje" not-null="true">
+		<type name="timestamp" length="0"/>
+		<comment> <![CDATA[Fecha de inicio del puntaje almacenado.]]> </comment>
+	</column>
+	<column name="fecha_fin_puntaje">
+		<type name="timestamp" length="0"/>
+		<comment> <![CDATA[Fecha en que el puntaje cambia por uno distinto y se genera un nuevo registro en la BD.]]> </comment>
+	</column>
+	<column name="es_actual" not-null="true">
+		<type name="boolean" length="0"/>
+		<comment> <![CDATA[Determina si el puntaje de la tupla es el que se encuentra activo para el cliente.]]> </comment>
+	</column>
+	<constraint name="fidelizacion_cliente_pk" type="pk-constr" table="parqueadero.fidelizacion_cliente">
+		<columns names="k_fidelizacion" ref-type="src-columns"/>
+	</constraint>
+
+	<customidxs object-type="column">
+		<object name="k_cliente" index="1"/>
+	</customidxs>
+
+	<customidxs object-type="constraint">
+		<object name="cliente_fk" index="1"/>
+	</customidxs>
+</table>
+
+<relationship name="aplica" type="rel1n" layers="0"
+	 src-col-pattern="{sc}"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
+	 src-table="parqueadero.promocion"
+	 dst-table="parqueadero.reserva"
+	 src-required="false" dst-required="false">
+	<line>
+		<position x="680" y="480"/>
+	<position x="680" y="680"/>
+	</line>
+</relationship>
+
+<relationship name="cliente_puntos" type="rel1n" layers="0"
+	 src-col-pattern="{sc}"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
+	 src-table="parqueadero.cliente"
+	 dst-table="parqueadero.fidelizacion_cliente"
+	 src-required="true" dst-required="false">
+	<line>
+		<position x="960" y="1720"/>
+	<position x="680" y="1720"/>
+	</line>
+</relationship>
+
+<relationship name="fidelizacion_cliente_has_many_reserva" type="rel1n" layers="0"
+	 src-col-pattern="{sc}"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
+	 src-table="parqueadero.fidelizacion_cliente"
+	 dst-table="parqueadero.reserva"
+	 src-required="false" dst-required="false">
+	<line>
+		<position x="580" y="1520"/>
+	<position x="580" y="1360"/>
+	</line>
+</relationship>
+
+<table name="audit_vehiculo" layers="0" collapse-mode="2" max-obj-count="9" z-value="0">
+	<schema name="auditoria"/>
+	<role name="parkud_db_admin"/>
+	<comment> <![CDATA[Tabla de aditoría para la tabla Vehículo del esquema Parqueadero.]]> </comment>
+	<position x="980" y="2100"/>
+	<column name="k_auditoria_vehiculo" not-null="true">
+		<type name="integer" length="0"/>
+		<comment> <![CDATA[Clave primaria de la tabla Auditoría Vehículo.]]> </comment>
+	</column>
+	<column name="placa_vehiculo" not-null="true">
+		<type name="varchar" length="7"/>
+		<comment> <![CDATA[La placa del vehículo auditado.]]> </comment>
+	</column>
+	<column name="fecha_audit_vehiculo" not-null="true">
+		<type name="timestamp" length="0"/>
+		<comment> <![CDATA[Fecha y hora en la que se hace auditoría del vehículo.]]> </comment>
+	</column>
+	<column name="tipo_vehiculo_audit" not-null="true">
+		<type name="varchar" length="10"/>
+		<comment> <![CDATA[Tipo de vehículo al que se le hizo auditoría.]]> </comment>
+	</column>
+	<column name="tipo_transaccion_vehiculo" not-null="true">
+		<type name="varchar" length="20"/>
+		<comment> <![CDATA[El tipo de transacción que fue auditada. ]]> </comment>
+	</column>
+	<column name="nombre_usuario_vehiculo" not-null="true">
+		<type name="varchar" length="200"/>
+		<comment> <![CDATA[Nombre de usuario que hizo la transacción.]]> </comment>
+	</column>
+	<constraint name="vehiculo_pk" type="pk-constr" table="auditoria.audit_vehiculo">
+		<columns names="k_auditoria_vehiculo" ref-type="src-columns"/>
+	</constraint>
+	<constraint name="tipo_vehiculo_audit_ck" type="ck-constr" table="auditoria.audit_vehiculo">
+			<expression> <![CDATA[tipo_vehiculo_audit in ('SUV', 'Automóvil', 'Moto')]]> </expression>
+		<comment> <![CDATA[Verifica que el tipo de vehículo esté dentro de los valores admitidos.]]> </comment>
+	</constraint>
+	<constraint name="tipo_transaccion_vehiculo_ck" type="ck-constr" table="auditoria.audit_vehiculo">
+			<expression> <![CDATA[tipo_transaccion_vehiculo in ('Modificación', 'Eliminación', 'Agregar')]]> </expression>
+		<comment> <![CDATA[Verifica que los tipos de transacción de la tabla Vehículo del esquema Auditoría sean válidos.]]> </comment>
+	</constraint>
+
+	<customidxs object-type="column">
+		<object name="k_cliente" index="1"/>
+		<object name="k_vehiculo" index="2"/>
+	</customidxs>
+
+	<customidxs object-type="constraint">
+		<object name="cliente_fk" index="2"/>
+		<object name="vehiculo_fk" index="1"/>
+	</customidxs>
+</table>
+
+<relationship name="audit_vehiculo" type="rel1n" layers="0"
+	 src-col-pattern="{sc}"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
+	 src-table="parqueadero.vehiculo"
+	 dst-table="auditoria.audit_vehiculo"
+	 src-required="false" dst-required="false">
+	<line>
+		<position x="800" y="2180"/>
+	<position x="980" y="2180"/>
+	</line>
+</relationship>
+
+<relationship name="audit_vehiculo_cliente" type="rel1n" layers="0"
+	 src-col-pattern="{sc}"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
+	 src-table="parqueadero.cliente"
+	 dst-table="auditoria.audit_vehiculo"
+	 src-required="true" dst-required="false">
+	<line>
+		<position x="1160" y="1980"/>
+	<position x="1160" y="2100"/>
+	</line>
+</relationship>
+
+<table name="audit_usuario" layers="0" collapse-mode="2" max-obj-count="7" z-value="0">
+	<schema name="auditoria"/>
+	<role name="parkud_db_admin"/>
+	<comment> <![CDATA[Tabla encargada de auditar los inicios de sesión realizados por los usuarios.]]> </comment>
+	<position x="1440" y="1680"/>
+	<column name="k_auditoria_usuario" not-null="true">
+		<type name="integer" length="0"/>
+		<comment> <![CDATA[Clave primaria de la tabla Auditoría Usuario]]> </comment>
+	</column>
+	<column name="nombre_usuario" not-null="true">
+		<type name="varchar" length="200"/>
+		<comment> <![CDATA[Nombre de usuario auditado. ]]> </comment>
+	</column>
+	<column name="direccion_ip" not-null="true">
+		<type name="varchar" length="39"/>
+		<comment> <![CDATA[Dirección IP (IPv4 o IPv6) desde donde el usuario inició sesión.]]> </comment>
+	</column>
+	<column name="fecha_audit_usuario" not-null="true">
+		<type name="timestamp" length="0"/>
+		<comment> <![CDATA[Fecha y hora en que se hizo la auditoría.]]> </comment>
+	</column>
+	<constraint name="usuario_pk" type="pk-constr" table="auditoria.audit_usuario">
+		<columns names="k_auditoria_usuario" ref-type="src-columns"/>
+	</constraint>
+
+	<customidxs object-type="column">
+		<object name="k_cliente" index="2"/>
+		<object name="k_empleado" index="1"/>
+	</customidxs>
+
+	<customidxs object-type="constraint">
+		<object name="cliente_fk" index="2"/>
+		<object name="empleado_fk" index="1"/>
+	</customidxs>
+</table>
+
+<relationship name="audit_usuario_emp" type="rel1n" layers="0"
+	 src-col-pattern="{sc}"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
+	 src-table="parqueadero.empleado"
+	 dst-table="auditoria.audit_usuario"
+	 src-required="false" dst-required="false">
+	<line>
+		<position x="1620" y="1580"/>
+	<position x="1620" y="1680"/>
+	</line>
+</relationship>
+
+<relationship name="audit_usuario_cliente" type="rel1n" layers="0"
+	 src-col-pattern="{sc}"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
+	 src-table="parqueadero.cliente"
+	 dst-table="auditoria.audit_usuario"
+	 src-required="false" dst-required="false">
+	<line>
+		<position x="1340" y="1800"/>
+	<position x="1440" y="1800"/>
+	</line>
+</relationship>
+
+<table name="audit_reserva" layers="0" collapse-mode="2" max-obj-count="12" z-value="0">
+	<schema name="auditoria"/>
+	<role name="parkud_db_admin"/>
+	<position x="60" y="780"/>
+	<column name="k_auditoria_reserva" not-null="true">
+		<type name="bigint" length="0"/>
+		<comment> <![CDATA[Clave primaria de la tabla Auditoría Reserva.]]> </comment>
+	</column>
+	<column name="fecha_audit_reserva" not-null="true">
+		<type name="timestamp" length="0"/>
+		<comment> <![CDATA[Fecha y hora en que se auditó la reserva.]]> </comment>
+	</column>
+	<column name="ciudad_audit_reserva" not-null="true">
+		<type name="varchar" length="100"/>
+		<comment> <![CDATA[Ciudad en que se hizo la reserva auditada.]]> </comment>
+	</column>
+	<column name="sucursal_audit_reserva" not-null="true">
+		<type name="varchar" length="50"/>
+		<comment> <![CDATA[Nombre de la sucursal en que la reserva fue auditada. ]]> </comment>
+	</column>
+	<column name="tipo_vehiculo_reserva" not-null="true">
+		<type name="varchar" length="9"/>
+		<comment> <![CDATA[Tipo de vehículo que participó en la reserva auditada. ]]> </comment>
+	</column>
+	<column name="tipo_transaccion_reserva" not-null="true">
+		<type name="varchar" length="12"/>
+		<comment> <![CDATA[Determina el tipo de transacción de la reserva auditada. ]]> </comment>
+	</column>
+	<column name="nombre_usuario_reserva" not-null="true">
+		<type name="varchar" length="200"/>
+		<comment> <![CDATA[Nombre del usuario que hizo la transacción de la reserva auditada. ]]> </comment>
+	</column>
+	<constraint name="reserva_pk" type="pk-constr" table="auditoria.audit_reserva">
+		<columns names="k_auditoria_reserva" ref-type="src-columns"/>
+	</constraint>
+	<constraint name="tipo_vehiculo_reserva_audit_ck" type="ck-constr" table="auditoria.audit_reserva">
+			<expression> <![CDATA[tipo_vehiculo_reserva in ('SUV', 'Automóvil', 'Moto')]]> </expression>
+		<comment> <![CDATA[Verifica que el valor de tipo de vehículo sea válido.]]> </comment>
+	</constraint>
+	<constraint name="tipo_transaccion_reserva_ck" type="ck-constr" table="auditoria.audit_reserva">
+			<expression> <![CDATA[tipo_transaccion_reserva in ('Modificación', 'Eliminación', 'Cancelación')]]> </expression>
+		<comment> <![CDATA[Verifica que el valor del tipo de transacción de la tabla de reserva sea válido.]]> </comment>
+	</constraint>
+
+	<customidxs object-type="column">
+		<object name="k_cliente" index="2"/>
+		<object name="k_reserva" index="1"/>
+		<object name="k_sucursal" index="3"/>
+	</customidxs>
+
+	<customidxs object-type="constraint">
+		<object name="cliente_fk" index="2"/>
+		<object name="reserva_fk" index="1"/>
+		<object name="sucursal_fk" index="3"/>
+	</customidxs>
+</table>
+
+<relationship name="audit_reserva" type="rel1n" layers="0"
+	 src-col-pattern="{sc}"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
+	 src-table="parqueadero.reserva"
+	 dst-table="auditoria.audit_reserva"
+	 src-required="true" dst-required="false">
+	<line>
+		<position x="520" y="1020"/>
+	<position x="420" y="1020"/>
+	</line>
+</relationship>
+
+<relationship name="audit_cliente_reserva" type="rel1n" layers="0"
+	 src-col-pattern="{sc}"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
+	 src-table="parqueadero.cliente"
+	 dst-table="auditoria.audit_reserva"
+	 src-required="true" dst-required="false"/>
+
+<relationship name="audit_sucursal_reserva" type="rel1n" layers="0"
+	 src-col-pattern="{sc}"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
+	 src-table="parqueadero.sucursal"
+	 dst-table="auditoria.audit_reserva"
+	 src-required="true" dst-required="false"/>
+
+<relationship name="reserva_slot" type="rel1n" layers="0"
+	 src-col-pattern="{sc}"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
+	 src-table="parqueadero.slot_parqueadero"
+	 dst-table="parqueadero.reserva"
+	 src-required="true" dst-required="false">
+	<line>
+		<position x="960" y="940"/>
+	<position x="860" y="940"/>
+	</line>
+</relationship>
+
+<index name="fidelizacion_cliente_ixfk" table="parqueadero.fidelizacion_cliente"
+	 concurrent="false" unique="false" fast-update="false" buffering="false"
+	 index-type="btree" factor="0">
+	<comment> <![CDATA[Índice de la llave foránea de la tabla Cliente.]]> </comment>
+		<idxelement use-sorting="true" nulls-first="false" asc-order="true">
+			<column name="k_cliente"/>
+		</idxelement>
+</index>
+
+<index name="auditvehiculo_cliente_ixfk" table="auditoria.audit_vehiculo"
+	 concurrent="false" unique="false" fast-update="false" buffering="false"
+	 index-type="btree" factor="0">
+	<comment> <![CDATA[Índice de la llave foránea de la tabla Cliente del esquema Parqueadero.]]> </comment>
+		<idxelement use-sorting="true" nulls-first="false" asc-order="true">
+			<column name="k_cliente"/>
+		</idxelement>
+</index>
+
+<index name="reserva_cliente_ixfk" table="parqueadero.reserva"
+	 concurrent="false" unique="false" fast-update="false" buffering="false"
+	 index-type="btree" factor="0">
+	<comment> <![CDATA[Índice de la llave foránea de la tabla Cliente.]]> </comment>
+		<idxelement use-sorting="true" nulls-first="false" asc-order="true">
+			<column name="k_cliente"/>
+		</idxelement>
+</index>
+
+<index name="reserva_promocion_ixkf" table="parqueadero.reserva"
+	 concurrent="false" unique="false" fast-update="false" buffering="false"
+	 index-type="btree" factor="0">
+	<comment> <![CDATA[Índice de la llave foránea de la tabla Promoción.]]> </comment>
+		<idxelement use-sorting="true" nulls-first="false" asc-order="true">
+			<column name="k_promocion"/>
+		</idxelement>
+</index>
+
+<index name="reserva_fidelizacion_ixfk" table="parqueadero.reserva"
+	 concurrent="false" unique="false" fast-update="false" buffering="false"
+	 index-type="btree" factor="0">
+	<comment> <![CDATA[Índice de la llave foránea de la tabla Fidelización Cliente.]]> </comment>
+		<idxelement use-sorting="true" nulls-first="false" asc-order="true">
+			<column name="k_fidelizacion"/>
+		</idxelement>
+</index>
+
+<index name="reserva_sucursal_slot_ixfk" table="parqueadero.reserva"
+	 concurrent="false" unique="false" fast-update="false" buffering="false"
+	 index-type="btree" factor="0">
+	<comment> <![CDATA[Índice de la llave foránea de la tabla Slot Parqueadero.]]> </comment>
+		<idxelement use-sorting="true" nulls-first="false" asc-order="true">
+			<column name="k_slot_parqueadero"/>
+		</idxelement>
+		<idxelement use-sorting="true" nulls-first="false" asc-order="true">
+			<column name="k_sucursal"/>
+		</idxelement>
+</index>
+
+<index name="auditusuario_empleado_ixfk" table="auditoria.audit_usuario"
+	 concurrent="false" unique="false" fast-update="false" buffering="false"
+	 index-type="btree" factor="0">
+	<comment> <![CDATA[Índice de la llave foránea de la tabla Empelado del esquema Parqueadero.]]> </comment>
+		<idxelement use-sorting="true" nulls-first="false" asc-order="true">
+			<column name="k_empleado"/>
+		</idxelement>
+</index>
+
+<index name="auditusuario_cliente_ixfk" table="auditoria.audit_usuario"
+	 concurrent="false" unique="false" fast-update="false" buffering="false"
+	 index-type="btree" factor="0">
+	<comment> <![CDATA[Índice de la llave foránea de la tabla Cliente del esquema Parqueadero.]]> </comment>
+		<idxelement use-sorting="true" nulls-first="false" asc-order="true">
+			<column name="k_cliente"/>
+		</idxelement>
+</index>
+
+<index name="auditreserva_reserva_ixfk" table="auditoria.audit_reserva"
+	 concurrent="false" unique="false" fast-update="false" buffering="false"
+	 index-type="btree" factor="0">
+	<comment> <![CDATA[Índice de la llave foránea de la tabla Reserva del esquema Parqueadero.]]> </comment>
+		<idxelement use-sorting="true" nulls-first="false" asc-order="true">
+			<column name="k_reserva"/>
+		</idxelement>
+</index>
+
+<index name="auditreserva_cliente_ixfk" table="auditoria.audit_reserva"
+	 concurrent="false" unique="false" fast-update="false" buffering="false"
+	 index-type="btree" factor="0">
+	<comment> <![CDATA[Índice de la llave foránea de la tabla Cliente del esquema Parqueadero.]]> </comment>
+		<idxelement use-sorting="true" nulls-first="false" asc-order="true">
+			<column name="k_cliente"/>
+		</idxelement>
+</index>
+
+<index name="auditreserva_sucursal" table="auditoria.audit_reserva"
+	 concurrent="false" unique="false" fast-update="false" buffering="false"
+	 index-type="btree" factor="0">
+	<comment> <![CDATA[Índice de la llave foránea de la tabla Sucursal del esquema Parqueadero.]]> </comment>
+		<idxelement use-sorting="true" nulls-first="false" asc-order="true">
+			<column name="k_sucursal"/>
+		</idxelement>
+</index>
+
+<extension name="pgcrypto">
+	<schema name="parqueadero"/>
+	<comment> <![CDATA[Extensión que permite hacer encriptaciones en la base de datos.]]> </comment>
+</extension>
+
+<constraint name="placa_cliente_uq" type="uq-constr" table="parqueadero.vehiculo">
+	<columns names="k_cliente,placa_vehiculo" ref-type="src-columns"/>
+		<comment> <![CDATA[Verifica que un cliente no tenga dos veces el mismo vehículo.]]> </comment>
+</constraint>
+
+<index name="auditvehiculo_vehiculo_ixfk" table="auditoria.audit_vehiculo"
+	 concurrent="false" unique="false" fast-update="false" buffering="false"
+	 index-type="btree" factor="0">
+	<comment> <![CDATA[Índice de la llave foránea de la tabla Vehículo del esquema Parqueadero.]]> </comment>
+		<idxelement use-sorting="true" nulls-first="false" asc-order="true">
+			<column name="k_vehiculo"/>
+		</idxelement>
+</index>
+
+<sequence name="vehiculo_sq" cycle="true" start="1" increment="1" min-value="0" max-value="2147483647" cache="1" owner-col="parqueadero.vehiculo.k_vehiculo">
+	<schema name="parqueadero"/>
+	<role name="parkud_db_admin"/>
+	<comment> <![CDATA[Secuencia asociada a la tabla Vehículo.]]> </comment>
+</sequence>
+
+<sequence name="fidelizacion_sq" cycle="true" start="1" increment="1" min-value="0" max-value="2147483647" cache="1" owner-col="parqueadero.fidelizacion_cliente.k_fidelizacion">
+	<schema name="parqueadero"/>
+	<role name="parkud_db_admin"/>
+	<comment> <![CDATA[Secuencia asociada a la tabla Fidelización Cliente.]]> </comment>
+</sequence>
+
+<sequence name="promocion_sq" cycle="true" start="1" increment="1" min-value="0" max-value="2147483647" cache="1" owner-col="parqueadero.promocion.k_promocion">
+	<schema name="parqueadero"/>
+	<role name="parkud_db_admin"/>
+	<comment> <![CDATA[Secuencia asociada a la tabla Promoción.]]> </comment>
+</sequence>
+
+<sequence name="sucursal_sq" cycle="true" start="1" increment="1" min-value="0" max-value="2147483647" cache="1" owner-col="parqueadero.sucursal.k_sucursal">
+	<schema name="parqueadero"/>
+	<role name="parkud_db_admin"/>
+	<comment> <![CDATA[Secuencia asociada a la tabla Sucursal.]]> </comment>
+</sequence>
+
+<sequence name="tarifa_minuto_sq" cycle="true" start="1" increment="1" min-value="0" max-value="2147483647" cache="1" owner-col="parqueadero.tarifa_minuto.k_tarifa_minuto">
+	<schema name="parqueadero"/>
+	<role name="parkud_db_admin"/>
+	<comment> <![CDATA[Secuencia asociada a la tabla Tarifa Minuto.]]> </comment>
+</sequence>
+
+<sequence name="direccion_sq" cycle="true" start="1" increment="1" min-value="0" max-value="2147483647" cache="1" owner-col="parqueadero.direccion.k_direccion">
+	<schema name="parqueadero"/>
+	<role name="parkud_db_admin"/>
+	<comment> <![CDATA[Secuencia asociada a la tabla Dirección.]]> </comment>
+</sequence>
+
+<sequence name="empleado_sq" cycle="true" start="1" increment="1" min-value="0" max-value="2147483647" cache="1" owner-col="parqueadero.empleado.k_empleado">
+	<schema name="parqueadero"/>
+	<role name="parkud_db_admin"/>
+	<comment> <![CDATA[Secuencia asociada a la tabla Empleado.]]> </comment>
+</sequence>
+
+<sequence name="tarjeta_pago_sq" cycle="true" start="1" increment="1" min-value="0" max-value="2147483647" cache="1" owner-col="parqueadero.tarjeta_pago.k_tarjeta_pago">
+	<schema name="parqueadero"/>
+	<role name="parkud_db_admin"/>
+	<comment> <![CDATA[Secuencia asociada a la tabla Tarjeta Pago.]]> </comment>
+</sequence>
+
+<sequence name="horario_sucursal_sq" cycle="true" start="1" increment="1" min-value="0" max-value="2147483647" cache="1" owner-col="parqueadero.horario_sucursal.k_horario_sucursal">
+	<schema name="parqueadero"/>
+	<role name="parkud_db_admin"/>
+	<comment> <![CDATA[Secuencia asociada a la tabla Horario Sucursal.]]> </comment>
+</sequence>
+
+<sequence name="vehiculo_sq" cycle="true" start="1" increment="1" min-value="0" max-value="2147483647" cache="1" owner-col="auditoria.audit_vehiculo.k_auditoria_vehiculo">
+	<schema name="auditoria"/>
+	<role name="parkud_db_admin"/>
+	<comment> <![CDATA[Secuencia asociada a la tabla Vehículo.]]> </comment>
+</sequence>
+
+<sequence name="usuario_sq" cycle="true" start="1" increment="1" min-value="0" max-value="2147483647" cache="1" owner-col="auditoria.audit_usuario.k_auditoria_usuario">
+	<schema name="auditoria"/>
+	<role name="parkud_db_admin"/>
+	<comment> <![CDATA[Secuencia asociada a la tabla Usuario.]]> </comment>
+</sequence>
+
+<sequence name="reserva_sq" cycle="true" start="1" increment="1" min-value="0" max-value="9223372036854775807" cache="1" owner-col="auditoria.audit_reserva.k_auditoria_reserva">
+	<schema name="auditoria"/>
+	<role name="parkud_db_admin"/>
+	<comment> <![CDATA[Secuencia asociada a la tabla Reserva.]]> </comment>
+</sequence>
+
+<policy name="cliente_pl" table="parqueadero.cliente" command="ALL" permissive="true">
+	<comment> <![CDATA[Política que evita que un cliente pueda ver registros en la tabla aparte de los suyos.]]> </comment>
+	<roles names="user_role"/>
+	<expression type="using-exp"> <![CDATA[PARQUEADERO.PGP_SYM_DECRYPT(CORREO_CLIENTE, 'AES_KEY') = CURRENT_USER]]> </expression>
+</policy>
+<policy name="tarjeta_pago_pl" table="parqueadero.tarjeta_pago" command="ALL" permissive="true">
+	<comment> <![CDATA[Política que solo deja que un cliente pueda ver las tarjetas asociadas a él mismo.]]> </comment>
+	<roles names="user_role"/>
+	<expression type="using-exp"> <![CDATA[K_CLIENTE IN (SELECT K_CLIENTE FROM PARQUEADERO.CLIENTE WHERE PARQUEADERO.PGP_SYM_DECRYPT(CORREO_CLIENTE, 'AES_KEY') = CURRENT_USER)]]> </expression>
+</policy>
+<policy name="empleado_operador_pl" table="parqueadero.empleado" command="ALL" permissive="true">
+	<comment> <![CDATA[Política que evita que un operador pueda ver registros en la tabla aparte de los suyos.]]> </comment>
+	<roles names="operador_role"/>
+	<expression type="using-exp"> <![CDATA[PARQUEADERO.PGP_SYM_DECRYPT(CORREO_EMPLEADO, 'AES_KEY') = CURRENT_USER]]> </expression>
+</policy>
+<relationship name="horario_emp" type="rel1n" layers="0"
+	 src-col-pattern="{sc}"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
+	 src-table="parqueadero.empleado"
+	 dst-table="parqueadero.horario_empleado"
+	 src-required="true" dst-required="false"
+	 identifier="true"
+/>
+
+<sequence name="horario_empleado_sq" cycle="false" start="1" increment="1" min-value="0" max-value="2147483647" cache="1" owner-col="parqueadero.horario_empleado.k_horario_empleado">
+	<schema name="parqueadero"/>
+	<role name="parkud_db_admin"/>
+	<comment> <![CDATA[Secuencia asociada a la tabla Horario Empleado.]]> </comment>
+</sequence>
+
+<policy name="vehiculo_cliente_pl" table="parqueadero.vehiculo" command="ALL" permissive="true">
+	<comment> <![CDATA[Política que solo deja que un cliente pueda ver los vehículos asociados a él mismo.]]> </comment>
+	<roles names="user_role"/>
+	<expression type="using-exp"> <![CDATA[K_CLIENTE IN (SELECT K_CLIENTE FROM PARQUEADERO.CLIENTE WHERE PARQUEADERO.PGP_SYM_DECRYPT(CORREO_CLIENTE, 'AES_KEY') = CURRENT_USER)]]> </expression>
+</policy>
+<policy name="fidelizacion_cliente_pl" table="parqueadero.fidelizacion_cliente" command="ALL" permissive="true">
+	<comment> <![CDATA[Política que solo deja que un cliente pueda ver el plan de fidelización asociado a él mismo.]]> </comment>
+	<roles names="user_role"/>
+	<expression type="using-exp"> <![CDATA[K_CLIENTE IN (SELECT K_CLIENTE FROM PARQUEADERO.CLIENTE WHERE PARQUEADERO.PGP_SYM_DECRYPT(CORREO_CLIENTE, 'AES_KEY') = CURRENT_USER)]]> </expression>
+</policy>
+<policy name="reserva_cliente_pl" table="parqueadero.reserva" command="ALL" permissive="true">
+	<comment> <![CDATA[Política que solo deja que un cliente pueda ver las reservas asociadas a él mismo.]]> </comment>
+	<roles names="user_role"/>
+	<expression type="using-exp"> <![CDATA[K_CLIENTE IN (SELECT K_CLIENTE FROM PARQUEADERO.CLIENTE WHERE PARQUEADERO.PGP_SYM_DECRYPT(CORREO_CLIENTE, 'AES_KEY') = CURRENT_USER)]]> </expression>
+</policy>
+<policy name="operador_horario_pl" table="parqueadero.horario_empleado" command="ALL" permissive="true">
+	<comment> <![CDATA[Política que solo deja que un operador pueda ver los horarios asociados a él mismo.]]> </comment>
+	<roles names="operador_role"/>
+	<expression type="using-exp"> <![CDATA[K_EMPLEADO IN (SELECT K_EMPLEADO FROM PARQUEADERO.EMPLEADO WHERE PARQUEADERO.PGP_SYM_DECRYPT(CORREO_EMPLEADO, 'AES_KEY') = CURRENT_USER)]]> </expression>
+</policy>
+<relationship name="tarjeta_reserva" type="rel1n" layers="0"
+	 src-col-pattern="{sc}"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
+	 src-table="parqueadero.tarjeta_pago"
+	 dst-table="parqueadero.reserva"
+	 src-required="true" dst-required="false">
+	<line>
+		<position x="1000" y="1120"/>
+	<position x="860" y="1120"/>
+	</line>
+</relationship>
+
+<permission>
+	<object name="parqueadero" type="schema"/>
+	<roles names="user_role"/>
+	<privileges usage="true"/>
+</permission>
+<permission>
+	<object name="parqueadero.cliente" type="table"/>
+	<roles names="user_role"/>
+	<privileges select="true" insert="true" update="true"/>
+</permission>
+<permission>
+	<object name="parqueadero.reserva" type="table"/>
+	<roles names="user_role"/>
+	<privileges select="true" insert="true" update="true"/>
+</permission>
+<permission>
+	<object name="parqueadero.tarjeta_pago" type="table"/>
+	<roles names="user_role"/>
+	<privileges select="true" delete="true" insert="true" update="true"/>
+</permission>
+<permission>
+	<object name="parqueadero.vehiculo" type="table"/>
+	<roles names="user_role"/>
+	<privileges select="true" delete="true" insert="true" update="true"/>
+</permission>
+<permission>
+	<object name="parqueadero.marca_vehiculo" type="table"/>
+	<roles names="user_role"/>
+	<privileges select="true"/>
+</permission>
+<permission>
+	<object name="parqueadero.fidelizacion_cliente" type="table"/>
+	<roles names="user_role"/>
+	<privileges select="true" insert="true" update="true"/>
+</permission>
+<permission>
+	<object name="parqueadero.promocion" type="table"/>
+	<roles names="user_role"/>
+	<privileges select="true"/>
+</permission>
+<permission>
+	<object name="parqueadero.promocion_por_reserva" type="table"/>
+	<roles names="user_role"/>
+	<privileges select="true"/>
+</permission>
+<permission>
+	<object name="parqueadero.promocion_por_tiempo" type="table"/>
+	<roles names="user_role"/>
+	<privileges select="true"/>
+</permission>
+<permission>
+	<object name="parqueadero.tarifa_minuto" type="table"/>
+	<roles names="user_role"/>
+	<privileges select="true"/>
+</permission>
+<permission>
+	<object name="parqueadero.horario_sucursal" type="table"/>
+	<roles names="user_role"/>
+	<privileges select="true"/>
+</permission>
+<permission>
+	<object name="auditoria.audit_reserva" type="table"/>
+	<roles names="admin_role"/>
+	<privileges select="true"/>
+</permission>
+<permission>
+	<object name="auditoria.audit_vehiculo" type="table"/>
+	<roles names="admin_role"/>
+	<privileges select="true"/>
+</permission>
+<permission>
+	<object name="parqueadero.empleado" type="table"/>
+	<roles names="admin_role"/>
+	<privileges select="true" insert="true" update="true"/>
+</permission>
+<permission>
+	<object name="parqueadero" type="schema"/>
+	<roles names="manage_account_user"/>
+	<privileges usage="true"/>
+</permission>
+<permission>
+	<object name="parqueadero.cliente" type="table"/>
+	<roles names="manage_account_user"/>
+	<privileges insert="true"/>
+</permission>
+<permission>
+	<object name="parqueadero.cliente_sq" type="sequence"/>
+	<roles names="manage_account_user"/>
+	<privileges usage="true"/>
+</permission>
+<permission>
+	<object name="parqueadero.sucursal" type="table"/>
+	<roles names="admin_role"/>
+	<privileges select="true" update="true"/>
+</permission>
+<permission>
+	<object name="parqueadero.tarifa_minuto" type="table"/>
+	<roles names="admin_role"/>
+	<privileges select="true" insert="true" update="true"/>
+</permission>
+<permission>
+	<object name="parqueadero.direccion" type="table"/>
+	<roles names="admin_role"/>
+	<privileges select="true" update="true"/>
+</permission>
+<permission>
+	<object name="parqueadero.horario_sucursal" type="table"/>
+	<roles names="admin_role"/>
+	<privileges select="true" insert="true" update="true"/>
+</permission>
+<permission>
+	<object name="parqueadero.horario_empleado" type="table"/>
+	<roles names="admin_role"/>
+	<privileges select="true" insert="true" update="true"/>
+</permission>
+<permission>
+	<object name="parqueadero.ejerce" type="table"/>
+	<roles names="admin_role"/>
+	<privileges select="true" insert="true" update="true"/>
+</permission>
+<permission>
+	<object name="parqueadero.reserva" type="table"/>
+	<roles names="admin_role"/>
+	<privileges select="true" insert="true" update="true"/>
+</permission>
+<permission>
+	<object name="parqueadero.cliente" type="table"/>
+	<roles names="admin_role"/>
+	<privileges select="true"/>
+</permission>
+<permission>
+	<object name="parqueadero.vehiculo" type="table"/>
+	<roles names="admin_role"/>
+	<privileges select="true"/>
+</permission>
+<permission>
+	<object name="parqueadero.slot_parqueadero" type="table"/>
+	<roles names="admin_role"/>
+	<privileges select="true" delete="true" insert="true" update="true"/>
+</permission>
+<permission>
+	<object name="parqueadero.trabaja" type="table"/>
+	<roles names="admin_role"/>
+	<privileges select="true" delete="true" insert="true" update="true"/>
+</permission>
+<permission>
+	<object name="parqueadero.promocion" type="table"/>
+	<roles names="admin_role"/>
+	<privileges select="true" delete="true" insert="true" update="true"/>
+</permission>
+<permission>
+	<object name="parqueadero.promocion_por_reserva" type="table"/>
+	<roles names="admin_role"/>
+	<privileges select="true" delete="true" insert="true" update="true"/>
+</permission>
+<permission>
+	<object name="parqueadero.promocion_por_tiempo" type="table"/>
+	<roles names="admin_role"/>
+	<privileges select="true" delete="true" insert="true" update="true"/>
+</permission>
+<permission>
+	<object name="parqueadero.fidelizacion_cliente" type="table"/>
+	<roles names="admin_role"/>
+	<privileges select="true" insert="true" update="true"/>
+</permission>
+<permission>
+	<object name="parqueadero.marca_vehiculo" type="table"/>
+	<roles names="admin_role"/>
+	<privileges select="true" delete="true" insert="true" update="true"/>
+</permission>
+<permission>
+	<object name="parqueadero.tarifa_minuto" type="table"/>
+	<roles names="super_admin_role"/>
+	<privileges select="true" delete="true" insert="true" update="true"/>
+</permission>
+<permission>
+	<object name="parqueadero.direccion" type="table"/>
+	<roles names="super_admin_role"/>
+	<privileges select="true" delete="true" insert="true" update="true"/>
+</permission>
+<permission>
+	<object name="parqueadero.ciudad" type="table"/>
+	<roles names="super_admin_role"/>
+	<privileges select="true" delete="true" insert="true" update="true"/>
+</permission>
+<permission>
+	<object name="parqueadero.departamento" type="table"/>
+	<roles names="super_admin_role"/>
+	<privileges select="true" delete="true" insert="true" update="true"/>
+</permission>
+<permission>
+	<object name="parqueadero.pais" type="table"/>
+	<roles names="super_admin_role"/>
+	<privileges select="true" delete="true" insert="true" update="true"/>
+</permission>
+<permission>
+	<object name="parqueadero.horario_sucursal" type="table"/>
+	<roles names="super_admin_role"/>
+	<privileges select="true" delete="true" insert="true" update="true"/>
+</permission>
+<permission>
+	<object name="parqueadero.dia_semana" type="table"/>
+	<roles names="admin_role"/>
+	<privileges select="true"/>
+</permission>
+<permission>
+	<object name="parqueadero.dia_semana" type="table"/>
+	<roles names="super_admin_role"/>
+	<privileges select="true"/>
+</permission>
+<permission>
+	<object name="parqueadero.horario_empleado" type="table"/>
+	<roles names="super_admin_role"/>
+	<privileges select="true" delete="true" insert="true" update="true"/>
+</permission>
+<permission>
+	<object name="parqueadero.cargo" type="table"/>
+	<roles names="super_admin_role"/>
+	<privileges select="true" delete="true" insert="true" update="true"/>
+</permission>
+<permission>
+	<object name="parqueadero.cargo" type="table"/>
+	<roles names="admin_role"/>
+	<privileges select="true"/>
+</permission>
+<permission>
+	<object name="parqueadero.cargo" type="table"/>
+	<roles names="operador_role"/>
+	<privileges select="true"/>
+</permission>
+<permission>
+	<object name="parqueadero.horario_empleado" type="table"/>
+	<roles names="operador_role"/>
+	<privileges select="true"/>
+</permission>
+<permission>
+	<object name="parqueadero.dia_semana" type="table"/>
+	<roles names="operador_role"/>
+	<privileges select="true"/>
+</permission>
+<permission>
+	<object name="parqueadero.sucursal" type="table"/>
+	<roles names="operador_role"/>
+	<privileges select="true"/>
+</permission>
+<permission>
+	<object name="parqueadero.horario_sucursal" type="table"/>
+	<roles names="operador_role"/>
+	<privileges select="true"/>
+</permission>
+<permission>
+	<object name="parqueadero.ejerce" type="table"/>
+	<roles names="super_admin_role"/>
+	<privileges select="true" delete="true" insert="true" update="true"/>
+</permission>
+<permission>
+	<object name="parqueadero.ejerce" type="table"/>
+	<roles names="operador_role"/>
+	<privileges select="true"/>
+</permission>
+<permission>
+	<object name="parqueadero.trabaja" type="table"/>
+	<roles names="super_admin_role"/>
+	<privileges select="true" delete="true" insert="true" update="true"/>
+</permission>
+<permission>
+	<object name="parqueadero.trabaja" type="table"/>
+	<roles names="operador_role"/>
+	<privileges select="true"/>
+</permission>
+<permission>
+	<object name="parqueadero.slot_parqueadero" type="table"/>
+	<roles names="super_admin_role"/>
+	<privileges select="true" delete="true" insert="true" update="true"/>
+</permission>
+<permission>
+	<object name="parqueadero.slot_parqueadero" type="table"/>
+	<roles names="operador_role"/>
+	<privileges select="true"/>
+</permission>
+<permission>
+	<object name="parqueadero.reserva" type="table"/>
+	<roles names="super_admin_role"/>
+	<privileges select="true" insert="true" update="true"/>
+</permission>
+<permission>
+	<object name="parqueadero.reserva" type="table"/>
+	<roles names="operador_role"/>
+	<privileges select="true"/>
+</permission>
+<permission>
+	<object name="parqueadero.vehiculo" type="table"/>
+	<roles names="super_admin_role"/>
+	<privileges select="true"/>
+</permission>
+<permission>
+	<object name="parqueadero.vehiculo" type="table"/>
+	<roles names="operador_role"/>
+	<privileges select="true"/>
+</permission>
+<permission>
+	<object name="parqueadero.marca_vehiculo" type="table"/>
+	<roles names="operador_role"/>
+	<privileges select="true"/>
+</permission>
+<permission>
+	<object name="parqueadero.marca_vehiculo" type="table"/>
+	<roles names="super_admin_role"/>
+	<privileges select="true" delete="true" insert="true" update="true"/>
+</permission>
+<permission>
+	<object name="auditoria.audit_reserva" type="table"/>
+	<roles names="super_admin_role"/>
+	<privileges select="true"/>
+</permission>
+<permission>
+	<object name="parqueadero.promocion" type="table"/>
+	<roles names="operador_role"/>
+	<privileges select="true"/>
+</permission>
+<permission>
+	<object name="parqueadero.promocion" type="table"/>
+	<roles names="super_admin_role"/>
+	<privileges select="true" delete="true" insert="true" update="true"/>
+</permission>
+<permission>
+	<object name="parqueadero.promocion_por_reserva" type="table"/>
+	<roles names="operador_role"/>
+	<privileges select="true"/>
+</permission>
+<permission>
+	<object name="parqueadero.promocion_por_reserva" type="table"/>
+	<roles names="super_admin_role"/>
+	<privileges select="true" delete="true" insert="true" update="true"/>
+</permission>
+<permission>
+	<object name="parqueadero.promocion_por_tiempo" type="table"/>
+	<roles names="operador_role"/>
+	<privileges select="true"/>
+</permission>
+<permission>
+	<object name="parqueadero.promocion_por_tiempo" type="table"/>
+	<roles names="super_admin_role"/>
+	<privileges select="true" delete="true" insert="true" update="true"/>
+</permission>
+<permission>
+	<object name="parqueadero.fidelizacion_cliente" type="table"/>
+	<roles names="operador_role"/>
+	<privileges select="true"/>
+</permission>
+<permission>
+	<object name="parqueadero.fidelizacion_cliente" type="table"/>
+	<roles names="super_admin_role"/>
+	<privileges select="true" insert="true" update="true"/>
+</permission>
+<permission>
+	<object name="parqueadero.empleado" type="table"/>
+	<roles names="operador_role"/>
+	<privileges select="true"/>
+</permission>
+<permission>
+	<object name="parqueadero.empleado" type="table"/>
+	<roles names="super_admin_role"/>
+	<privileges select="true" delete="true" insert="true" update="true"/>
+</permission>
+<permission>
+	<object name="auditoria" type="schema"/>
+	<roles names="admin_role"/>
+	<privileges usage="true"/>
+</permission>
+<permission>
+	<object name="auditoria" type="schema"/>
+	<roles names="super_admin_role"/>
+	<privileges usage="true"/>
+</permission>
+<permission>
+	<object name="parqueadero" type="schema"/>
+	<roles names="super_admin_role"/>
+	<privileges usage="true"/>
+</permission>
+<permission>
+	<object name="parqueadero" type="schema"/>
+	<roles names="admin_role"/>
+	<privileges usage="true"/>
+</permission>
+<permission>
+	<object name="parqueadero" type="schema"/>
+	<roles names="operador_role"/>
+	<privileges usage="true"/>
+</permission>
+<permission>
+	<object name="parkud_dbpg" type="database"/>
+	<roles names="admin_role"/>
+	<privileges connect="true"/>
+</permission>
+<permission>
+	<object name="parkud_dbpg" type="database"/>
+	<roles names="super_admin_role"/>
+	<privileges connect="true"/>
+</permission>
+<permission>
+	<object name="parkud_dbpg" type="database"/>
+	<roles names="user_role"/>
+	<privileges connect="true"/>
+</permission>
+<permission>
+	<object name="parkud_dbpg" type="database"/>
+	<roles names="operador_role"/>
+	<privileges connect="true"/>
+</permission>
+<permission>
+	<object name="parqueadero.pais" type="table"/>
+	<roles names="admin_role"/>
+	<privileges select="true"/>
+</permission>
+<permission>
+	<object name="parqueadero.pais" type="table"/>
+	<roles names="operador_role"/>
+	<privileges select="true"/>
+</permission>
+<permission>
+	<object name="parqueadero.pais" type="table"/>
+	<roles names="user_role"/>
+	<privileges select="true"/>
+</permission>
+<permission>
+	<object name="parqueadero.departamento" type="table"/>
+	<roles names="admin_role"/>
+	<privileges select="true"/>
+</permission>
+<permission>
+	<object name="parqueadero.departamento" type="table"/>
+	<roles names="operador_role"/>
+	<privileges select="true"/>
+</permission>
+<permission>
+	<object name="parqueadero.departamento" type="table"/>
+	<roles names="user_role"/>
+	<privileges select="true"/>
+</permission>
+<permission>
+	<object name="parqueadero.ciudad" type="table"/>
+	<roles names="admin_role"/>
+	<privileges select="true"/>
+</permission>
+<permission>
+	<object name="parqueadero.ciudad" type="table"/>
+	<roles names="operador_role"/>
+	<privileges select="true"/>
+</permission>
+<permission>
+	<object name="parqueadero.ciudad" type="table"/>
+	<roles names="user_role"/>
+	<privileges select="true"/>
+</permission>
+<permission>
+	<object name="parqueadero.direccion" type="table"/>
+	<roles names="operador_role"/>
+	<privileges select="true"/>
+</permission>
+<permission>
+	<object name="parqueadero.direccion" type="table"/>
+	<roles names="user_role"/>
+	<privileges select="true"/>
+</permission>
+<permission>
+	<object name="parqueadero.sucursal" type="table"/>
+	<roles names="super_admin_role"/>
+	<privileges select="true" delete="true" insert="true" update="true"/>
+</permission>
+<permission>
+	<object name="parqueadero.sucursal" type="table"/>
+	<roles names="user_role"/>
+	<privileges select="true"/>
+</permission>
+<permission>
+	<object name="parqueadero.tarifa_minuto" type="table"/>
+	<roles names="operador_role"/>
+	<privileges select="true"/>
+</permission>
+<permission>
+	<object name="parqueadero.dia_semana" type="table"/>
+	<roles names="user_role"/>
+	<privileges select="true"/>
+</permission>
+<permission>
+	<object name="parqueadero.slot_parqueadero" type="table"/>
+	<roles names="user_role"/>
+	<privileges select="true"/>
+</permission>
+<permission>
+	<object name="parqueadero.reserva_sq" type="sequence"/>
+	<roles names="user_role"/>
+	<privileges usage="true"/>
+</permission>
+<permission>
+	<object name="parqueadero.reserva_sq" type="sequence"/>
+	<roles names="operador_role"/>
+	<privileges usage="true"/>
+</permission>
+<permission>
+	<object name="parqueadero.reserva_sq" type="sequence"/>
+	<roles names="admin_role"/>
+	<privileges usage="true"/>
+</permission>
+<permission>
+	<object name="parqueadero.reserva_sq" type="sequence"/>
+	<roles names="super_admin_role"/>
+	<privileges usage="true"/>
+</permission>
+<permission>
+	<object name="parqueadero.vehiculo_sq" type="sequence"/>
+	<roles names="user_role"/>
+	<privileges usage="true"/>
+</permission>
+<permission>
+	<object name="parqueadero.vehiculo_sq" type="sequence"/>
+	<roles names="operador_role"/>
+	<privileges usage="true"/>
+</permission>
+<permission>
+	<object name="parqueadero.vehiculo_sq" type="sequence"/>
+	<roles names="super_admin_role"/>
+	<privileges usage="true"/>
+</permission>
+<permission>
+	<object name="parqueadero.vehiculo_sq" type="sequence"/>
+	<roles names="admin_role"/>
+	<privileges usage="true"/>
+</permission>
+<permission>
+	<object name="parqueadero.fidelizacion_sq" type="sequence"/>
+	<roles names="admin_role"/>
+	<privileges usage="true"/>
+</permission>
+<permission>
+	<object name="parqueadero.fidelizacion_sq" type="sequence"/>
+	<roles names="super_admin_role"/>
+	<privileges usage="true"/>
+</permission>
+<permission>
+	<object name="parqueadero.fidelizacion_sq" type="sequence"/>
+	<roles names="operador_role"/>
+	<privileges usage="true"/>
+</permission>
+<permission>
+	<object name="parqueadero.fidelizacion_sq" type="sequence"/>
+	<roles names="user_role"/>
+	<privileges usage="true"/>
+</permission>
+<permission>
+	<object name="parqueadero.promocion_sq" type="sequence"/>
+	<roles names="super_admin_role"/>
+	<privileges usage="true"/>
+</permission>
+<permission>
+	<object name="parqueadero.promocion_sq" type="sequence"/>
+	<roles names="admin_role"/>
+	<privileges usage="true"/>
+</permission>
+<permission>
+	<object name="parqueadero.sucursal_sq" type="sequence"/>
+	<roles names="super_admin_role"/>
+	<privileges usage="true"/>
+</permission>
+<permission>
+	<object name="parqueadero.tarifa_minuto_sq" type="sequence"/>
+	<roles names="super_admin_role"/>
+	<privileges usage="true"/>
+</permission>
+<permission>
+	<object name="parqueadero.tarifa_minuto_sq" type="sequence"/>
+	<roles names="admin_role"/>
+	<privileges usage="true"/>
+</permission>
+<permission>
+	<object name="parqueadero.direccion_sq" type="sequence"/>
+	<roles names="super_admin_role"/>
+	<privileges usage="true"/>
+</permission>
+<permission>
+	<object name="parqueadero.empleado_sq" type="sequence"/>
+	<roles names="super_admin_role"/>
+	<privileges usage="true"/>
+</permission>
+<permission>
+	<object name="parqueadero.empleado_sq" type="sequence"/>
+	<roles names="admin_role"/>
+	<privileges usage="true"/>
+</permission>
+<permission>
+	<object name="parqueadero.tarjeta_pago_sq" type="sequence"/>
+	<roles names="user_role"/>
+	<privileges usage="true"/>
+</permission>
+<permission>
+	<object name="parqueadero.horario_sucursal_sq" type="sequence"/>
+	<roles names="admin_role"/>
+	<privileges usage="true"/>
+</permission>
+<permission>
+	<object name="parqueadero.horario_sucursal_sq" type="sequence"/>
+	<roles names="super_admin_role"/>
+	<privileges usage="true"/>
+</permission>
+<permission>
+	<object name="auditoria.vehiculo_sq" type="sequence"/>
+	<roles names="admin_role"/>
+	<privileges usage="true"/>
+</permission>
+<permission>
+	<object name="auditoria.vehiculo_sq" type="sequence"/>
+	<roles names="user_role"/>
+	<privileges usage="true"/>
+</permission>
+<permission>
+	<object name="auditoria.vehiculo_sq" type="sequence"/>
+	<roles names="super_admin_role"/>
+	<privileges usage="true"/>
+</permission>
+<permission>
+	<object name="auditoria.reserva_sq" type="sequence"/>
+	<roles names="user_role"/>
+	<privileges usage="true"/>
+</permission>
+<permission>
+	<object name="auditoria.reserva_sq" type="sequence"/>
+	<roles names="operador_role"/>
+	<privileges usage="true"/>
+</permission>
+<permission>
+	<object name="auditoria.reserva_sq" type="sequence"/>
+	<roles names="admin_role"/>
+	<privileges usage="true"/>
+</permission>
+<permission>
+	<object name="auditoria.reserva_sq" type="sequence"/>
+	<roles names="super_admin_role"/>
+	<privileges usage="true"/>
+</permission>
+<permission>
+	<object name="auditoria.usuario_sq" type="sequence"/>
+	<roles names="user_role"/>
+	<privileges usage="true"/>
+</permission>
+<permission>
+	<object name="auditoria.usuario_sq" type="sequence"/>
+	<roles names="operador_role"/>
+	<privileges usage="true"/>
+</permission>
+<permission>
+	<object name="auditoria.usuario_sq" type="sequence"/>
+	<roles names="super_admin_role"/>
+	<privileges usage="true"/>
+</permission>
+<permission>
+	<object name="auditoria.usuario_sq" type="sequence"/>
+	<roles names="admin_role"/>
+	<privileges usage="true"/>
+</permission>
+<permission>
+	<object name="auditoria" type="schema"/>
+	<roles names="operador_role"/>
+	<privileges usage="true"/>
+</permission>
+<permission>
+	<object name="auditoria" type="schema"/>
+	<roles names="user_role"/>
+	<privileges usage="true"/>
+</permission>
+<permission>
+	<object name="auditoria.audit_vehiculo" type="table"/>
+	<roles names="user_role"/>
+	<privileges insert="true"/>
+</permission>
+<permission>
+	<object name="auditoria.audit_usuario" type="table"/>
+	<roles names="admin_role"/>
+	<privileges select="true" insert="true"/>
+</permission>
+<permission>
+	<object name="auditoria.audit_usuario" type="table"/>
+	<roles names="super_admin_role"/>
+	<privileges select="true" insert="true"/>
+</permission>
+<permission>
+	<object name="auditoria.audit_usuario" type="table"/>
+	<roles names="user_role"/>
+	<privileges insert="true"/>
+</permission>
+<permission>
+	<object name="auditoria.audit_usuario" type="table"/>
+	<roles names="operador_role"/>
+	<privileges insert="true"/>
+</permission>
+<permission>
+	<object name="auditoria.audit_vehiculo" type="table"/>
+	<roles names="super_admin_role"/>
+	<privileges select="true"/>
+</permission>
+<permission>
+	<object name="auditoria.audit_reserva" type="table"/>
+	<roles names="user_role"/>
+	<privileges insert="true"/>
+</permission>
+<permission>
+	<object name="parqueadero.horario_empleado_sq" type="sequence"/>
+	<roles names="operador_role"/>
+	<privileges usage="true"/>
+</permission>
+<permission>
+	<object name="parqueadero.horario_empleado_sq" type="sequence"/>
+	<roles names="admin_role"/>
+	<privileges usage="true"/>
+</permission>
+<permission>
+	<object name="parqueadero.horario_empleado_sq" type="sequence"/>
+	<roles names="super_admin_role"/>
+	<privileges usage="true"/>
+</permission>
+</dbmodel>
