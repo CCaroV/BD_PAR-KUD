@@ -50,7 +50,7 @@ SELECT
     PARQUEADERO.CREAR_CLIENTE_FU('CC', '1045698521', 'Christian', NULL, 'Caro', 'Vargas', 3005050527, 'chcarov@udistrital.edu.co');
 
 -- Para cambiar su clave y que esta se vuelva válida:
-CALL PARQUEADERO.CAMBIO_PRIMERA_CLAVE_USUARIO_PR('chcarov@udistrital.edu.co', '1234');
+CALL PARQUEADERO.PRIMER_CAMBIO_CLAVE_PR('chcarov@udistrital.edu.co', '1234');
 
 -- Para agregar un vehículo:
 CALL PARQUEADERO.AGREGAR_VEHICULO_PR('Automóvil', 'CFD256', 'Christian', NULL, 'Caro', 'Vargas', 'Audi', 'Negro');
@@ -63,3 +63,18 @@ CALL PARQUEADERO.CREAR_SUCURSAL_PR('Bogotá, D.C.', 'Bogotá, D.C.', 'Carrera 72
 -- ddl-end --
 COMMENT ON ROLE parkud_db_admin IS E'El administrador de la base de datos de PAR-KUD.';
 
+CREATE OR REPLACE FUNCTION PARQUEADERO.PRUEBA_JSON_FU()
+RETURNS JSON 
+LANGUAGE PLPGSQL
+AS $$
+DECLARE
+    RESULTADO_L JSON;
+BEGIN
+    SELECT JSON_AGG(ROW_TO_JSON(T)) INTO RESULTADO_L FROM(
+        SELECT * FROM PARQUEADERO.SUCURSAL) T;
+    RETURN RESULTADO_L;
+EXCEPTION
+    WHEN OTHERS THEN
+        RAISE EXCEPTION 'PRUEBA_JSON_FU ha ocurrido un error: %/%', SQLSTATE, SQLERRM;
+END;
+$$;

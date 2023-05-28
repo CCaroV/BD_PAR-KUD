@@ -158,6 +158,7 @@ ON DELETE RESTRICT ON UPDATE CASCADE;
 -- DROP TABLE IF EXISTS parqueadero.sucursal CASCADE;
 CREATE TABLE parqueadero.sucursal (
 	k_sucursal integer NOT NULL,
+	k_direccion integer NOT NULL,
 	nombre_sucursal varchar(50) NOT NULL,
 	tipo_sucursal varchar(13) NOT NULL,
 	tiempo_gracia_previo numeric(3) NOT NULL,
@@ -368,7 +369,6 @@ COMMENT ON SEQUENCE parqueadero.cliente_sq IS E'Consecutivo de la clave primaria
 CREATE TABLE parqueadero.direccion (
 	k_direccion integer NOT NULL,
 	k_ciudad varchar(5) NOT NULL,
-	k_sucursal integer NOT NULL,
 	nombre_direccion varchar(200) NOT NULL,
 	edificio_direccion varchar(200) NOT NULL,
 	codigo_postal varchar(6) NOT NULL,
@@ -395,16 +395,16 @@ REFERENCES parqueadero.ciudad (k_ciudad) MATCH FULL
 ON DELETE RESTRICT ON UPDATE CASCADE;
 -- ddl-end --
 
--- object: sucursal_fk | type: CONSTRAINT --
--- ALTER TABLE parqueadero.direccion DROP CONSTRAINT IF EXISTS sucursal_fk CASCADE;
-ALTER TABLE parqueadero.direccion ADD CONSTRAINT sucursal_fk FOREIGN KEY (k_sucursal)
-REFERENCES parqueadero.sucursal (k_sucursal) MATCH FULL
+-- object: direccion_fk | type: CONSTRAINT --
+-- ALTER TABLE parqueadero.sucursal DROP CONSTRAINT IF EXISTS direccion_fk CASCADE;
+ALTER TABLE parqueadero.sucursal ADD CONSTRAINT direccion_fk FOREIGN KEY (k_direccion)
+REFERENCES parqueadero.direccion (k_direccion) MATCH FULL
 ON DELETE RESTRICT ON UPDATE CASCADE;
 -- ddl-end --
 
--- object: direccion_uq | type: CONSTRAINT --
--- ALTER TABLE parqueadero.direccion DROP CONSTRAINT IF EXISTS direccion_uq CASCADE;
-ALTER TABLE parqueadero.direccion ADD CONSTRAINT direccion_uq UNIQUE (k_sucursal);
+-- object: sucursal_uq | type: CONSTRAINT --
+-- ALTER TABLE parqueadero.sucursal DROP CONSTRAINT IF EXISTS sucursal_uq CASCADE;
+ALTER TABLE parqueadero.sucursal ADD CONSTRAINT sucursal_uq UNIQUE (k_direccion);
 -- ddl-end --
 
 -- object: parqueadero.tarifa_minuto | type: TABLE --
@@ -557,9 +557,9 @@ CREATE TABLE parqueadero.empleado (
 	correo_empleado bytea NOT NULL,
 	CONSTRAINT empleado_pk PRIMARY KEY (k_empleado),
 	CONSTRAINT tipo_id_empleado_uq UNIQUE (tipo_identificacion_empleado,numero_identificacion_emp),
-	CONSTRAINT tipo_id_empleado_ck CHECK (tipo_identificacion_empleado in ('PEP', 'CE', 'CC', 'PPT')),
 	CONSTRAINT telefono_empleado_uq UNIQUE (telefono_empleado),
-	CONSTRAINT correo_empleado_uq UNIQUE (correo_empleado)
+	CONSTRAINT correo_empleado_uq UNIQUE (correo_empleado),
+	CONSTRAINT tipo_id_empleado_ck CHECK (tipo_identificacion_empleado in ('PEP', 'CE', 'CC', 'PPT'))
 );
 -- ddl-end --
 COMMENT ON TABLE parqueadero.empleado IS E'Empleado que trabaja en una o varias sucursales.';
@@ -584,11 +584,11 @@ COMMENT ON COLUMN parqueadero.empleado.correo_empleado IS E'Correo electrónico 
 -- ddl-end --
 COMMENT ON CONSTRAINT tipo_id_empleado_uq ON parqueadero.empleado IS E'Verifica que el número de documento del empleado sea único respecto a su tipo de documento.';
 -- ddl-end --
-COMMENT ON CONSTRAINT tipo_id_empleado_ck ON parqueadero.empleado IS E'Verifica que el tipo de identificación es válido de acuerdo a la normatividad colombiana.';
--- ddl-end --
 COMMENT ON CONSTRAINT telefono_empleado_uq ON parqueadero.empleado IS E'Verifica que el número de teléfono de un empleado no se repita.';
 -- ddl-end --
 COMMENT ON CONSTRAINT correo_empleado_uq ON parqueadero.empleado IS E'Verifica que el correo de un empleado no se repita.';
+-- ddl-end --
+COMMENT ON CONSTRAINT tipo_id_empleado_ck ON parqueadero.empleado IS E'Verifica que el tipo de identificación es válido de acuerdo a la normatividad colombiana.';
 -- ddl-end --
 ALTER TABLE parqueadero.empleado OWNER TO parkud_db_admin;
 -- ddl-end --
@@ -1005,17 +1005,6 @@ USING btree
 );
 -- ddl-end --
 COMMENT ON INDEX parqueadero.tarjeta_cliente_ixfk IS E'Índice de la llave foránea de la tabla Cliente.';
--- ddl-end --
-
--- object: direccion_sucursal_ixfk | type: INDEX --
--- DROP INDEX IF EXISTS parqueadero.direccion_sucursal_ixfk CASCADE;
-CREATE INDEX direccion_sucursal_ixfk ON parqueadero.direccion
-USING btree
-(
-	k_sucursal ASC NULLS LAST
-);
--- ddl-end --
-COMMENT ON INDEX parqueadero.direccion_sucursal_ixfk IS E'Índice de la llave foránea de la tabla Sucursal.';
 -- ddl-end --
 
 -- object: direccion_ciudad_ixfk | type: INDEX --
@@ -1721,6 +1710,17 @@ COMMENT ON POLICY operador_horario_pl ON parqueadero.horario_empleado IS E'Polí
 ALTER TABLE parqueadero.reserva ADD CONSTRAINT tarjeta_pago_fk FOREIGN KEY (k_tarjeta_pago)
 REFERENCES parqueadero.tarjeta_pago (k_tarjeta_pago) MATCH FULL
 ON DELETE RESTRICT ON UPDATE CASCADE;
+-- ddl-end --
+
+-- object: sucursal_direccion | type: INDEX --
+-- DROP INDEX IF EXISTS parqueadero.sucursal_direccion CASCADE;
+CREATE INDEX sucursal_direccion ON parqueadero.sucursal
+USING btree
+(
+	k_direccion ASC NULLS LAST
+);
+-- ddl-end --
+COMMENT ON INDEX parqueadero.sucursal_direccion IS E'Índice de la llave foránea de la tabla Dirección.';
 -- ddl-end --
 
 -- object: "grant_U_ad498d56ef" | type: PERMISSION --

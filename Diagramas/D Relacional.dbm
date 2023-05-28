@@ -3,7 +3,7 @@
 CAUTION: Do not modify this file unless you know what you are doing.
  Unexpected results may occur if the code is changed deliberately.
 -->
-<dbmodel pgmodeler-ver="1.0.2" use-changelog="false" last-position="634,913" last-zoom="0.95" max-obj-count="172"
+<dbmodel pgmodeler-ver="1.0.2" use-changelog="false" last-position="231,3" last-zoom="0.95" max-obj-count="172"
 	 default-schema="parqueadero" default-owner="parkud_db_admin"
 	 layers="Default layer"
 	 active-layers="0"
@@ -136,12 +136,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	 src-fk-pattern="{st}_fk"
 	 src-table="parqueadero.pais"
 	 dst-table="parqueadero.departamento"
-	 src-required="true" dst-required="false">
-	<line>
-		<position x="3020" y="520"/>
-	<position x="2920" y="520"/>
-	</line>
-</relationship>
+	 src-required="true" dst-required="false"/>
 
 <relationship name="contiene" type="rel1n" layers="0"
 	 src-col-pattern="{sc}"
@@ -149,14 +144,9 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	 src-fk-pattern="{st}_fk"
 	 src-table="parqueadero.departamento"
 	 dst-table="parqueadero.ciudad"
-	 src-required="true" dst-required="false">
-	<line>
-		<position x="2600" y="520"/>
-	<position x="2500" y="520"/>
-	</line>
-</relationship>
+	 src-required="true" dst-required="false"/>
 
-<table name="sucursal" layers="0" collapse-mode="2" max-obj-count="6" z-value="0">
+<table name="sucursal" layers="0" collapse-mode="2" max-obj-count="7" z-value="0">
 	<schema name="parqueadero"/>
 	<role name="parkud_db_admin"/>
 	<comment> <![CDATA[Las diferentes sucursales con las que PAR-KUD cuenta.]]> </comment>
@@ -188,6 +178,15 @@ CAUTION: Do not modify this file unless you know what you are doing.
 			<expression> <![CDATA[tipo_sucursal in ('Cubierta', 'Semicubierta', 'Descubierta')]]> </expression>
 		<comment> <![CDATA[Verifica que el tipo de sucursal se ajuste a las reglas de negocio.]]> </comment>
 	</constraint>
+
+	<customidxs object-type="column">
+		<object name="k_direccion" index="1"/>
+	</customidxs>
+
+	<customidxs object-type="constraint">
+		<object name="direccion_fk" index="2"/>
+		<object name="sucursal_uq" index="3"/>
+	</customidxs>
 </table>
 
 <table name="reserva" layers="0" collapse-mode="2" rls-enabled="true" max-obj-count="18" z-value="0">
@@ -256,8 +255,8 @@ CAUTION: Do not modify this file unless you know what you are doing.
 		<object name="cliente_fk" index="1"/>
 		<object name="fidelizacion_cliente_fk" index="3"/>
 		<object name="promocion_fk" index="2"/>
-		<object name="slot_parqueadero_fk" index="6"/>
-		<object name="tarjeta_pago_fk" index="7"/>
+		<object name="slot_parqueadero_fk" index="4"/>
+		<object name="tarjeta_pago_fk" index="5"/>
 	</customidxs>
 </table>
 
@@ -391,7 +390,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<comment> <![CDATA[Consecutivo de la clave primaria de la tabla Cliente.]]> </comment>
 </sequence>
 
-<table name="direccion" layers="0" collapse-mode="2" max-obj-count="7" z-value="0">
+<table name="direccion" layers="0" collapse-mode="2" max-obj-count="6" z-value="0">
 	<schema name="parqueadero"/>
 	<role name="parkud_db_admin"/>
 	<comment> <![CDATA[Índica la dirección en la que una sucursal se encuentra.]]> </comment>
@@ -418,13 +417,10 @@ CAUTION: Do not modify this file unless you know what you are doing.
 
 	<customidxs object-type="column">
 		<object name="k_ciudad" index="1"/>
-		<object name="k_sucursal" index="2"/>
 	</customidxs>
 
 	<customidxs object-type="constraint">
 		<object name="ciudad_fk" index="1"/>
-		<object name="direccion_uq" index="3"/>
-		<object name="sucursal_fk" index="2"/>
 	</customidxs>
 </table>
 
@@ -447,12 +443,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	 src-fk-pattern="{st}_fk"
 	 src-table="parqueadero.sucursal"
 	 dst-table="parqueadero.direccion"
-	 src-required="true" dst-required="false">
-	<line>
-		<position x="1540" y="420"/>
-	<position x="1800" y="420"/>
-	</line>
-</relationship>
+	 src-required="false" dst-required="true"/>
 
 <table name="tarifa_minuto" layers="0" collapse-mode="2" max-obj-count="12" z-value="0">
 	<schema name="parqueadero"/>
@@ -522,12 +513,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	 src-fk-pattern="{st}_fk"
 	 src-table="parqueadero.sucursal"
 	 dst-table="parqueadero.tarifa_minuto"
-	 src-required="true" dst-required="false">
-	<line>
-		<position x="1540" y="320"/>
-	<position x="3320" y="320"/>
-	</line>
-</relationship>
+	 src-required="true" dst-required="false"/>
 
 <table name="horario_sucursal" layers="0" collapse-mode="2" max-obj-count="8" z-value="0">
 	<schema name="parqueadero"/>
@@ -603,12 +589,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	 src-fk-pattern="{st}_fk"
 	 src-table="parqueadero.dia_semana"
 	 dst-table="parqueadero.horario_sucursal"
-	 src-required="true" dst-required="false">
-	<line>
-		<position x="2220" y="820"/>
-	<position x="1860" y="820"/>
-	</line>
-</relationship>
+	 src-required="true" dst-required="false"/>
 
 <table name="horario_empleado" layers="0" collapse-mode="2" max-obj-count="7" z-value="0">
 	<schema name="parqueadero"/>
@@ -694,10 +675,6 @@ CAUTION: Do not modify this file unless you know what you are doing.
 		<columns names="tipo_identificacion_empleado,numero_identificacion_emp" ref-type="src-columns"/>
 		<comment> <![CDATA[Verifica que el número de documento del empleado sea único respecto a su tipo de documento.]]> </comment>
 	</constraint>
-	<constraint name="tipo_id_empleado_ck" type="ck-constr" table="parqueadero.empleado">
-			<expression> <![CDATA[tipo_identificacion_empleado in ('PEP', 'CE', 'CC', 'PPT')]]> </expression>
-		<comment> <![CDATA[Verifica que el tipo de identificación es válido de acuerdo a la normatividad colombiana.]]> </comment>
-	</constraint>
 	<constraint name="telefono_empleado_uq" type="uq-constr" table="parqueadero.empleado">
 		<columns names="telefono_empleado" ref-type="src-columns"/>
 		<comment> <![CDATA[Verifica que el número de teléfono de un empleado no se repita.]]> </comment>
@@ -705,6 +682,10 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<constraint name="correo_empleado_uq" type="uq-constr" table="parqueadero.empleado">
 		<columns names="correo_empleado" ref-type="src-columns"/>
 		<comment> <![CDATA[Verifica que el correo de un empleado no se repita.]]> </comment>
+	</constraint>
+	<constraint name="tipo_id_empleado_ck" type="ck-constr" table="parqueadero.empleado">
+			<expression> <![CDATA[tipo_identificacion_empleado in ('PEP', 'CE', 'CC', 'PPT')]]> </expression>
+		<comment> <![CDATA[Verifica que el tipo de identificación es válido de acuerdo a la normatividad colombiana.]]> </comment>
 	</constraint>
 </table>
 
@@ -734,12 +715,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	 dst-table="parqueadero.trabaja"
 	 src-required="true" dst-required="false"
 	 identifier="true"
->
-	<line>
-		<position x="1400" y="440"/>
-	<position x="1400" y="780"/>
-	</line>
-</relationship>
+/>
 
 <relationship name="empleado_trabaja" type="rel1n" layers="0"
 	 src-col-pattern="{sc}"
@@ -749,12 +725,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	 dst-table="parqueadero.trabaja"
 	 src-required="true" dst-required="false"
 	 identifier="true"
->
-	<line>
-		<position x="1480" y="1180"/>
-	<position x="1480" y="940"/>
-	</line>
-</relationship>
+/>
 
 <relationship name="dia_horario_emp" type="rel1n" layers="0"
 	 src-col-pattern="{sc}"
@@ -762,12 +733,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	 src-fk-pattern="{st}_fk"
 	 src-table="parqueadero.dia_semana"
 	 dst-table="parqueadero.horario_empleado"
-	 src-required="true" dst-required="false">
-	<line>
-		<position x="2360" y="840"/>
-	<position x="2360" y="920"/>
-	</line>
-</relationship>
+	 src-required="true" dst-required="false"/>
 
 <table name="cargo" layers="0" collapse-mode="2" max-obj-count="1" z-value="0">
 	<schema name="parqueadero"/>
@@ -898,12 +864,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	 src-fk-pattern="{st}_fk"
 	 src-table="parqueadero.sucursal"
 	 dst-table="parqueadero.promocion"
-	 src-required="true" dst-required="false">
-	<line>
-		<position x="1240" y="340"/>
-	<position x="840" y="340"/>
-	</line>
-</relationship>
+	 src-required="true" dst-required="false"/>
 
 <table name="promocion_por_tiempo" layers="0" collapse-mode="2" max-obj-count="8" z-value="0">
 	<schema name="parqueadero"/>
@@ -954,12 +915,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	 dst-table="parqueadero.promocion_por_tiempo"
 	 src-required="true" dst-required="false"
 	 identifier="true"
->
-	<line>
-		<position x="520" y="400"/>
-	<position x="380" y="400"/>
-	</line>
-</relationship>
+/>
 
 <table name="promocion_por_reserva" layers="0" collapse-mode="2" max-obj-count="8" z-value="0">
 	<schema name="parqueadero"/>
@@ -1009,12 +965,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	 dst-table="parqueadero.promocion_por_reserva"
 	 src-required="true" dst-required="false"
 	 identifier="true"
->
-	<line>
-		<position x="520" y="260"/>
-	<position x="380" y="260"/>
-	</line>
-</relationship>
+/>
 
 <table name="tarjeta_pago" layers="0" collapse-mode="2" rls-enabled="true" max-obj-count="10" z-value="0">
 	<schema name="parqueadero"/>
@@ -1251,15 +1202,6 @@ CAUTION: Do not modify this file unless you know what you are doing.
 		</idxelement>
 </index>
 
-<index name="direccion_sucursal_ixfk" table="parqueadero.direccion"
-	 concurrent="false" unique="false" fast-update="false" buffering="false"
-	 index-type="btree" factor="0">
-	<comment> <![CDATA[Índice de la llave foránea de la tabla Sucursal.]]> </comment>
-		<idxelement use-sorting="true" nulls-first="false" asc-order="true">
-			<column name="k_sucursal"/>
-		</idxelement>
-</index>
-
 <index name="direccion_ciudad_ixfk" table="parqueadero.direccion"
 	 concurrent="false" unique="false" fast-update="false" buffering="false"
 	 index-type="btree" factor="0">
@@ -1313,12 +1255,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	 src-fk-pattern="{st}_fk"
 	 src-table="parqueadero.promocion"
 	 dst-table="parqueadero.reserva"
-	 src-required="false" dst-required="false">
-	<line>
-		<position x="680" y="480"/>
-	<position x="680" y="680"/>
-	</line>
-</relationship>
+	 src-required="false" dst-required="false"/>
 
 <relationship name="cliente_puntos" type="rel1n" layers="0"
 	 src-col-pattern="{sc}"
@@ -1326,12 +1263,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	 src-fk-pattern="{st}_fk"
 	 src-table="parqueadero.cliente"
 	 dst-table="parqueadero.fidelizacion_cliente"
-	 src-required="true" dst-required="false">
-	<line>
-		<position x="960" y="1720"/>
-	<position x="680" y="1720"/>
-	</line>
-</relationship>
+	 src-required="true" dst-required="false"/>
 
 <relationship name="fidelizacion_cliente_has_many_reserva" type="rel1n" layers="0"
 	 src-col-pattern="{sc}"
@@ -1339,12 +1271,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	 src-fk-pattern="{st}_fk"
 	 src-table="parqueadero.fidelizacion_cliente"
 	 dst-table="parqueadero.reserva"
-	 src-required="false" dst-required="false">
-	<line>
-		<position x="580" y="1520"/>
-	<position x="580" y="1360"/>
-	</line>
-</relationship>
+	 src-required="false" dst-required="false"/>
 
 <table name="audit_vehiculo" layers="0" collapse-mode="2" max-obj-count="9" z-value="0">
 	<schema name="auditoria"/>
@@ -1841,6 +1768,15 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<position x="860" y="1120"/>
 	</line>
 </relationship>
+
+<index name="sucursal_direccion" table="parqueadero.sucursal"
+	 concurrent="false" unique="false" fast-update="false" buffering="false"
+	 index-type="btree" factor="0">
+	<comment> <![CDATA[Índice de la llave foránea de la tabla Dirección.]]> </comment>
+		<idxelement use-sorting="true" nulls-first="false" asc-order="true">
+			<column name="k_direccion"/>
+		</idxelement>
+</index>
 
 <permission>
 	<object name="parqueadero" type="schema"/>
