@@ -512,7 +512,9 @@ BEGIN
         SELECT C.NOMBRE_CIUDAD "Ciudad",
             S.TIPO_SUCURSAL "Tipo sucursal",
             S.NOMBRE_SUCURSAL "Nombre sucursal"
-        FROM 
+        FROM PARQUEADERO.CIUDAD C
+            INNER JOIN PARQUEADERO.DIRECCION D ON C.K_CIUDAD = D.K_CIUDAD
+            INNER JOIN PARQUEADERO.SUCURSAL S ON S.K_DIRECCION = D.K_DIRECCION
     )
 END;
 $$;

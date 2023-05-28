@@ -537,70 +537,71 @@ INSERT INTO PARQUEADERO.CIUDAD(
     'Puerto Carreño'
 );
 
--- Insertar una sucursal con su respectiva dirección.
-INSERT INTO PARQUEADERO.SUCURSAL(
-    NOMBRE_SUCURSAL,
-    TIPO_SUCURSAL,
-    TIEMPO_GRACIA_PREVIO,
-    TIEMPO_GRACIA_POS
-) VALUES (
-    'Sucursal Kennedy',
-    'Cubierta',
-    15,
-    0
-),
-(
-    'Sucursal Chapinero',
-    'Semicubierta',
-    15,
-    10
-),
-(
-    'Sucursal Suba',
-    'Descubierta',
-    20,
-    0
-),
-(
-    'Sucursal Ciudad Bolivar',
-    'Cubierta',
-    0,
-    0
-);
-
+-- Insertar las direcciones de las sucursales
 INSERT INTO PARQUEADERO.DIRECCION(
     K_CIUDAD,
-    K_SUCURSAL,
     NOMBRE_DIRECCION,
     EDIFICIO_DIRECCION,
     CODIGO_POSTAL
 ) VALUES (
     ( SELECT K_CIUDAD FROM PARQUEADERO.CIUDAD WHERE NOMBRE_CIUDAD = 'Bogotá, D.C.'),
-    ( SELECT K_SUCURSAL FROM PARQUEADERO.SUCURSAL WHERE NOMBRE_SUCURSAL = 'Sucursal Kennedy'),
     'Carrera 77B # 58C - 41',
     'Edificio Kennedy',
     '111120'
 ),
 (
     ( SELECT K_CIUDAD FROM PARQUEADERO.CIUDAD WHERE NOMBRE_CIUDAD = 'Bogotá, D.C.'),
-    ( SELECT K_SUCURSAL FROM PARQUEADERO.SUCURSAL WHERE NOMBRE_SUCURSAL = 'Sucursal Chapinero'),
     'Carrera 7B # 45A - 23',
     'Edificio Javeriana',
     '111136'
 ),
 (
     ( SELECT K_CIUDAD FROM PARQUEADERO.CIUDAD WHERE NOMBRE_CIUDAD = 'Bogotá, D.C.'),
-    ( SELECT K_SUCURSAL FROM PARQUEADERO.SUCURSAL WHERE NOMBRE_SUCURSAL = 'Sucursal Suba'),
     'Calle 138B # 130A - 85',
     'C.C. Plaza Suba',
     '111158'
 ),
 (
     ( SELECT K_CIUDAD FROM PARQUEADERO.CIUDAD WHERE NOMBRE_CIUDAD = 'Bogotá, D.C.'),
-    ( SELECT K_SUCURSAL FROM PARQUEADERO.SUCURSAL WHERE NOMBRE_SUCURSAL = 'Sucursal Ciudad Bolivar'),
     'Carrera 66B # 56F - 12 Sur',
     'Lote Ciudad Bolivar',
     '111174'
+);
+
+-- Insertar una sucursal con su respectiva dirección.
+INSERT INTO PARQUEADERO.SUCURSAL(
+    K_DIRECCION,
+    NOMBRE_SUCURSAL,
+    TIPO_SUCURSAL,
+    TIEMPO_GRACIA_PREVIO,
+    TIEMPO_GRACIA_POS
+) VALUES (
+    ( SELECT K_DIRECCION FROM PARQUEADERO.DIRECCION WHERE CODIGO_POSTAL = '111120' ),
+    'Sucursal Kennedy',
+    'Cubierta',
+    15,
+    0
+),
+(
+    ( SELECT K_DIRECCION FROM PARQUEADERO.DIRECCION WHERE CODIGO_POSTAL = '111136' ),
+    'Sucursal Chapinero',
+    'Semicubierta',
+    15,
+    10
+),
+(
+    ( SELECT K_DIRECCION FROM PARQUEADERO.DIRECCION WHERE CODIGO_POSTAL = '111158' ),
+    'Sucursal Suba',
+    'Descubierta',
+    20,
+    0
+),
+(
+    ( SELECT K_DIRECCION FROM PARQUEADERO.DIRECCION WHERE CODIGO_POSTAL = '111174' ),
+    'Sucursal Ciudad Bolivar',
+    'Cubierta',
+    0,
+    0
 );
 
 --Insertar la tarifa de una sucursal
