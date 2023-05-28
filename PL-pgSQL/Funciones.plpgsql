@@ -314,68 +314,68 @@ ALTER FUNCTION PARQUEADERO.CREAR_ADMIN_FU(
 REVOKE EXECUTE ON FUNCTION PARQUEADERO.CREAR_ADMIN_FU FROM ADMIN_ROLE;
 
 -- Función que muestra la información básica de todas las sucursales.
--- CREATE OR REPLACE FUNCTION PARQUEADERO.MOSTRAR_SUCURSALES_FU()
--- RETURNS JSON
--- LANGUAGE PLPGSQL
--- AS $$
--- DECLARE
---     RESULTADO_L JSON;
--- BEGIN
---     -- Inserta en un JSON el resultado de la consukta
---     SELECT JSON_AGG(ROW_TO_JSON(T)) INTO RESULTADO_L 
---     FROM(
---         -- Consulta que devuelve la información de todas las sucursales
---         SELECT DISTINCT S.TIPO_SUCURSAL "Tipo parqueadero",
---             S.NOMBRE_SUCURSAL "Nombre parqueadero",
---             C.NOMBRE_CIUDAD "Ciudad",
---             D.NOMBRE_DIRECCION || ', ' || D.EDIFICIO_DIRECCION "Dirección",
---             COUNT(SP.K_SLOT_PARQUEADERO) "Disponibilidad",
---             CASE
---                 WHEN TM.VALOR_MINUTO_SUV != 0 THEN TM.VALOR_MINUTO_SUV::VARCHAR
---                 WHEN TM.VALOR_MINUTO_SUV = 0 THEN 'No aplica'
---             END AS "Tarifa SUV",
---             CASE
---                 WHEN TM.VALOR_MINUTO_AUTO != 0 THEN TM.VALOR_MINUTO_AUTO::VARCHAR
---                 WHEN TM.VALOR_MINUTO_AUTO = 0 THEN 'No aplica'
---             END AS "Tarifa automóvil",
---             CASE
---                 WHEN TM.VALOR_MINUTO_MOTO != 0 THEN TM.VALOR_MINUTO_MOTO::VARCHAR
---                 WHEN TM.VALOR_MINUTO_MOTO = 0 THEN 'No aplica'
---             END AS "Tarifa motocicleta",
---             CASE
---                 WHEN TM.ADICION_PARQ_CUBIERTO != 0 THEN TM.ADICION_PARQ_CUBIERTO::VARCHAR
---                 WHEN TM.ADICION_PARQ_CUBIERTO = 0 THEN 'Sin incremento'
---             END AS "Incremento parq. cubierto"
---         FROM PARQUEADERO.SUCURSAL S
---             INNER JOIN PARQUEADERO.DIRECCION D ON S.K_SUCURSAL = D.K_SUCURSAL
---             INNER JOIN PARQUEADERO.CIUDAD C ON C.K_CIUDAD = D.K_CIUDAD
---             INNER JOIN PARQUEADERO.TARIFA_MINUTO TM ON S.K_SUCURSAL = TM.K_SUCURSAL
---             INNER JOIN PARQUEADERO.SLOT_PARQUEADERO SP ON SP.K_SUCURSAL = S.K_SUCURSAL
---             INNER JOIN PARQUEADERO.HORARIO_SUCURSAL HS ON HS.K_SUCURSAL = S.K_SUCURSAL
---             INNER JOIN PARQUEADERO.DIA_SEMANA DS ON HS.K_DIA_SEMANA = DS.K_DIA_SEMANA
---             LEFT JOIN PARQUEADERO.RESERVA R ON SP.K_SLOT_PARQUEADERO = R.K_SLOT_PARQUEADERO
---                 AND SP.K_SUCURSAL = R.K_SUCURSAL AND S.K_SUCURSAL = R.K_SUCURSAL
---         GROUP BY "Tipo parqueadero",
---             "Nombre parqueadero",
---             "Ciudad",
---             "Dirección",
---             "Tarifa SUV",
---             "Tarifa automóvil",
---             "Tarifa motocicleta",
---             "Incremento parq. cubierto"
---     ) T;
+CREATE OR REPLACE FUNCTION PARQUEADERO.MOSTRAR_SUCURSALES_FU()
+RETURNS JSON
+LANGUAGE PLPGSQL
+AS $$
+DECLARE
+    RESULTADO_L JSON;
+BEGIN
+    -- Inserta en un JSON el resultado de la consukta
+    SELECT JSON_AGG(ROW_TO_JSON(T)) INTO RESULTADO_L 
+    FROM(
+        -- Consulta que devuelve la información de todas las sucursales
+        SELECT DISTINCT S.TIPO_SUCURSAL "Tipo parqueadero",
+            S.NOMBRE_SUCURSAL "Nombre parqueadero",
+            C.NOMBRE_CIUDAD "Ciudad",
+            D.NOMBRE_DIRECCION || ', ' || D.EDIFICIO_DIRECCION "Dirección",
+            COUNT(DISTINCT SP.K_SLOT_PARQUEADERO) "Disponibilidad",
+            CASE
+                WHEN TM.VALOR_MINUTO_SUV != 0 THEN TM.VALOR_MINUTO_SUV::VARCHAR
+                WHEN TM.VALOR_MINUTO_SUV = 0 THEN 'No aplica'
+            END AS "Tarifa SUV",
+            CASE
+                WHEN TM.VALOR_MINUTO_AUTO != 0 THEN TM.VALOR_MINUTO_AUTO::VARCHAR
+                WHEN TM.VALOR_MINUTO_AUTO = 0 THEN 'No aplica'
+            END AS "Tarifa automóvil",
+            CASE
+                WHEN TM.VALOR_MINUTO_MOTO != 0 THEN TM.VALOR_MINUTO_MOTO::VARCHAR
+                WHEN TM.VALOR_MINUTO_MOTO = 0 THEN 'No aplica'
+            END AS "Tarifa motocicleta",
+            CASE
+                WHEN TM.ADICION_PARQ_CUBIERTO != 0 THEN TM.ADICION_PARQ_CUBIERTO::VARCHAR
+                WHEN TM.ADICION_PARQ_CUBIERTO = 0 THEN 'Sin incremento'
+            END AS "Incremento parq. cubierto"
+        FROM PARQUEADERO.SUCURSAL S
+            INNER JOIN PARQUEADERO.DIRECCION D ON S.K_DIRECCION = D.K_DIRECCION
+            INNER JOIN PARQUEADERO.CIUDAD C ON C.K_CIUDAD = D.K_CIUDAD
+            INNER JOIN PARQUEADERO.TARIFA_MINUTO TM ON S.K_SUCURSAL = TM.K_SUCURSAL
+            INNER JOIN PARQUEADERO.SLOT_PARQUEADERO SP ON SP.K_SUCURSAL = S.K_SUCURSAL
+            INNER JOIN PARQUEADERO.HORARIO_SUCURSAL HS ON HS.K_SUCURSAL = S.K_SUCURSAL
+            INNER JOIN PARQUEADERO.DIA_SEMANA DS ON HS.K_DIA_SEMANA = DS.K_DIA_SEMANA
+            LEFT JOIN PARQUEADERO.RESERVA R ON SP.K_SLOT_PARQUEADERO = R.K_SLOT_PARQUEADERO
+                AND SP.K_SUCURSAL = R.K_SUCURSAL AND S.K_SUCURSAL = R.K_SUCURSAL
+        GROUP BY "Tipo parqueadero",
+            "Nombre parqueadero",
+            "Ciudad",
+            "Dirección",
+            "Tarifa SUV",
+            "Tarifa automóvil",
+            "Tarifa motocicleta",
+            "Incremento parq. cubierto"
+    ) T;
     
---     -- Devuelve un JSON con la información de la consulta
---     RETURN RESULTADO_L;
--- EXCEPTION
---     WHEN OTHERS THEN
---         RAISE EXCEPTION 'MOSTRAR_SUCURSALES_FU ha ocurrido un error: %/%', SQLSTATE, SQLERRM;
--- END;
--- $$;
+    -- Devuelve un JSON con la información de la consulta
+    RETURN RESULTADO_L;
+EXCEPTION
+    WHEN OTHERS THEN
+        RAISE EXCEPTION 'MOSTRAR_SUCURSALES_FU ha ocurrido un error: %/%', SQLSTATE, SQLERRM;
+END;
+$$;
 
--- COMMENT ON FUNCTION PARQUEADERO.MOSTRAR_SUCURSALES_FU IS E'Función que muestra la información básica de todas las sucursales.';
+COMMENT ON FUNCTION PARQUEADERO.MOSTRAR_SUCURSALES_FU IS E'Función que muestra la información básica de todas las sucursales.';
 
--- ALTER FUNCTION PARQUEADERO.MOSTRAR_SUCURSALES_FU() OWNER TO PARKUD_DB_ADMIN;
+ALTER FUNCTION PARQUEADERO.MOSTRAR_SUCURSALES_FU() OWNER TO PARKUD_DB_ADMIN;
 
 -- Función que verifica la disponibilidad de una sucursal
 -- CREATE OR REPLACE FUNCTION PARQUEADERO.VERIFICAR_DISPONIBILIDAD_FU(
