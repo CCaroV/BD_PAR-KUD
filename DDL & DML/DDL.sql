@@ -198,6 +198,7 @@ CREATE TABLE parqueadero.reserva (
 	fecha_inicio_reserva timestamp NOT NULL,
 	puntos_usados numeric(8) NOT NULL,
 	esta_activa boolean NOT NULL,
+	fecha_ingreso_vehiculo timestamp,
 	fecha_salida_vehiculo timestamp,
 	valor_reserva numeric(7,1),
 	puntos_acumulados numeric(8),
@@ -218,6 +219,8 @@ COMMENT ON COLUMN parqueadero.reserva.fecha_inicio_reserva IS E'Hora y fecha en 
 COMMENT ON COLUMN parqueadero.reserva.puntos_usados IS E'La cantidad de puntos que un cliente usó en una reserva.';
 -- ddl-end --
 COMMENT ON COLUMN parqueadero.reserva.esta_activa IS E'Booleano que determina si la reserva está activa o no.';
+-- ddl-end --
+COMMENT ON COLUMN parqueadero.reserva.fecha_ingreso_vehiculo IS E'Determina la hora y fecha de ingreso del vehículo a la sucursal.';
 -- ddl-end --
 COMMENT ON COLUMN parqueadero.reserva.fecha_salida_vehiculo IS E'Índica cuando el vehículo sale de la sucursal.';
 -- ddl-end --
@@ -1712,15 +1715,15 @@ REFERENCES parqueadero.tarjeta_pago (k_tarjeta_pago) MATCH FULL
 ON DELETE RESTRICT ON UPDATE CASCADE;
 -- ddl-end --
 
--- object: sucursal_direccion | type: INDEX --
--- DROP INDEX IF EXISTS parqueadero.sucursal_direccion CASCADE;
-CREATE INDEX sucursal_direccion ON parqueadero.sucursal
+-- object: sucursal_direccion_ixfk | type: INDEX --
+-- DROP INDEX IF EXISTS parqueadero.sucursal_direccion_ixfk CASCADE;
+CREATE INDEX sucursal_direccion_ixfk ON parqueadero.sucursal
 USING btree
 (
 	k_direccion ASC NULLS LAST
 );
 -- ddl-end --
-COMMENT ON INDEX parqueadero.sucursal_direccion IS E'Índice de la llave foránea de la tabla Dirección.';
+COMMENT ON INDEX parqueadero.sucursal_direccion_ixfk IS E'Índice de la llave foránea de la tabla Dirección.';
 -- ddl-end --
 
 -- object: "grant_U_ad498d56ef" | type: PERMISSION --
