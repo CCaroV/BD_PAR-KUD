@@ -320,16 +320,30 @@ LANGUAGE PLPGSQL
 AS $$
 DECLARE
     RESULTADO_L JSON;
+    DIA_ACTUAL_L VARCHAR;
 BEGIN
+    -- Selecciona el día de la semana.
+    SELECT PARQUEADERO.OBTENER_DIA_FECHA_FU((SELECT CURRENT_DATE)) INTO DIA_ACTUAL_L;
+
     -- Inserta en un JSON el resultado de la consukta
     SELECT JSON_AGG(ROW_TO_JSON(T)) INTO RESULTADO_L 
     FROM(
         -- Consulta que devuelve la información de todas las sucursales
-        SELECT DISTINCT S.TIPO_SUCURSAL "Tipo parqueadero",
-            S.NOMBRE_SUCURSAL "Nombre parqueadero",
-            C.NOMBRE_CIUDAD "Ciudad",
-            D.NOMBRE_DIRECCION || ', ' || D.EDIFICIO_DIRECCION "Dirección",
-            COUNT(DISTINCT SP.K_SLOT_PARQUEADERO) "Disponibilidad",
+        SELECT S.TIPO_SUCURSAL AS "Tipo parqueadero",
+            S.NOMBRE_SUCURSAL AS "Nombre parqueadero",
+            C.NOMBRE_CIUDAD AS "Ciudad",
+            D.NOMBRE_DIRECCION || ', ' || D.EDIFICIO_DIRECCION AS "Dirección",
+            COUNT(DISTINCT SP.K_SLOT_PARQUEADERO) - COUNT(DISTINCT R.K_RESERVA) AS "Disponibilidad",
+            CASE 
+                WHEN HS.HORA_ABIERTO_SUCURSAL IS NULL AND HS.ES_HORARIO_COMPLETO THEN 'Horario 24 horas'
+                WHEN HS.HORA_ABIERTO_SUCURSAL IS NULL AND HS.ES_CERRADO_COMPLETO THEN 'Sucursal cerrada'
+                WHEN HS.HORA_ABIERTO_SUCURSAL IS NOT NULL THEN HS.HORA_ABIERTO_SUCURSAL::VARCHAR
+            END AS "Hora abierto",
+            CASE 
+                WHEN HS.HORA_CERRADO_SUCURSAL IS NULL AND HS.ES_HORARIO_COMPLETO THEN 'Horario 24 horas'
+                WHEN HS.HORA_CERRADO_SUCURSAL IS NULL AND HS.ES_CERRADO_COMPLETO THEN 'Sucursal cerrada'
+                WHEN HS.HORA_CERRADO_SUCURSAL IS NOT NULL THEN HS.HORA_CERRADO_SUCURSAL::VARCHAR
+            END AS "Hora cerrado",
             CASE
                 WHEN TM.VALOR_MINUTO_SUV != 0 THEN TM.VALOR_MINUTO_SUV::VARCHAR
                 WHEN TM.VALOR_MINUTO_SUV = 0 THEN 'No aplica'
@@ -353,16 +367,28 @@ BEGIN
             INNER JOIN PARQUEADERO.SLOT_PARQUEADERO SP ON SP.K_SUCURSAL = S.K_SUCURSAL
             INNER JOIN PARQUEADERO.HORARIO_SUCURSAL HS ON HS.K_SUCURSAL = S.K_SUCURSAL
             INNER JOIN PARQUEADERO.DIA_SEMANA DS ON HS.K_DIA_SEMANA = DS.K_DIA_SEMANA
-            LEFT JOIN PARQUEADERO.RESERVA R ON SP.K_SLOT_PARQUEADERO = R.K_SLOT_PARQUEADERO
-                AND SP.K_SUCURSAL = R.K_SUCURSAL AND S.K_SUCURSAL = R.K_SUCURSAL
-        GROUP BY "Tipo parqueadero",
-            "Nombre parqueadero",
-            "Ciudad",
-            "Dirección",
-            "Tarifa SUV",
-            "Tarifa automóvil",
-            "Tarifa motocicleta",
-            "Incremento parq. cubierto"
+            LEFT JOIN (
+                SELECT K_SLOT_PARQUEADERO,
+                    K_SUCURSAL,
+                    K_RESERVA
+                FROM PARQUEADERO.RESERVA
+                WHERE ESTA_ACTIVA = TRUE
+            ) R ON SP.K_SLOT_PARQUEADERO = R.K_SLOT_PARQUEADERO
+            AND SP.K_SUCURSAL = R.K_SUCURSAL
+            AND S.K_SUCURSAL = R.K_SUCURSAL
+        WHERE DS.K_DIA_SEMANA = DIA_ACTUAL_L
+        GROUP BY S.TIPO_SUCURSAL,
+            S.NOMBRE_SUCURSAL,
+            C.NOMBRE_CIUDAD,
+            D.NOMBRE_DIRECCION || ', ' || D.EDIFICIO_DIRECCION,
+            HS.HORA_ABIERTO_SUCURSAL,
+            HS.HORA_CERRADO_SUCURSAL,
+            HS.ES_HORARIO_COMPLETO,
+            HS.ES_CERRADO_COMPLETO,
+            TM.VALOR_MINUTO_SUV,
+            TM.VALOR_MINUTO_AUTO,
+            TM.VALOR_MINUTO_MOTO,
+            TM.ADICION_PARQ_CUBIERTO
     ) T;
     
     -- Devuelve un JSON con la información de la consulta
