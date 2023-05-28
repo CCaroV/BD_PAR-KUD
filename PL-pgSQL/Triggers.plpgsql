@@ -110,3 +110,33 @@ CREATE OR REPLACE TRIGGER VERIFICAR_AUDIT_USUARIO_TR
     BEFORE INSERT OR UPDATE ON AUDITORIA.AUDIT_USUARIO
     FOR EACH ROW
     EXECUTE FUNCTION AUDITORIA.VERIFICAR_AUDIT_USUARIO_TR();
+
+-- Trigger que verifica que el nombre de una sucursal no se repita en una ciudad
+CREATE OR REPLACE FUNCTION PARQUEADERO.VERIFICAR_NOMBRE_SUCURSAL_TR()
+RETURNS TRIGGER
+LANGUAGE PLPGSQL
+AS $$
+BEGIN
+    IF EXISTS (
+        SELECT 1
+        FROM PARQUEADERO.SUCURSAL
+        WHERE NOMBRE_SUCURSAL = NEW.NOMBRE_SUCURSAL
+          AND K_DIRECCION IN (
+              SELECT K_DIRECCION
+              FROM PARQUEADERO.DIRECCION
+              WHERE K_CIUDAD = NEW.K_CIUDAD
+          )
+          AND K_SUCURSAL <> NEW.K_SUCURSAL -- Excluir el registro actual en caso de actualización
+    ) THEN
+        -- Lanzar una excepción indicando que el nombre de la sucursal no es único en relación con la ciudad
+        RAISE EXCEPTION 'Ya existe una sucursal con el mismo nombre en la misma ciudad';
+    END IF;
+
+    RETURN NEW;
+END;
+$$;
+
+CREATE TRIGGER VERIFICAR_NOMBRE_SUCURSAL_TR
+    BEFORE INSERT OR UPDATE ON PARQUEADERO.SUCURSAL
+    FOR EACH ROW
+    EXECUTE FUNCTION PARQUEADERO.VERIFICAR_NOMBRE_SUCURSAL_TR();
