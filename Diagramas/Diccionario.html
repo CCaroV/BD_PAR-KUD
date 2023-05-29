@@ -1436,16 +1436,6 @@ max-width: 500px;
  <td><p class="max-td-wth"><em></em></p></td>
  </tr>
  <tr>
- <td>k_sucursal</td>
- <td class="data-type">integer</td>
- <td class="bool-field"></td>
- <td class="bool-field">&#10003;</td>
- <td class="bool-field">&#10003;</td>
- <td class="bool-field">&#10003;</td>
- <td class="value"></td>
- <td><p class="max-td-wth"><em></em></p></td>
- </tr>
- <tr>
  <td>nombre_direccion</td>
  <td class="data-type">varchar(200)</td>
  <td class="bool-field"></td>
@@ -1505,22 +1495,6 @@ max-width: 500px;
  <td class="value"></td>
  <td colspan="3"><p class="max-td-wth"><em></em></p></td>
  </tr>
- <tr>
- <td>sucursal_fk</td>
- <td class="value constr-type">FOREIGN KEY</td>
- <td>k_sucursal</td>
- <td><a href="#parqueadero.sucursal">parqueadero.sucursal</a></td>
- <td class="value"></td>
- <td colspan="3"><p class="max-td-wth"><em></em></p></td>
- </tr>
- <tr>
- <td>direccion_uq</td>
- <td class="value constr-type">UNIQUE</td>
- <td>k_sucursal</td>
- <td></td>
- <td class="value"></td>
- <td colspan="3"><p class="max-td-wth"><em></em></p></td>
- </tr>
  </table>
  </td>
  </tr>
@@ -1537,14 +1511,6 @@ max-width: 500px;
  <td class="title">Expression(s)</td>
  <td class="title">Predicate</td>
  <td class="title">Description</td>
- </tr>
- <tr>
- <td>direccion_sucursal_ixfk</td>
- <td class="value constr-type">btree</td>
- <td>k_sucursal</td>
- <td class="value"><p class="max-td-wth"></p></td>
- <td class="value"><p class="max-td-wth"></p></td>
- <td><p class="max-td-wth"><em>Índice de la llave foránea de la tabla Sucursal.</em></p></td></td>
  </tr>
  <tr>
  <td>direccion_ciudad_ixfk</td>
@@ -1833,14 +1799,6 @@ max-width: 500px;
  <td colspan="3"><p class="max-td-wth"><em>Verifica que el número de documento del empleado sea único respecto a su tipo de documento.</em></p></td>
  </tr>
  <tr>
- <td>tipo_id_empleado_ck</td>
- <td class="value constr-type">CHECK</td>
- <td></td>
- <td></td>
- <td class="value"><p class="max-td-wth">tipo_identificacion_empleado in ('PEP', 'CE', 'CC', 'PPT')</p></td>
- <td colspan="3"><p class="max-td-wth"><em>Verifica que el tipo de identificación es válido de acuerdo a la normatividad colombiana.</em></p></td>
- </tr>
- <tr>
  <td>telefono_empleado_uq</td>
  <td class="value constr-type">UNIQUE</td>
  <td>telefono_empleado</td>
@@ -1855,6 +1813,14 @@ max-width: 500px;
  <td></td>
  <td class="value"></td>
  <td colspan="3"><p class="max-td-wth"><em>Verifica que el correo de un empleado no se repita.</em></p></td>
+ </tr>
+ <tr>
+ <td>tipo_id_empleado_ck</td>
+ <td class="value constr-type">CHECK</td>
+ <td></td>
+ <td></td>
+ <td class="value"><p class="max-td-wth">tipo_identificacion_empleado in ('PEP', 'CE', 'CC', 'PPT')</p></td>
+ <td colspan="3"><p class="max-td-wth"><em>Verifica que el tipo de identificación es válido de acuerdo a la normatividad colombiana.</em></p></td>
  </tr>
  </table>
  </td>
@@ -3015,6 +2981,26 @@ max-width: 500px;
  <td><p class="max-td-wth"><em>Booleano que determina si la reserva está activa o no.</em></p></td>
  </tr>
  <tr>
+ <td>placa_vehiculo</td>
+ <td class="data-type">varchar(7)</td>
+ <td class="bool-field"></td>
+ <td class="bool-field"></td>
+ <td class="bool-field"></td>
+ <td class="bool-field">&#10003;</td>
+ <td class="value"></td>
+ <td><p class="max-td-wth"><em>La placa del vehículo que reservó.</em></p></td>
+ </tr>
+ <tr>
+ <td>fecha_ingreso_vehiculo</td>
+ <td class="data-type">timestamp</td>
+ <td class="bool-field"></td>
+ <td class="bool-field"></td>
+ <td class="bool-field"></td>
+ <td class="bool-field"></td>
+ <td class="value"></td>
+ <td><p class="max-td-wth"><em>Determina la hora y fecha de ingreso del vehículo a la sucursal.</em></p></td>
+ </tr>
+ <tr>
  <td>fecha_salida_vehiculo</td>
  <td class="data-type">timestamp</td>
  <td class="bool-field"></td>
@@ -3101,22 +3087,6 @@ max-width: 500px;
  <td colspan="3"><p class="max-td-wth"><em></em></p></td>
  </tr>
  <tr>
- <td>valor_reserva_ck</td>
- <td class="value constr-type">CHECK</td>
- <td></td>
- <td></td>
- <td class="value"><p class="max-td-wth">valor_reserva > 0</p></td>
- <td colspan="3"><p class="max-td-wth"><em>Verifica que el valor de la reserva es un número positivo.</em></p></td>
- </tr>
- <tr>
- <td>fecha_reserva_ck</td>
- <td class="value constr-type">CHECK</td>
- <td></td>
- <td></td>
- <td class="value"><p class="max-td-wth">fecha_inicio_reserva < fecha_salida_vehiculo</p></td>
- <td colspan="3"><p class="max-td-wth"><em>Verifica que las fechas de la reserva sean consistentes.</em></p></td>
- </tr>
- <tr>
  <td>slot_parqueadero_fk</td>
  <td class="value constr-type">FOREIGN KEY</td>
  <td>k_slot_parqueadero, k_sucursal</td>
@@ -3131,6 +3101,22 @@ max-width: 500px;
  <td><a href="#parqueadero.tarjeta_pago">parqueadero.tarjeta_pago</a></td>
  <td class="value"></td>
  <td colspan="3"><p class="max-td-wth"><em></em></p></td>
+ </tr>
+ <tr>
+ <td>valor_reserva_ck</td>
+ <td class="value constr-type">CHECK</td>
+ <td></td>
+ <td></td>
+ <td class="value"><p class="max-td-wth">valor_reserva > 0</p></td>
+ <td colspan="3"><p class="max-td-wth"><em>Verifica que el valor de la reserva es un número positivo.</em></p></td>
+ </tr>
+ <tr>
+ <td>fecha_reserva_ck</td>
+ <td class="value constr-type">CHECK</td>
+ <td></td>
+ <td></td>
+ <td class="value"><p class="max-td-wth">fecha_inicio_reserva < fecha_salida_vehiculo</p></td>
+ <td colspan="3"><p class="max-td-wth"><em>Verifica que las fechas de la reserva sean consistentes.</em></p></td>
  </tr>
  </table>
  </td>
@@ -3332,6 +3318,16 @@ max-width: 500px;
  <td><p class="max-td-wth"><em>Clave primaria de la tabla Sucursal.</em></p></td>
  </tr>
  <tr>
+ <td>k_direccion</td>
+ <td class="data-type">integer</td>
+ <td class="bool-field"></td>
+ <td class="bool-field">&#10003;</td>
+ <td class="bool-field">&#10003;</td>
+ <td class="bool-field">&#10003;</td>
+ <td class="value"></td>
+ <td><p class="max-td-wth"><em></em></p></td>
+ </tr>
+ <tr>
  <td>nombre_sucursal</td>
  <td class="data-type">varchar(50)</td>
  <td class="bool-field"></td>
@@ -3400,6 +3396,47 @@ max-width: 500px;
  <td></td>
  <td class="value"><p class="max-td-wth">tipo_sucursal in ('Cubierta', 'Semicubierta', 'Descubierta')</p></td>
  <td colspan="3"><p class="max-td-wth"><em>Verifica que el tipo de sucursal se ajuste a las reglas de negocio.</em></p></td>
+ </tr>
+ <tr>
+ <td>direccion_fk</td>
+ <td class="value constr-type">FOREIGN KEY</td>
+ <td>k_direccion</td>
+ <td><a href="#parqueadero.direccion">parqueadero.direccion</a></td>
+ <td class="value"></td>
+ <td colspan="3"><p class="max-td-wth"><em></em></p></td>
+ </tr>
+ <tr>
+ <td>sucursal_uq</td>
+ <td class="value constr-type">UNIQUE</td>
+ <td>k_direccion</td>
+ <td></td>
+ <td class="value"></td>
+ <td colspan="3"><p class="max-td-wth"><em></em></p></td>
+ </tr>
+ </table>
+ </td>
+ </tr>
+ <tr>
+ <td colspan="8" class="nested-tab-parent">
+ <table class="nested-tab">
+ <tr>
+ <td class="title" colspan="6">Indexes</td>
+ </tr>
+ <tr>
+ <td class="title">Name</td>
+ <td class="title">Type</td>
+ <td class="title">Column(s)</td>
+ <td class="title">Expression(s)</td>
+ <td class="title">Predicate</td>
+ <td class="title">Description</td>
+ </tr>
+ <tr>
+ <td>sucursal_direccion_ixfk</td>
+ <td class="value constr-type">btree</td>
+ <td>k_direccion</td>
+ <td class="value"><p class="max-td-wth"></p></td>
+ <td class="value"><p class="max-td-wth"></p></td>
+ <td><p class="max-td-wth"><em>Índice de la llave foránea de la tabla Dirección.</em></p></td></td>
  </tr>
  </table>
  </td>
@@ -4038,20 +4075,20 @@ max-width: 500px;
  <td colspan="3"><p class="max-td-wth"><em></em></p></td>
  </tr>
  <tr>
- <td>tipo_vehiculo_ck</td>
- <td class="value constr-type">CHECK</td>
- <td></td>
- <td></td>
- <td class="value"><p class="max-td-wth">tipo_vehiculo in ('SUV', 'Automóvil', 'Moto')</p></td>
- <td colspan="3"><p class="max-td-wth"><em>Verifica que el tipo de vehículo se corresponde con las reglas de negocio.</em></p></td>
- </tr>
- <tr>
  <td>placa_cliente_uq</td>
  <td class="value constr-type">UNIQUE</td>
  <td>k_cliente, placa_vehiculo</td>
  <td></td>
  <td class="value"></td>
  <td colspan="3"><p class="max-td-wth"><em>Verifica que un cliente no tenga dos veces el mismo vehículo.</em></p></td>
+ </tr>
+ <tr>
+ <td>tipo_vehiculo_ck</td>
+ <td class="value constr-type">CHECK</td>
+ <td></td>
+ <td></td>
+ <td class="value"><p class="max-td-wth">tipo_vehiculo in ('SUV', 'Automóvil', 'Moto')</p></td>
+ <td colspan="3"><p class="max-td-wth"><em>Verifica que el tipo de vehículo se corresponde con las reglas de negocio.</em></p></td>
  </tr>
  </table>
  </td>
@@ -4096,7 +4133,7 @@ max-width: 500px;
  <a href="#index" class="nav-link">&uarr; Index</a>
 </div>
 <footer>
-Generated at <em>2023-05-25T00:08:15 </em> by <strong>pgModeler 1.0.2</strong><br/>
+Generated at <em>2023-05-29T12:32:18 </em> by <strong>pgModeler 1.0.2</strong><br/>
 <a href="https://pgmodeler.io">PostgreSQL Database Modeler - https://pgmodeler.io</a><br/>
 Copyright © 2006 - 2023 Raphael Araújo e Silva
 </footer> </body>
