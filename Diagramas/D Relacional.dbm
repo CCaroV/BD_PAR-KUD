@@ -3,7 +3,7 @@
 CAUTION: Do not modify this file unless you know what you are doing.
  Unexpected results may occur if the code is changed deliberately.
 -->
-<dbmodel pgmodeler-ver="1.0.2" use-changelog="false" last-position="567,1105" last-zoom="1.7" max-obj-count="172"
+<dbmodel pgmodeler-ver="1.0.2" use-changelog="false" last-position="0,665" last-zoom="1.05" max-obj-count="172"
 	 default-schema="parqueadero" default-owner="parkud_db_admin"
 	 layers="Default layer"
 	 active-layers="0"
@@ -189,7 +189,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</customidxs>
 </table>
 
-<table name="reserva" layers="0" collapse-mode="2" rls-enabled="true" max-obj-count="19" z-value="0">
+<table name="reserva" layers="0" collapse-mode="2" rls-enabled="true" max-obj-count="20" z-value="0">
 	<schema name="parqueadero"/>
 	<role name="parkud_db_admin"/>
 	<comment> <![CDATA[Las diferentes reservas que un cliente puede hacer de un parqueadero.]]> </comment>
@@ -213,6 +213,10 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<column name="esta_activa" not-null="true">
 		<type name="boolean" length="0"/>
 		<comment> <![CDATA[Booleano que determina si la reserva está activa o no.]]> </comment>
+	</column>
+	<column name="placa_vehiculo" not-null="true">
+		<type name="varchar" length="7"/>
+		<comment> <![CDATA[La placa del vehículo que reservó.]]> </comment>
 	</column>
 	<column name="fecha_ingreso_vehiculo">
 		<type name="timestamp" length="0"/>
@@ -1740,12 +1744,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	 src-fk-pattern="{st}_fk"
 	 src-table="parqueadero.tarjeta_pago"
 	 dst-table="parqueadero.reserva"
-	 src-required="true" dst-required="false">
-	<line>
-		<position x="1000" y="1120"/>
-	<position x="860" y="1120"/>
-	</line>
-</relationship>
+	 src-required="true" dst-required="false"/>
 
 <index name="sucursal_direccion_ixfk" table="parqueadero.sucursal"
 	 concurrent="false" unique="false" fast-update="false" buffering="false"
