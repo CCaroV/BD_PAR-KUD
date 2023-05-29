@@ -146,6 +146,7 @@ CREATE OR REPLACE PROCEDURE PARQUEADERO.INSERTAR_METODO_PAGO_PR(
 LANGUAGE PLPGSQL
 AS $$
 DECLARE 
+    -- Declaración de variables locales
     K_CLIENTE_L PARQUEADERO.CLIENTE.K_CLIENTE%TYPE;
 BEGIN
     -- Recupera la clave primaria del cliente conectado a la BD
