@@ -614,6 +614,11 @@ BEGIN
             AND C.NOMBRE_CIUDAD = CIUDAD_P
             AND SP.ES_CUBIERTO = ES_PARQ_CUBIERTO_P
             AND S.NOMBRE_SUCURSAL = NOMBRE_SUCURSAL_P
+        GROUP BY "Ciudad",
+            "Nombre sucursal",
+            "Dirección",
+            "Tarifa minuto"
+        HAVING (COUNT(DISTINCT SP.K_SLOT_PARQUEADERO) - COUNT(DISTINCT R.K_RESERVA)) > 0
     ) T;
 
     -- Devuelve un JSON con la información de la consulta
