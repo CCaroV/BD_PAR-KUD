@@ -633,3 +633,50 @@ ALTER FUNCTION PARQUEADERO.MOSTRAR_INFO_SUCURSAL_RESERVA_FU(
     CHARACTER VARYING, 
     CHARACTER VARYING
 ) OWNER TO PARKUD_DB_ADMIN;
+
+-- Función que retorna la información de los métodos de pago de un cliente para pagar una reserva.
+CREATE OR REPLACE FUNCTION PARQUEADERO.MOSTRAR_METODOS_PAGO_FU()
+RETURNS JSON
+LANGUAGE PLPGSQL
+AS $$
+DECLARE 
+    -- Declaración de variables locales
+    RESULTADO_L JSON;
+    K_CLIENTE_L PARQUEADERO.CLIENTE.K_CLIENTE%TYPE;
+BEGIN
+    -- Recupera la clave primaria del cliente conectado a la BD
+    SELECT K_CLIENTE INTO STRICT K_CLIENTE_L
+    FROM PARQUEADERO.CLIENTE
+    WHERE PARQUEADERO.PGP_SYM_DECRYPT(CORREO_CLIENTE, 'AES_KEY') = CURRENT_USER;
+
+    -- Inserta en un JSON el resultado de la consukta
+    SELECT JSON_AGG(ROW_TO_JSON(T)) INTO RESULTADO_L 
+    -- Consulta que devuelve la información de pago del cliente
+    FROM(
+        SELECT PARQUEADERO.PGP_SYM_DECRYPT(T.TIPO_TARJETA, 'AES_KEY')  "Tipo tarjeta",
+            PARQUEADERO.PGP_SYM_DECRYPT(T.ULTIMOS_CUATRO_DIGITOS, 'AES_KEY') "Últimos 4 dígitos",
+            PARQUEADERO.PGP_SYM_DECRYPT(T.NOMBRE_DUENIO_TARJETA, 'AES_KEY') || ' ' || PARQUEADERO.PGP_SYM_DECRYPT(T.APELLIDO_DUENIO_TARJETA, 'AES_KEY') "Nombre en la tarjeta"
+        FROM PARQUEADERO.CLIENTE C
+            INNER JOIN PARQUEADERO.TARJETA_PAGO T ON C.K_CLIENTE = T.K_CLIENTE
+        WHERE C.K_CLIENTE = K_CLIENTE_L
+    ) T;
+
+    -- Devuelve un JSON con la información de la consulta
+    RETURN RESULTADO_L;
+EXCEPTION
+    -- Excepciones
+    WHEN NO_DATA_FOUND THEN
+        ROLLBACK;
+        RAISE EXCEPTION 'El usuario actual no está registrado como cliente, %/%', SQLSTATE, SQLERRM;
+    WHEN TOO_MANY_ROWS THEN
+        ROLLBACK;
+        RAISE EXCEPTION 'Hay inconsistencias en la BD, tabla cliente: hay un correo repetido, %/%', SQLSTATE, SQLERRM;
+    WHEN OTHERS THEN
+        ROLLBACK;
+        RAISE EXCEPTION 'MOSTRAR_METODOS_PAGO_FU ha ocurrido un error: %/%', SQLSTATE, SQLERRM;
+END;
+$$;
+
+COMMENT ON FUNCTION PARQUEADERO.MOSTRAR_METODOS_PAGO_FU IS E'Función que retorna la información de los métodos de pago de un cliente para pagar una reserva.';
+
+ALTER FUNCTION PARQUEADERO.MOSTRAR_METODOS_PAGO_FU() OWNER TO PARKUD_DB_ADMIN;
