@@ -116,7 +116,19 @@ CREATE OR REPLACE FUNCTION PARQUEADERO.VERIFICAR_NOMBRE_SUCURSAL_TR()
 RETURNS TRIGGER
 LANGUAGE PLPGSQL
 AS $$
+DECLARE
+    -- Declaración de variables locales
+    K_CIUDAD_L PARQUEADERO.CIUDAD.K_CIUDAD%TYPE;
 BEGIN
+    -- Inserta la PK de la ciudad en la variable
+    SELECT C.K_CIUDAD INTO STRICT K_CIUDAD_L
+    FROM PARQUEADERO.PAIS P
+        INNER JOIN PARQUEADERO.DEPARTAMENTO DP ON P.K_PAIS = DP.K_PAIS
+        INNER JOIN PARQUEADERO.CIUDAD C ON DP.K_DEPARTAMENTO = C.K_DEPARTAMENTO
+        INNER JOIN PARQUEADERO.DIRECCION D ON C.K_CIUDAD = D.K_CIUDAD
+    WHERE D.K_DIRECCION = NEW.K_DIRECCION;
+
+    -- Verifica que el nombre de la sucursal no se repita en la misma ciudad
     IF EXISTS (
         SELECT 1
         FROM PARQUEADERO.SUCURSAL
@@ -124,19 +136,19 @@ BEGIN
           AND K_DIRECCION IN (
               SELECT K_DIRECCION
               FROM PARQUEADERO.DIRECCION
-              WHERE K_CIUDAD = NEW.K_CIUDAD
+              WHERE K_CIUDAD = K_CIUDAD_L
           )
           AND K_SUCURSAL <> NEW.K_SUCURSAL -- Excluir el registro actual en caso de actualización
     ) THEN
-        -- Lanzar una excepción indicando que el nombre de la sucursal no es único en relación con la ciudad
-        RAISE EXCEPTION 'Ya existe una sucursal con el mismo nombre en la misma ciudad';
+        -- Lanza una excepción indicando que el nombre de la sucursal no es único en relación con la ciudad
+        RAISE EXCEPTION 'Ya existe una sucursal con el mismo nombre en la misma ciudad.';
     END IF;
 
     RETURN NEW;
 END;
 $$;
 
-CREATE TRIGGER VERIFICAR_NOMBRE_SUCURSAL_TR
+CREATE OR REPLACE TRIGGER VERIFICAR_NOMBRE_SUCURSAL_TR
     BEFORE INSERT OR UPDATE ON PARQUEADERO.SUCURSAL
     FOR EACH ROW
     EXECUTE FUNCTION PARQUEADERO.VERIFICAR_NOMBRE_SUCURSAL_TR();
