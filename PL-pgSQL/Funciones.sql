@@ -689,3 +689,46 @@ $$;
 COMMENT ON FUNCTION PARQUEADERO.MOSTRAR_METODOS_PAGO_FU IS E'Función que retorna la información de los métodos de pago de un cliente para pagar una reserva.';
 
 ALTER FUNCTION PARQUEADERO.MOSTRAR_METODOS_PAGO_FU() OWNER TO PARKUD_DB_ADMIN;
+
+
+-- Función que retorna los valores de auditoría
+CREATE OR REPLACE FUNCTION AUDITORIA.MOSTRAR_AUDITORIA_FU()
+RETURNS JSON
+LANGUAGE PLPGSQL
+AS $$
+DECLARE 
+    RESULTADO_L JSON;
+BEGIN
+
+    SELECT JSON_AGG(ROW_TO_JSON(T)) INTO RESULTADO_L
+    FROM (
+        SELECT AR.NOMBRE_USUARIO_RESERVA "Usuario",
+            AR.FECHA_AUDIT_RESERVA "Fecha",
+            'Reserva:' || ' ' || TIPO_TRANSACCION_RESERVA "Transacción",
+            C.NOMBRE_CIUDAD "Ciudad",
+            S.NOMBRE_SUCURSAL "Sucursal"
+        FROM PARQUEADERO.PAIS P 
+            INNER JOIN PARQUEADERO.DEPARTAMENTO DP ON P.K_PAIS = DP.K_PAIS
+            INNER JOIN PARQUEADERO.CIUDAD C ON DP.K_DEPARTAMENTO = C.K_DEPARTAMENTO
+            INNER JOIN PARQUEADERO.DIRECCION D ON C.K_CIUDAD = D.K_CIUDAD
+            INNER JOIN PARQUEADERO.SUCURSAL S ON D.K_DIRECCION = S.K_DIRECCION
+            INNER JOIN AUDITORIA.AUDIT_RESERVA AR ON S.K_SUCURSAL = AR.K_SUCURSAL
+        UNION ALL
+        SELECT NOMBRE_USUARIO_VEHICULO "Usuario",
+            FECHA_AUDIT_VEHICULO "Fecha",
+            'Vehículo' || ' ' || PLACA_VEHICULO || ': ' || TIPO_TRANSACCION_VEHICULO "Transacción",
+            'N/A' "Ciudad",
+            'N/A' "Sucursal"
+        FROM AUDITORIA.AUDIT_VEHICULO
+        UNION ALL
+        SELECT NOMBRE_USUARIO "Usuario",
+            FECHA_AUDIT_USUARIO "Fecha",
+            'Ingreso a la app:' || ' ' || DIRECCION_IP "Transacción",
+            'N/A' "Ciudad",
+            'N/A' "Sucursal"
+        FROM AUDITORIA.AUDIT_USUARIO
+    ) T;
+
+    RETURN RESULTADO_L;
+END;
+$$;
