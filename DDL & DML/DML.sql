@@ -566,6 +566,12 @@ INSERT INTO PARQUEADERO.DIRECCION(
     'Carrera 66B # 56F - 12 Sur',
     'Lote Ciudad Bolivar',
     '111174'
+),
+(
+    ( SELECT K_CIUDAD FROM PARQUEADERO.CIUDAD WHERE NOMBRE_CIUDAD = 'Barranquilla'),
+    'Calle 30 # 8-75 Lado Occidental',
+    'Edificio Carrera 14',
+    '154123'
 );
 
 -- Insertar una sucursal con su respectiva dirección.
@@ -600,6 +606,12 @@ INSERT INTO PARQUEADERO.SUCURSAL(
     ( SELECT K_DIRECCION FROM PARQUEADERO.DIRECCION WHERE CODIGO_POSTAL = '111174' ),
     'Sucursal Ciudad Bolivar',
     'Cubierta',
+    0,
+    0
+)(
+    ( SELECT K_DIRECCION FROM PARQUEADERO.DIRECCION WHERE CODIGO_POSTAL = '154123' ),
+    'Sucursal Carrera 14',
+    'Descubierta',
     0,
     0
 );
@@ -655,6 +667,16 @@ INSERT INTO PARQUEADERO.TARIFA_MINUTO(
     50,
     0,
     10000,
+    ( SELECT CURRENT_TIMESTAMP AT TIME ZONE 'America/Bogota'),
+    NULL,
+    TRUE
+)(
+    ( SELECT K_SUCURSAL FROM PARQUEADERO.SUCURSAL WHERE NOMBRE_SUCURSAL = 'Sucursal Carrera 14'),
+    80,
+    60,
+    50,
+    0,
+    6000,
     ( SELECT CURRENT_TIMESTAMP AT TIME ZONE 'America/Bogota'),
     NULL,
     TRUE
@@ -886,6 +908,61 @@ INSERT INTO PARQUEADERO.HORARIO_SUCURSAL(
 ),
 (
     ( SELECT K_SUCURSAL FROM PARQUEADERO.SUCURSAL WHERE NOMBRE_SUCURSAL = 'Sucursal Ciudad Bolivar'),
+    'Domingo',
+    '04:00',
+    '19:00',
+    FALSE,
+    FALSE
+),(
+    ( SELECT K_SUCURSAL FROM PARQUEADERO.SUCURSAL WHERE NOMBRE_SUCURSAL = 'Sucursal Carrera 14'),
+    'Lunes',
+    '02:00',
+    '23:00',
+    FALSE,
+    FALSE
+),
+(
+    ( SELECT K_SUCURSAL FROM PARQUEADERO.SUCURSAL WHERE NOMBRE_SUCURSAL = 'Sucursal Carrera 14'),
+    'Martes',
+    '06:00',
+    '23:00',
+    FALSE,
+    FALSE
+),
+(
+    ( SELECT K_SUCURSAL FROM PARQUEADERO.SUCURSAL WHERE NOMBRE_SUCURSAL = 'Sucursal Carrera 14'),
+    'Miércoles',
+    '05:00',
+    '20:00',
+    FALSE,
+    FALSE
+),
+(
+    ( SELECT K_SUCURSAL FROM PARQUEADERO.SUCURSAL WHERE NOMBRE_SUCURSAL = 'Sucursal Carrera 14'),
+    'Jueves',
+    '04:00',
+    '19:00',
+    FALSE,
+    FALSE
+),
+(
+    ( SELECT K_SUCURSAL FROM PARQUEADERO.SUCURSAL WHERE NOMBRE_SUCURSAL = 'Sucursal Carrera 14'),
+    'Viernes',
+    '04:00',
+    '19:00',
+    FALSE,
+    FALSE
+),
+(
+    ( SELECT K_SUCURSAL FROM PARQUEADERO.SUCURSAL WHERE NOMBRE_SUCURSAL = 'Sucursal Carrera 14'),
+    'Sábado',
+    NULL,
+    NULL,
+    TRUE,
+    FALSE
+),
+(
+    ( SELECT K_SUCURSAL FROM PARQUEADERO.SUCURSAL WHERE NOMBRE_SUCURSAL = 'Sucursal Carrera 14'),
     'Domingo',
     '04:00',
     '19:00',
@@ -2192,6 +2269,330 @@ INSERT INTO PARQUEADERO.SLOT_PARQUEADERO(
 (
     'B27',
     ( SELECT K_SUCURSAL FROM PARQUEADERO.SUCURSAL WHERE NOMBRE_SUCURSAL = 'Sucursal Ciudad Bolivar'),
+    TRUE,
+    'Automóvil'
+),
+(
+    'A1',
+    ( SELECT K_SUCURSAL FROM PARQUEADERO.SUCURSAL WHERE NOMBRE_SUCURSAL = 'Sucursal Carrera 14'),
+    TRUE,
+    'Moto'
+),
+(
+    'A2',
+    ( SELECT K_SUCURSAL FROM PARQUEADERO.SUCURSAL WHERE NOMBRE_SUCURSAL = 'Sucursal Carrera 14'),
+    TRUE,
+    'Moto'
+),
+(
+    'A3',
+    ( SELECT K_SUCURSAL FROM PARQUEADERO.SUCURSAL WHERE NOMBRE_SUCURSAL = 'Sucursal Carrera 14'),
+    TRUE,
+    'Moto'
+),
+(
+    'A4',
+    ( SELECT K_SUCURSAL FROM PARQUEADERO.SUCURSAL WHERE NOMBRE_SUCURSAL = 'Sucursal Carrera 14'),
+    TRUE,
+    'Moto'
+),
+(
+    'A5',
+    ( SELECT K_SUCURSAL FROM PARQUEADERO.SUCURSAL WHERE NOMBRE_SUCURSAL = 'Sucursal Carrera 14'),
+    TRUE,
+    'Moto'
+),
+(
+    'A6',
+    ( SELECT K_SUCURSAL FROM PARQUEADERO.SUCURSAL WHERE NOMBRE_SUCURSAL = 'Sucursal Carrera 14'),
+    TRUE,
+    'Moto'
+),
+(
+    'A7',
+    ( SELECT K_SUCURSAL FROM PARQUEADERO.SUCURSAL WHERE NOMBRE_SUCURSAL = 'Sucursal Carrera 14'),
+    TRUE,
+    'Moto'
+),
+(
+    'A8',
+    ( SELECT K_SUCURSAL FROM PARQUEADERO.SUCURSAL WHERE NOMBRE_SUCURSAL = 'Sucursal Carrera 14'),
+    TRUE,
+    'Moto'
+),
+(
+    'A9',
+    ( SELECT K_SUCURSAL FROM PARQUEADERO.SUCURSAL WHERE NOMBRE_SUCURSAL = 'Sucursal Carrera 14'),
+    TRUE,
+    'Moto'
+),
+(
+    'A10',
+    ( SELECT K_SUCURSAL FROM PARQUEADERO.SUCURSAL WHERE NOMBRE_SUCURSAL = 'Sucursal Carrera 14'),
+    TRUE,
+    'Moto'
+),
+(
+    'A11',
+    ( SELECT K_SUCURSAL FROM PARQUEADERO.SUCURSAL WHERE NOMBRE_SUCURSAL = 'Sucursal Carrera 14'),
+    TRUE,
+    'Moto'
+),
+(
+    'A12',
+    ( SELECT K_SUCURSAL FROM PARQUEADERO.SUCURSAL WHERE NOMBRE_SUCURSAL = 'Sucursal Carrera 14'),
+    TRUE,
+    'Moto'
+),
+(
+    'A13',
+    ( SELECT K_SUCURSAL FROM PARQUEADERO.SUCURSAL WHERE NOMBRE_SUCURSAL = 'Sucursal Carrera 14'),
+    TRUE,
+    'Moto'
+),
+(
+    'A14',
+    ( SELECT K_SUCURSAL FROM PARQUEADERO.SUCURSAL WHERE NOMBRE_SUCURSAL = 'Sucursal Carrera 14'),
+    TRUE,
+    'Moto'
+),
+(
+    'A15',
+    ( SELECT K_SUCURSAL FROM PARQUEADERO.SUCURSAL WHERE NOMBRE_SUCURSAL = 'Sucursal Carrera 14'),
+    TRUE,
+    'Moto'
+),
+(
+    'A16',
+    ( SELECT K_SUCURSAL FROM PARQUEADERO.SUCURSAL WHERE NOMBRE_SUCURSAL = 'Sucursal Carrera 14'),
+    TRUE,
+    'Moto'
+),
+(
+    'A17',
+    ( SELECT K_SUCURSAL FROM PARQUEADERO.SUCURSAL WHERE NOMBRE_SUCURSAL = 'Sucursal Carrera 14'),
+    TRUE,
+    'Moto'
+),
+(
+    'A18',
+    ( SELECT K_SUCURSAL FROM PARQUEADERO.SUCURSAL WHERE NOMBRE_SUCURSAL = 'Sucursal Carrera 14'),
+    TRUE,
+    'Moto'
+),
+(
+    'A19',
+    ( SELECT K_SUCURSAL FROM PARQUEADERO.SUCURSAL WHERE NOMBRE_SUCURSAL = 'Sucursal Carrera 14'),
+    TRUE,
+    'Moto'
+),
+(
+    'A20',
+    ( SELECT K_SUCURSAL FROM PARQUEADERO.SUCURSAL WHERE NOMBRE_SUCURSAL = 'Sucursal Carrera 14'),
+    TRUE,
+    'Moto'
+),
+(
+    'A21',
+    ( SELECT K_SUCURSAL FROM PARQUEADERO.SUCURSAL WHERE NOMBRE_SUCURSAL = 'Sucursal Carrera 14'),
+    TRUE,
+    'Moto'
+),
+(
+    'A22',
+    ( SELECT K_SUCURSAL FROM PARQUEADERO.SUCURSAL WHERE NOMBRE_SUCURSAL = 'Sucursal Carrera 14'),
+    TRUE,
+    'Moto'
+),
+(
+    'A23',
+    ( SELECT K_SUCURSAL FROM PARQUEADERO.SUCURSAL WHERE NOMBRE_SUCURSAL = 'Sucursal Carrera 14'),
+    TRUE,
+    'Moto'
+),
+(
+    'A24',
+    ( SELECT K_SUCURSAL FROM PARQUEADERO.SUCURSAL WHERE NOMBRE_SUCURSAL = 'Sucursal Carrera 14'),
+    TRUE,
+    'Moto'
+),
+(
+    'A25',
+    ( SELECT K_SUCURSAL FROM PARQUEADERO.SUCURSAL WHERE NOMBRE_SUCURSAL = 'Sucursal Carrera 14'),
+    TRUE,
+    'Moto'
+),
+(
+    'A26',
+    ( SELECT K_SUCURSAL FROM PARQUEADERO.SUCURSAL WHERE NOMBRE_SUCURSAL = 'Sucursal Carrera 14'),
+    TRUE,
+    'Moto'
+),
+(
+    'A27',
+    ( SELECT K_SUCURSAL FROM PARQUEADERO.SUCURSAL WHERE NOMBRE_SUCURSAL = 'Sucursal Carrera 14'),
+    TRUE,
+    'Moto'
+),
+(
+    'B1',
+    ( SELECT K_SUCURSAL FROM PARQUEADERO.SUCURSAL WHERE NOMBRE_SUCURSAL = 'Sucursal Carrera 14'),
+    TRUE,
+    'Automóvil'
+),
+(
+    'B2',
+    ( SELECT K_SUCURSAL FROM PARQUEADERO.SUCURSAL WHERE NOMBRE_SUCURSAL = 'Sucursal Carrera 14'),
+    TRUE,
+    'Automóvil'
+),
+(
+    'B3',
+    ( SELECT K_SUCURSAL FROM PARQUEADERO.SUCURSAL WHERE NOMBRE_SUCURSAL = 'Sucursal Carrera 14'),
+    TRUE,
+    'Automóvil'
+),
+(
+    'B4',
+    ( SELECT K_SUCURSAL FROM PARQUEADERO.SUCURSAL WHERE NOMBRE_SUCURSAL = 'Sucursal Carrera 14'),
+    TRUE,
+    'Automóvil'
+),
+(
+    'B5',
+    ( SELECT K_SUCURSAL FROM PARQUEADERO.SUCURSAL WHERE NOMBRE_SUCURSAL = 'Sucursal Carrera 14'),
+    TRUE,
+    'Automóvil'
+),
+(
+    'B6',
+    ( SELECT K_SUCURSAL FROM PARQUEADERO.SUCURSAL WHERE NOMBRE_SUCURSAL = 'Sucursal Carrera 14'),
+    TRUE,
+    'Automóvil'
+),
+(
+    'B7',
+    ( SELECT K_SUCURSAL FROM PARQUEADERO.SUCURSAL WHERE NOMBRE_SUCURSAL = 'Sucursal Carrera 14'),
+    TRUE,
+    'Automóvil'
+),
+(
+    'B8',
+    ( SELECT K_SUCURSAL FROM PARQUEADERO.SUCURSAL WHERE NOMBRE_SUCURSAL = 'Sucursal Carrera 14'),
+    TRUE,
+    'Automóvil'
+),
+(
+    'B9',
+    ( SELECT K_SUCURSAL FROM PARQUEADERO.SUCURSAL WHERE NOMBRE_SUCURSAL = 'Sucursal Carrera 14'),
+    TRUE,
+    'Automóvil'
+),
+(
+    'B10',
+    ( SELECT K_SUCURSAL FROM PARQUEADERO.SUCURSAL WHERE NOMBRE_SUCURSAL = 'Sucursal Carrera 14'),
+    TRUE,
+    'Automóvil'
+),
+(
+    'B11',
+    ( SELECT K_SUCURSAL FROM PARQUEADERO.SUCURSAL WHERE NOMBRE_SUCURSAL = 'Sucursal Carrera 14'),
+    TRUE,
+    'Automóvil'
+),
+(
+    'B12',
+    ( SELECT K_SUCURSAL FROM PARQUEADERO.SUCURSAL WHERE NOMBRE_SUCURSAL = 'Sucursal Carrera 14'),
+    TRUE,
+    'Automóvil'
+),
+(
+    'B13',
+    ( SELECT K_SUCURSAL FROM PARQUEADERO.SUCURSAL WHERE NOMBRE_SUCURSAL = 'Sucursal Carrera 14'),
+    TRUE,
+    'Automóvil'
+),
+(
+    'B14',
+    ( SELECT K_SUCURSAL FROM PARQUEADERO.SUCURSAL WHERE NOMBRE_SUCURSAL = 'Sucursal Carrera 14'),
+    TRUE,
+    'Automóvil'
+),
+(
+    'B15',
+    ( SELECT K_SUCURSAL FROM PARQUEADERO.SUCURSAL WHERE NOMBRE_SUCURSAL = 'Sucursal Carrera 14'),
+    TRUE,
+    'Automóvil'
+),
+(
+    'B16',
+    ( SELECT K_SUCURSAL FROM PARQUEADERO.SUCURSAL WHERE NOMBRE_SUCURSAL = 'Sucursal Carrera 14'),
+    TRUE,
+    'Automóvil'
+),
+(
+    'B17',
+    ( SELECT K_SUCURSAL FROM PARQUEADERO.SUCURSAL WHERE NOMBRE_SUCURSAL = 'Sucursal Carrera 14'),
+    TRUE,
+    'Automóvil'
+),
+(
+    'B18',
+    ( SELECT K_SUCURSAL FROM PARQUEADERO.SUCURSAL WHERE NOMBRE_SUCURSAL = 'Sucursal Carrera 14'),
+    TRUE,
+    'Automóvil'
+),
+(
+    'B19',
+    ( SELECT K_SUCURSAL FROM PARQUEADERO.SUCURSAL WHERE NOMBRE_SUCURSAL = 'Sucursal Carrera 14'),
+    TRUE,
+    'Automóvil'
+),
+(
+    'B20',
+    ( SELECT K_SUCURSAL FROM PARQUEADERO.SUCURSAL WHERE NOMBRE_SUCURSAL = 'Sucursal Carrera 14'),
+    TRUE,
+    'Automóvil'
+),
+(
+    'B21',
+    ( SELECT K_SUCURSAL FROM PARQUEADERO.SUCURSAL WHERE NOMBRE_SUCURSAL = 'Sucursal Carrera 14'),
+    TRUE,
+    'Automóvil'
+),
+(
+    'B22',
+    ( SELECT K_SUCURSAL FROM PARQUEADERO.SUCURSAL WHERE NOMBRE_SUCURSAL = 'Sucursal Carrera 14'),
+    TRUE,
+    'Automóvil'
+),
+(
+    'B23',
+    ( SELECT K_SUCURSAL FROM PARQUEADERO.SUCURSAL WHERE NOMBRE_SUCURSAL = 'Sucursal Carrera 14'),
+    TRUE,
+    'Automóvil'
+),
+(
+    'B24',
+    ( SELECT K_SUCURSAL FROM PARQUEADERO.SUCURSAL WHERE NOMBRE_SUCURSAL = 'Sucursal Carrera 14'),
+    TRUE,
+    'Automóvil'
+),
+(
+    'B25',
+    ( SELECT K_SUCURSAL FROM PARQUEADERO.SUCURSAL WHERE NOMBRE_SUCURSAL = 'Sucursal Carrera 14'),
+    TRUE,
+    'Automóvil'
+),
+(
+    'B26',
+    ( SELECT K_SUCURSAL FROM PARQUEADERO.SUCURSAL WHERE NOMBRE_SUCURSAL = 'Sucursal Carrera 14'),
+    TRUE,
+    'Automóvil'
+),
+(
+    'B27',
+    ( SELECT K_SUCURSAL FROM PARQUEADERO.SUCURSAL WHERE NOMBRE_SUCURSAL = 'Sucursal Carrera 14'),
     TRUE,
     'Automóvil'
 );
