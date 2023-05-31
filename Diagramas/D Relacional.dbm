@@ -3,7 +3,7 @@
 CAUTION: Do not modify this file unless you know what you are doing.
  Unexpected results may occur if the code is changed deliberately.
 -->
-<dbmodel pgmodeler-ver="1.0.2" use-changelog="false" last-position="0,665" last-zoom="1.05" max-obj-count="172"
+<dbmodel pgmodeler-ver="1.0.2" use-changelog="false" last-position="137,1255" last-zoom="0.85" max-obj-count="172"
 	 default-schema="parqueadero" default-owner="parkud_db_admin"
 	 layers="Default layer"
 	 active-layers="0"
@@ -1317,7 +1317,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</customidxs>
 
 	<customidxs object-type="constraint">
-		<object name="cliente_fk" index="2"/>
+		<object name="cliente_fk" index="4"/>
 		<object name="vehiculo_fk" index="1"/>
 	</customidxs>
 </table>
@@ -1341,6 +1341,9 @@ CAUTION: Do not modify this file unless you know what you are doing.
 		<position x="1160" y="1980"/>
 	<position x="1160" y="2100"/>
 	</line>
+	<label ref-type="name-label">
+		<position x="9.7045" y="2.10901"/>
+	</label>
 </relationship>
 
 <table name="audit_usuario" layers="0" collapse-mode="2" max-obj-count="7" z-value="0">
@@ -1498,15 +1501,6 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	 concurrent="false" unique="false" fast-update="false" buffering="false"
 	 index-type="btree" factor="0">
 	<comment> <![CDATA[Índice de la llave foránea de la tabla Cliente.]]> </comment>
-		<idxelement use-sorting="true" nulls-first="false" asc-order="true">
-			<column name="k_cliente"/>
-		</idxelement>
-</index>
-
-<index name="auditvehiculo_cliente_ixfk" table="auditoria.audit_vehiculo"
-	 concurrent="false" unique="false" fast-update="false" buffering="false"
-	 index-type="btree" factor="0">
-	<comment> <![CDATA[Índice de la llave foránea de la tabla Cliente del esquema Parqueadero.]]> </comment>
 		<idxelement use-sorting="true" nulls-first="false" asc-order="true">
 			<column name="k_cliente"/>
 		</idxelement>
@@ -1752,6 +1746,15 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<comment> <![CDATA[Índice de la llave foránea de la tabla Dirección.]]> </comment>
 		<idxelement use-sorting="true" nulls-first="false" asc-order="true">
 			<column name="k_direccion"/>
+		</idxelement>
+</index>
+
+<index name="auditvehiculo_cliente_ixfk" table="auditoria.audit_vehiculo"
+	 concurrent="false" unique="false" fast-update="false" buffering="false"
+	 index-type="btree" factor="0">
+	<comment> <![CDATA[Índice de la llave foránea de la tabla Cliente del esquema Parqueadero.]]> </comment>
+		<idxelement use-sorting="true" nulls-first="false" asc-order="true">
+			<column name="k_cliente"/>
 		</idxelement>
 </index>
 
