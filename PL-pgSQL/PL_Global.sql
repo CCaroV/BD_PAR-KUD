@@ -98,7 +98,7 @@ EXCEPTION
 END;
 $$;
 
-COMMENT ON FUNCTION PARQUEADERO.CREAR_TABLA_TEMP_USUARIO_PR IS E'Procedimiento que crea una tabla temporal para ingresar la clave primaria del usuario conectado.';
+COMMENT ON PROCEDURE PARQUEADERO.CREAR_TABLA_TEMP_USUARIO_PR IS E'Procedimiento que crea una tabla temporal para ingresar la clave primaria del usuario conectado.';
 
 ALTER PROCEDURE PARQUEADERO.CREAR_TABLA_TEMP_USUARIO_PR OWNER TO PARKUD_DB_ADMIN;
 
@@ -129,7 +129,7 @@ EXCEPTION
 END;
 $$;
 
-COMMENT ON FUNCTION PARQUEADERO.INSERTAR_LLAVE_CLIENTE_PR IS E'Procedimiento para insertar la llave primaria de un cliente conectado en la BD en la tabla temporal de llave primaria.';
+COMMENT ON PROCEDURE PARQUEADERO.INSERTAR_LLAVE_CLIENTE_PR IS E'Procedimiento para insertar la llave primaria de un cliente conectado en la BD en la tabla temporal de llave primaria.';
 
 ALTER PROCEDURE PARQUEADERO.INSERTAR_LLAVE_CLIENTE_PR OWNER TO PARKUD_DB_ADMIN;
 
@@ -160,6 +160,6 @@ EXCEPTION
 END;
 $$;
 
-COMMENT ON FUNCTION PARQUEADERO.INSERTAR_LLAVE_EMPLEADO_PR IS E'Procedimiento para insertar la llave primaria de un empleado conectado en la BD en la tabla temporal de llave primaria.';
+COMMENT ON PROCEDURE PARQUEADERO.INSERTAR_LLAVE_EMPLEADO_PR IS E'Procedimiento para insertar la llave primaria de un empleado conectado en la BD en la tabla temporal de llave primaria.';
 
 ALTER PROCEDURE PARQUEADERO.INSERTAR_LLAVE_EMPLEADO_PR OWNER TO PARKUD_DB_ADMIN;
