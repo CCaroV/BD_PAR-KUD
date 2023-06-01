@@ -439,7 +439,7 @@ max-width: 500px;
  <td class="value constr-type">CHECK</td>
  <td></td>
  <td></td>
- <td class="value"><p class="max-td-wth">tipo_transaccion_reserva in ('Modificación', 'Eliminación', 'Cancelación')</p></td>
+ <td class="value"><p class="max-td-wth">tipo_transaccion_reserva in ('Creación','Modificación', 'Eliminación', 'Cancelación')</p></td>
  <td colspan="3"><p class="max-td-wth"><em>Verifica que el valor del tipo de transacción de la tabla de reserva sea válido.</em></p></td>
  </tr>
  </table>
@@ -575,6 +575,16 @@ max-width: 500px;
  <td><p class="max-td-wth"><em>Fecha y hora en que se hizo la auditoría.</em></p></td>
  </tr>
  <tr>
+ <td>tipo_transaccion_cliente</td>
+ <td class="data-type">varchar(20)</td>
+ <td class="bool-field"></td>
+ <td class="bool-field"></td>
+ <td class="bool-field"></td>
+ <td class="bool-field">&#10003;</td>
+ <td class="value"></td>
+ <td><p class="max-td-wth"><em>Valor que identifica la transacción que hizo el cliente auditado.</em></p></td>
+ </tr>
+ <tr>
  <td colspan="8" class="nested-tab-parent">
  <table class="nested-tab">
  <tr>
@@ -611,6 +621,14 @@ max-width: 500px;
  <td><a href="#parqueadero.cliente">parqueadero.cliente</a></td>
  <td class="value"></td>
  <td colspan="3"><p class="max-td-wth"><em></em></p></td>
+ </tr>
+ <tr>
+ <td>tipo_transaccion_cliente_ck</td>
+ <td class="value constr-type">CHECK</td>
+ <td></td>
+ <td></td>
+ <td class="value"><p class="max-td-wth">tipo_transaccion_cliente IN ('Ingreso a la app', 'Registro')</p></td>
+ <td colspan="3"><p class="max-td-wth"><em>Verifica que el tipo de transacción del cliente esté dentro de los rangos válidos.</em></p></td>
  </tr>
  </table>
  </td>
@@ -779,18 +797,18 @@ max-width: 500px;
  <td colspan="3"><p class="max-td-wth"><em></em></p></td>
  </tr>
  <tr>
- <td>vehiculo_fk</td>
- <td class="value constr-type">FOREIGN KEY</td>
- <td>k_vehiculo</td>
- <td><a href="#parqueadero.vehiculo">parqueadero.vehiculo</a></td>
- <td class="value"></td>
- <td colspan="3"><p class="max-td-wth"><em></em></p></td>
- </tr>
- <tr>
  <td>cliente_fk</td>
  <td class="value constr-type">FOREIGN KEY</td>
  <td>k_cliente</td>
  <td><a href="#parqueadero.cliente">parqueadero.cliente</a></td>
+ <td class="value"></td>
+ <td colspan="3"><p class="max-td-wth"><em></em></p></td>
+ </tr>
+ <tr>
+ <td>vehiculo_fk</td>
+ <td class="value constr-type">FOREIGN KEY</td>
+ <td>k_vehiculo</td>
+ <td><a href="#parqueadero.vehiculo">parqueadero.vehiculo</a></td>
  <td class="value"></td>
  <td colspan="3"><p class="max-td-wth"><em></em></p></td>
  </tr>
@@ -828,20 +846,20 @@ max-width: 500px;
  <td class="title">Description</td>
  </tr>
  <tr>
- <td>auditvehiculo_cliente_ixfk</td>
- <td class="value constr-type">btree</td>
- <td>k_cliente</td>
- <td class="value"><p class="max-td-wth"></p></td>
- <td class="value"><p class="max-td-wth"></p></td>
- <td><p class="max-td-wth"><em>Índice de la llave foránea de la tabla Cliente del esquema Parqueadero.</em></p></td></td>
- </tr>
- <tr>
  <td>auditvehiculo_vehiculo_ixfk</td>
  <td class="value constr-type">btree</td>
  <td>k_vehiculo</td>
  <td class="value"><p class="max-td-wth"></p></td>
  <td class="value"><p class="max-td-wth"></p></td>
  <td><p class="max-td-wth"><em>Índice de la llave foránea de la tabla Vehículo del esquema Parqueadero.</em></p></td></td>
+ </tr>
+ <tr>
+ <td>auditvehiculo_cliente_ixfk</td>
+ <td class="value constr-type">btree</td>
+ <td>k_cliente</td>
+ <td class="value"><p class="max-td-wth"></p></td>
+ <td class="value"><p class="max-td-wth"></p></td>
+ <td><p class="max-td-wth"><em>Índice de la llave foránea de la tabla Cliente del esquema Parqueadero.</em></p></td></td>
  </tr>
  </table>
  </td>
@@ -1174,14 +1192,6 @@ max-width: 500px;
  <td colspan="3"><p class="max-td-wth"><em>Verifica que el número de documento del cliente sea único respecto a su tipo de documento.</em></p></td>
  </tr>
  <tr>
- <td>tipo_id_cliente_ck</td>
- <td class="value constr-type">CHECK</td>
- <td></td>
- <td></td>
- <td class="value"><p class="max-td-wth">tipo_identificacion_cliente in ('CC', 'CE', 'PAP')</p></td>
- <td colspan="3"><p class="max-td-wth"><em>Verifica que el tipo de identificación es válido de acuerdo a la normatividad colombiana.</em></p></td>
- </tr>
- <tr>
  <td>telefono_cliente_uq</td>
  <td class="value constr-type">UNIQUE</td>
  <td>telefono_cliente</td>
@@ -1196,6 +1206,14 @@ max-width: 500px;
  <td></td>
  <td class="value"></td>
  <td colspan="3"><p class="max-td-wth"><em>Verifica que el correo de un cliente no se repita.</em></p></td>
+ </tr>
+ <tr>
+ <td>tipo_id_cliente_ck</td>
+ <td class="value constr-type">CHECK</td>
+ <td></td>
+ <td></td>
+ <td class="value"><p class="max-td-wth">tipo_identificacion_cliente in ('CC', 'CE', 'PAP')</p></td>
+ <td colspan="3"><p class="max-td-wth"><em>Verifica que el tipo de identificación es válido de acuerdo a la normatividad colombiana.</em></p></td>
  </tr>
  </table>
  </td>
@@ -3167,6 +3185,14 @@ max-width: 500px;
  <td class="value"><p class="max-td-wth"></p></td>
  <td><p class="max-td-wth"><em>Índice de la llave foránea de la tabla Slot Parqueadero.</em></p></td></td>
  </tr>
+ <tr>
+ <td>reserva_tarjeta_pago_ixfk</td>
+ <td class="value constr-type">btree</td>
+ <td>k_tarjeta_pago</td>
+ <td class="value"><p class="max-td-wth"></p></td>
+ <td class="value"><p class="max-td-wth"></p></td>
+ <td><p class="max-td-wth"><em>Índice de la llave foránea de la tabla Tarjeta Pago.</em></p></td></td>
+ </tr>
  </table>
  </td>
  </tr>
@@ -3390,14 +3416,6 @@ max-width: 500px;
  <td colspan="3"><p class="max-td-wth"><em></em></p></td>
  </tr>
  <tr>
- <td>tipo_sucursal_ck</td>
- <td class="value constr-type">CHECK</td>
- <td></td>
- <td></td>
- <td class="value"><p class="max-td-wth">tipo_sucursal in ('Cubierta', 'Semicubierta', 'Descubierta')</p></td>
- <td colspan="3"><p class="max-td-wth"><em>Verifica que el tipo de sucursal se ajuste a las reglas de negocio.</em></p></td>
- </tr>
- <tr>
  <td>direccion_fk</td>
  <td class="value constr-type">FOREIGN KEY</td>
  <td>k_direccion</td>
@@ -3412,6 +3430,14 @@ max-width: 500px;
  <td></td>
  <td class="value"></td>
  <td colspan="3"><p class="max-td-wth"><em></em></p></td>
+ </tr>
+ <tr>
+ <td>tipo_sucursal_ck</td>
+ <td class="value constr-type">CHECK</td>
+ <td></td>
+ <td></td>
+ <td class="value"><p class="max-td-wth">tipo_sucursal in ('Cubierta', 'Semicubierta', 'Descubierta')</p></td>
+ <td colspan="3"><p class="max-td-wth"><em>Verifica que el tipo de sucursal se ajuste a las reglas de negocio.</em></p></td>
  </tr>
  </table>
  </td>
@@ -4133,7 +4159,7 @@ max-width: 500px;
  <a href="#index" class="nav-link">&uarr; Index</a>
 </div>
 <footer>
-Generated at <em>2023-05-29T12:32:18 </em> by <strong>pgModeler 1.0.2</strong><br/>
+Generated at <em>2023-05-31T17:23:16 </em> by <strong>pgModeler 1.0.2</strong><br/>
 <a href="https://pgmodeler.io">PostgreSQL Database Modeler - https://pgmodeler.io</a><br/>
 Copyright © 2006 - 2023 Raphael Araújo e Silva
 </footer> </body>

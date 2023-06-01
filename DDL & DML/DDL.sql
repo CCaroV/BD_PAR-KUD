@@ -84,7 +84,16 @@ ALTER SCHEMA auditoria OWNER TO parkud_db_admin;
 COMMENT ON SCHEMA auditoria IS E'Esquema de auditoría de la BD de parqueaderos.';
 -- ddl-end --
 
-SET search_path TO pg_catalog,public,parqueadero,auditoria;
+-- object: temporal | type: SCHEMA --
+-- DROP SCHEMA IF EXISTS temporal CASCADE;
+CREATE SCHEMA temporal;
+-- ddl-end --
+ALTER SCHEMA temporal OWNER TO parkud_db_admin;
+-- ddl-end --
+COMMENT ON SCHEMA temporal IS E'Esquema para la creación de objetos temporales.';
+-- ddl-end --
+
+SET search_path TO pg_catalog,public,parqueadero,auditoria,temporal;
 -- ddl-end --
 
 -- object: parqueadero.pais | type: TABLE --
@@ -306,9 +315,9 @@ CREATE TABLE parqueadero.cliente (
 	correo_cliente bytea NOT NULL,
 	CONSTRAINT cliente_pk PRIMARY KEY (k_cliente),
 	CONSTRAINT tipo_id_cliente_uq UNIQUE (tipo_identificacion_cliente,numero_identificacion_cliente),
-	CONSTRAINT tipo_id_cliente_ck CHECK (tipo_identificacion_cliente in ('CC', 'CE', 'PAP')),
 	CONSTRAINT telefono_cliente_uq UNIQUE (telefono_cliente),
-	CONSTRAINT correo_cliente_uq UNIQUE (correo_cliente)
+	CONSTRAINT correo_cliente_uq UNIQUE (correo_cliente),
+	CONSTRAINT tipo_id_cliente_ck CHECK (tipo_identificacion_cliente in ('CC', 'CE', 'PAP'))
 );
 -- ddl-end --
 COMMENT ON TABLE parqueadero.cliente IS E'Los clientes que reservan parqueaderos en el sistema.';
@@ -333,11 +342,11 @@ COMMENT ON COLUMN parqueadero.cliente.correo_cliente IS E'Dirección de correo e
 -- ddl-end --
 COMMENT ON CONSTRAINT tipo_id_cliente_uq ON parqueadero.cliente IS E'Verifica que el número de documento del cliente sea único respecto a su tipo de documento.';
 -- ddl-end --
-COMMENT ON CONSTRAINT tipo_id_cliente_ck ON parqueadero.cliente IS E'Verifica que el tipo de identificación es válido de acuerdo a la normatividad colombiana.';
--- ddl-end --
 COMMENT ON CONSTRAINT telefono_cliente_uq ON parqueadero.cliente IS E'Verifica que el número de teléfono de un cliente no se repita.';
 -- ddl-end --
 COMMENT ON CONSTRAINT correo_cliente_uq ON parqueadero.cliente IS E'Verifica que el correo de un cliente no se repita.';
+-- ddl-end --
+COMMENT ON CONSTRAINT tipo_id_cliente_ck ON parqueadero.cliente IS E'Verifica que el tipo de identificación es válido de acuerdo a la normatividad colombiana.';
 -- ddl-end --
 ALTER TABLE parqueadero.cliente OWNER TO parkud_db_admin;
 -- ddl-end --
@@ -1134,7 +1143,9 @@ CREATE TABLE auditoria.audit_usuario (
 	nombre_usuario varchar(200) NOT NULL,
 	direccion_ip varchar(39) NOT NULL,
 	fecha_audit_usuario timestamp NOT NULL,
-	CONSTRAINT usuario_pk PRIMARY KEY (k_auditoria_usuario)
+	tipo_transaccion_cliente varchar(20) NOT NULL,
+	CONSTRAINT usuario_pk PRIMARY KEY (k_auditoria_usuario),
+	CONSTRAINT tipo_transaccion_cliente_ck CHECK (tipo_transaccion_cliente IN ('Ingreso a la app', 'Registro'))
 );
 -- ddl-end --
 COMMENT ON TABLE auditoria.audit_usuario IS E'Tabla encargada de auditar los inicios de sesión realizados por los usuarios.';
@@ -1146,6 +1157,10 @@ COMMENT ON COLUMN auditoria.audit_usuario.nombre_usuario IS E'Nombre de usuario 
 COMMENT ON COLUMN auditoria.audit_usuario.direccion_ip IS E'Dirección IP (IPv4 o IPv6) desde donde el usuario inició sesión.';
 -- ddl-end --
 COMMENT ON COLUMN auditoria.audit_usuario.fecha_audit_usuario IS E'Fecha y hora en que se hizo la auditoría.';
+-- ddl-end --
+COMMENT ON COLUMN auditoria.audit_usuario.tipo_transaccion_cliente IS E'Valor que identifica la transacción que hizo el cliente auditado.';
+-- ddl-end --
+COMMENT ON CONSTRAINT tipo_transaccion_cliente_ck ON auditoria.audit_usuario IS E'Verifica que el tipo de transacción del cliente esté dentro de los rangos válidos.';
 -- ddl-end --
 ALTER TABLE auditoria.audit_usuario OWNER TO parkud_db_admin;
 -- ddl-end --
@@ -1179,7 +1194,7 @@ CREATE TABLE auditoria.audit_reserva (
 	nombre_usuario_reserva varchar(200) NOT NULL,
 	CONSTRAINT reserva_pk PRIMARY KEY (k_auditoria_reserva),
 	CONSTRAINT tipo_vehiculo_reserva_audit_ck CHECK (tipo_vehiculo_reserva in ('SUV', 'Automóvil', 'Moto')),
-	CONSTRAINT tipo_transaccion_reserva_ck CHECK (tipo_transaccion_reserva in ('Modificación', 'Eliminación', 'Cancelación'))
+	CONSTRAINT tipo_transaccion_reserva_ck CHECK (tipo_transaccion_reserva in ('Creación','Modificación', 'Eliminación', 'Cancelación'))
 );
 -- ddl-end --
 COMMENT ON COLUMN auditoria.audit_reserva.k_auditoria_reserva IS E'Clave primaria de la tabla Auditoría Reserva.';
@@ -1240,17 +1255,6 @@ USING btree
 );
 -- ddl-end --
 COMMENT ON INDEX parqueadero.fidelizacion_cliente_ixfk IS E'Índice de la llave foránea de la tabla Cliente.';
--- ddl-end --
-
--- object: auditvehiculo_cliente_ixfk | type: INDEX --
--- DROP INDEX IF EXISTS auditoria.auditvehiculo_cliente_ixfk CASCADE;
-CREATE INDEX auditvehiculo_cliente_ixfk ON auditoria.audit_vehiculo
-USING btree
-(
-	k_cliente ASC NULLS LAST
-);
--- ddl-end --
-COMMENT ON INDEX auditoria.auditvehiculo_cliente_ixfk IS E'Índice de la llave foránea de la tabla Cliente del esquema Parqueadero.';
 -- ddl-end --
 
 -- object: reserva_cliente_ixfk | type: INDEX --
@@ -1727,6 +1731,28 @@ USING btree
 );
 -- ddl-end --
 COMMENT ON INDEX parqueadero.sucursal_direccion_ixfk IS E'Índice de la llave foránea de la tabla Dirección.';
+-- ddl-end --
+
+-- object: auditvehiculo_cliente_ixfk | type: INDEX --
+-- DROP INDEX IF EXISTS auditoria.auditvehiculo_cliente_ixfk CASCADE;
+CREATE INDEX auditvehiculo_cliente_ixfk ON auditoria.audit_vehiculo
+USING btree
+(
+	k_cliente ASC NULLS LAST
+);
+-- ddl-end --
+COMMENT ON INDEX auditoria.auditvehiculo_cliente_ixfk IS E'Índice de la llave foránea de la tabla Cliente del esquema Parqueadero.';
+-- ddl-end --
+
+-- object: reserva_tarjeta_pago_ixfk | type: INDEX --
+-- DROP INDEX IF EXISTS parqueadero.reserva_tarjeta_pago_ixfk CASCADE;
+CREATE INDEX reserva_tarjeta_pago_ixfk ON parqueadero.reserva
+USING btree
+(
+	k_tarjeta_pago ASC NULLS LAST
+);
+-- ddl-end --
+COMMENT ON INDEX parqueadero.reserva_tarjeta_pago_ixfk IS E'Índice de la llave foránea de la tabla Tarjeta Pago.';
 -- ddl-end --
 
 -- object: "grant_U_ad498d56ef" | type: PERMISSION --
@@ -2591,6 +2617,12 @@ GRANT USAGE
 GRANT USAGE
    ON SEQUENCE parqueadero.horario_empleado_sq
    TO super_admin_role;
+-- ddl-end --
+
+-- object: "grant_CU_49b494ce61" | type: PERMISSION --
+GRANT CREATE,USAGE
+   ON SCHEMA temporal
+   TO user_role,admin_role,super_admin_role,operador_role;
 -- ddl-end --
 
 

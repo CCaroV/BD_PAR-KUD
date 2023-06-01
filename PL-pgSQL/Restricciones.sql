@@ -1,90 +1,6 @@
--- Trigger de auditoría de vehículos
-CREATE OR REPLACE FUNCTION AUDITORIA.AUDIT_VEHICULO_TR()
-RETURNS TRIGGER
-LANGUAGE PLPGSQL
-AS $$
-BEGIN
-    CASE TG_OP
-        -- En caso de que se esté insertando un vehículo
-        WHEN 'INSERT' THEN
-            INSERT INTO AUDITORIA.AUDIT_VEHICULO (
-                K_CLIENTE,
-                K_VEHICULO,
-                PLACA_VEHICULO,
-                FECHA_AUDIT_VEHICULO,
-                TIPO_VEHICULO_AUDIT,
-                TIPO_TRANSACCION_VEHICULO,
-                NOMBRE_USUARIO_VEHICULO
-            )
-            VALUES (
-                NEW.K_CLIENTE,
-                NEW.K_VEHICULO,
-                NEW.PLACA_VEHICULO,
-                (SELECT CURRENT_TIMESTAMP AT TIME ZONE 'America/Bogota'),
-                NEW.TIPO_VEHICULO,
-                'Agregar',
-                (SELECT USER)
-            );
-        
-        -- En caso de que se esté actualizando la información de un vehículo
-        WHEN 'UPDATE' THEN
-            INSERT INTO AUDITORIA.AUDIT_VEHICULO (
-                K_CLIENTE,
-                K_VEHICULO,
-                PLACA_VEHICULO,
-                FECHA_AUDIT_VEHICULO,
-                TIPO_VEHICULO_AUDIT,
-                TIPO_TRANSACCION_VEHICULO,
-                NOMBRE_USUARIO_VEHICULO
-            )
-            VALUES (
-                NEW.K_CLIENTE,
-                NEW.K_VEHICULO,
-                NEW.PLACA_VEHICULO,
-                (SELECT CURRENT_TIMESTAMP AT TIME ZONE 'America/Bogota'),
-                NEW.TIPO_VEHICULO,
-                'Modificación',
-                (SELECT USER)
-            );
-
-        -- En caso de que se esté eliminando un vehículo
-        WHEN 'DELETE' THEN
-            INSERT INTO AUDITORIA.AUDIT_VEHICULO (
-                K_CLIENTE,
-                K_VEHICULO,
-                PLACA_VEHICULO,
-                FECHA_AUDIT_VEHICULO,
-                TIPO_VEHICULO_AUDIT,
-                TIPO_TRANSACCION_VEHICULO,
-                NOMBRE_USUARIO_VEHICULO
-            )
-            VALUES (
-                OLD.K_CLIENTE,
-                NULL,
-                OLD.PLACA_VEHICULO,
-                (SELECT CURRENT_TIMESTAMP AT TIME ZONE 'America/Bogota'),
-                OLD.TIPO_VEHICULO,
-                'Eliminación',
-                (SELECT USER)
-            );
-    END CASE;
-    RETURN NEW;
-EXCEPTION
--- Excepciones
-    WHEN OTHERS THEN
-        ROLLBACK;
-        RAISE EXCEPTION 'AUDIT_VEHICULO_TR ha ocurrido un error: %/%', SQLSTATE, SQLERRM;
-END;
-$$;
-
-COMMENT ON FUNCTION AUDITORIA.AUDIT_VEHICULO_TR IS E'Trigger de auditoría de vehículos.';
-
-ALTER FUNCTION AUDITORIA.AUDIT_VEHICULO_TR() OWNER TO PARKUD_DB_ADMIN ;
-
-CREATE OR REPLACE TRIGGER AUDIT_VEHICULO_TR
-    AFTER INSERT OR UPDATE OR DELETE ON PARQUEADERO.VEHICULO
-    FOR EACH ROW
-    EXECUTE FUNCTION AUDITORIA.AUDIT_VEHICULO_TR();
+/* Triggers que verifican que los datos de las tablas se correspondan con las reglas de negocio.
+Existen algunas reglas de negocio que no pueden ser definidas mediante la cláusula CHECK en la BD.
+Estas restricciones pueden ser modeladas mediante triggers.*/
 
 -- Trigger que verifica que la tabla de auditoría de usuarios tenga una llave foránea de empleado o cliente (excluyentes).
 CREATE OR REPLACE FUNCTION AUDITORIA.VERIFICAR_AUDIT_USUARIO_TR()
@@ -112,6 +28,7 @@ CREATE OR REPLACE TRIGGER VERIFICAR_AUDIT_USUARIO_TR
     BEFORE INSERT OR UPDATE ON AUDITORIA.AUDIT_USUARIO
     FOR EACH ROW
     EXECUTE FUNCTION AUDITORIA.VERIFICAR_AUDIT_USUARIO_TR();
+
 
 -- Trigger que verifica que el nombre de una sucursal no se repita en una ciudad.
 CREATE OR REPLACE FUNCTION PARQUEADERO.VERIFICAR_NOMBRE_SUCURSAL_TR()
@@ -166,6 +83,7 @@ RETURNS TRIGGER
 LANGUAGE PLPGSQL
 AS $$
 DECLARE
+    -- Declaración de variables locales
     K_TARIFA_MINUTO_L PARQUEADERO.TARIFA_MINUTO.K_TARIFA_MINUTO%TYPE;
     FECHA_INICIO_TARIFA_L PARQUEADERO.TARIFA_MINUTO.FECHA_INICIO_TARIFA%TYPE;
 BEGIN
@@ -182,7 +100,7 @@ BEGIN
             FECHA_INICIO_TARIFA_L
         FROM PARQUEADERO.TARIFA_MINUTO
         WHERE K_SUCURSAL = NEW.K_SUCURSAL
-            AND ESTA_ACTIVA;
+            AND ESTA_ACTIVA = TRUE;
 
         -- Si han habido cambios recientes en la tarifa
         IF (SELECT CURRENT_TIMESTAMP AT TIME ZONE 'America/Bogota') - FECHA_INICIO_TARIFA_L <= '0 YEARS 0 MONTHS 0 DAYS 0 HOURS 10 MINUTES'::INTERVAL THEN

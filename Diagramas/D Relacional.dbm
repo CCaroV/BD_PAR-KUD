@@ -3,7 +3,7 @@
 CAUTION: Do not modify this file unless you know what you are doing.
  Unexpected results may occur if the code is changed deliberately.
 -->
-<dbmodel pgmodeler-ver="1.0.2" use-changelog="false" last-position="137,1255" last-zoom="0.85" max-obj-count="172"
+<dbmodel pgmodeler-ver="1.0.2" use-changelog="false" last-position="262,0" last-zoom="1.4" max-obj-count="174"
 	 default-schema="parqueadero" default-owner="parkud_db_admin"
 	 layers="Default layer"
 	 active-layers="0"
@@ -60,11 +60,16 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<comment> <![CDATA[Esquema de auditoría de la BD de parqueaderos. ]]> </comment>
 </schema>
 
+<schema name="temporal" layers="0" fill-color="#e1e1e1">
+	<role name="parkud_db_admin"/>
+	<comment> <![CDATA[Esquema para la creación de objetos temporales.]]> </comment>
+</schema>
+
 <table name="pais" layers="0" collapse-mode="2" max-obj-count="2" z-value="0">
 	<schema name="parqueadero"/>
 	<role name="parkud_db_admin"/>
 	<comment> <![CDATA[Tabla que almacena los países en que PAR-KUD tiene sucursales de parqueaderos.]]> </comment>
-	<position x="3020" y="460"/>
+	<position x="2420" y="1100"/>
 	<column name="k_pais" not-null="true">
 		<type name="varchar" length="3"/>
 		<comment> <![CDATA[Clave primaria de la tabla País, utilizando el estándar ISO 3166-1 alpha-3.]]> </comment>
@@ -82,7 +87,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<schema name="parqueadero"/>
 	<role name="parkud_db_admin"/>
 	<comment> <![CDATA[Los diferentes departamentos, estados, provincias, en los que se divide un país.]]> </comment>
-	<position x="2600" y="420"/>
+	<position x="2380" y="780"/>
 	<column name="k_departamento" not-null="true">
 		<type name="varchar" length="5"/>
 		<comment> <![CDATA[Clave primaria de la tabla Departamento.]]> </comment>
@@ -108,7 +113,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<schema name="parqueadero"/>
 	<role name="parkud_db_admin"/>
 	<comment> <![CDATA[Nombre de las diferentes ciudades, municipios, entre otros que un departamento puede tener.]]> </comment>
-	<position x="2220" y="420"/>
+	<position x="2200" y="460"/>
 	<column name="k_ciudad" not-null="true">
 		<type name="varchar" length="5"/>
 		<comment> <![CDATA[Clave primaria de la tabla Ciudad.]]> </comment>
@@ -136,7 +141,12 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	 src-fk-pattern="{st}_fk"
 	 src-table="parqueadero.pais"
 	 dst-table="parqueadero.departamento"
-	 src-required="true" dst-required="false"/>
+	 src-required="true" dst-required="false">
+	<line>
+		<position x="2540" y="1080"/>
+	<position x="2540" y="960"/>
+	</line>
+</relationship>
 
 <relationship name="contiene" type="rel1n" layers="0"
 	 src-col-pattern="{sc}"
@@ -144,13 +154,18 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	 src-fk-pattern="{st}_fk"
 	 src-table="parqueadero.departamento"
 	 dst-table="parqueadero.ciudad"
-	 src-required="true" dst-required="false"/>
+	 src-required="true" dst-required="false">
+	<line>
+		<position x="2440" y="760"/>
+	<position x="2440" y="640"/>
+	</line>
+</relationship>
 
 <table name="sucursal" layers="0" collapse-mode="2" max-obj-count="7" z-value="0">
 	<schema name="parqueadero"/>
 	<role name="parkud_db_admin"/>
 	<comment> <![CDATA[Las diferentes sucursales con las que PAR-KUD cuenta.]]> </comment>
-	<position x="1240" y="220"/>
+	<position x="1260" y="220"/>
 	<column name="k_sucursal" not-null="true">
 		<type name="integer" length="0"/>
 		<comment> <![CDATA[Clave primaria de la tabla Sucursal.]]> </comment>
@@ -184,8 +199,8 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</customidxs>
 
 	<customidxs object-type="constraint">
-		<object name="direccion_fk" index="2"/>
-		<object name="sucursal_uq" index="3"/>
+		<object name="direccion_fk" index="1"/>
+		<object name="sucursal_uq" index="2"/>
 	</customidxs>
 </table>
 
@@ -193,7 +208,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<schema name="parqueadero"/>
 	<role name="parkud_db_admin"/>
 	<comment> <![CDATA[Las diferentes reservas que un cliente puede hacer de un parqueadero.]]> </comment>
-	<position x="520" y="680"/>
+	<position x="540" y="720"/>
 	<column name="k_reserva" not-null="true">
 		<type name="bigint" length="0"/>
 		<comment> <![CDATA[Clave primaria de la tabla Parqueadero.]]> </comment>
@@ -278,7 +293,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<schema name="parqueadero"/>
 	<role name="parkud_db_admin"/>
 	<comment> <![CDATA[Los diferentes parqueaderos que se encuentran en una sucursal.]]> </comment>
-	<position x="960" y="760"/>
+	<position x="980" y="800"/>
 	<column name="k_slot_parqueadero" not-null="true">
 		<type name="varchar" length="5"/>
 		<comment> <![CDATA[Residuo de la tabla Parqueadero.]]> </comment>
@@ -322,7 +337,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<schema name="parqueadero"/>
 	<role name="parkud_db_admin"/>
 	<comment> <![CDATA[Los clientes que reservan parqueaderos en el sistema.]]> </comment>
-	<position x="960" y="1580"/>
+	<position x="980" y="1620"/>
 	<column name="k_cliente" not-null="true">
 		<type name="integer" length="0"/>
 		<comment> <![CDATA[Clave primaria de la tabla Cliente.]]> </comment>
@@ -366,10 +381,6 @@ CAUTION: Do not modify this file unless you know what you are doing.
 		<columns names="tipo_identificacion_cliente,numero_identificacion_cliente" ref-type="src-columns"/>
 		<comment> <![CDATA[Verifica que el número de documento del cliente sea único respecto a su tipo de documento.]]> </comment>
 	</constraint>
-	<constraint name="tipo_id_cliente_ck" type="ck-constr" table="parqueadero.cliente">
-			<expression> <![CDATA[tipo_identificacion_cliente in ('CC', 'CE', 'PAP')]]> </expression>
-		<comment> <![CDATA[Verifica que el tipo de identificación es válido de acuerdo a la normatividad colombiana.]]> </comment>
-	</constraint>
 	<constraint name="telefono_cliente_uq" type="uq-constr" table="parqueadero.cliente">
 		<columns names="telefono_cliente" ref-type="src-columns"/>
 		<comment> <![CDATA[Verifica que el número de teléfono de un cliente no se repita.]]> </comment>
@@ -377,6 +388,10 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<constraint name="correo_cliente_uq" type="uq-constr" table="parqueadero.cliente">
 		<columns names="correo_cliente" ref-type="src-columns"/>
 		<comment> <![CDATA[Verifica que el correo de un cliente no se repita.]]> </comment>
+	</constraint>
+	<constraint name="tipo_id_cliente_ck" type="ck-constr" table="parqueadero.cliente">
+			<expression> <![CDATA[tipo_identificacion_cliente in ('CC', 'CE', 'PAP')]]> </expression>
+		<comment> <![CDATA[Verifica que el tipo de identificación es válido de acuerdo a la normatividad colombiana.]]> </comment>
 	</constraint>
 </table>
 
@@ -402,7 +417,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<schema name="parqueadero"/>
 	<role name="parkud_db_admin"/>
 	<comment> <![CDATA[Índica la dirección en la que una sucursal se encuentra.]]> </comment>
-	<position x="1800" y="360"/>
+	<position x="1760" y="440"/>
 	<column name="k_direccion" not-null="true">
 		<type name="integer" length="0"/>
 		<comment> <![CDATA[Clave primaria de la tabla Dirección.]]> </comment>
@@ -440,8 +455,8 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	 dst-table="parqueadero.direccion"
 	 src-required="true" dst-required="false">
 	<line>
-		<position x="2220" y="520"/>
-	<position x="2100" y="520"/>
+		<position x="2200" y="540"/>
+	<position x="2060" y="540"/>
 	</line>
 </relationship>
 
@@ -451,13 +466,18 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	 src-fk-pattern="{st}_fk"
 	 src-table="parqueadero.sucursal"
 	 dst-table="parqueadero.direccion"
-	 src-required="false" dst-required="true"/>
+	 src-required="false" dst-required="true">
+	<line>
+		<position x="1580" y="440"/>
+	<position x="1760" y="440"/>
+	</line>
+</relationship>
 
 <table name="tarifa_minuto" layers="0" collapse-mode="2" max-obj-count="12" z-value="0">
 	<schema name="parqueadero"/>
 	<role name="parkud_db_admin"/>
 	<comment> <![CDATA[Tarifa cobrada por minuto en una sucursal.]]> </comment>
-	<position x="3320" y="120"/>
+	<position x="2560" y="180"/>
 	<column name="k_tarifa_minuto" not-null="true">
 		<type name="integer" length="0"/>
 		<comment> <![CDATA[Clave primaria de la tabla Tarifa Minuto]]> </comment>
@@ -521,13 +541,18 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	 src-fk-pattern="{st}_fk"
 	 src-table="parqueadero.sucursal"
 	 dst-table="parqueadero.tarifa_minuto"
-	 src-required="true" dst-required="false"/>
+	 src-required="true" dst-required="false">
+	<line>
+		<position x="1580" y="360"/>
+	<position x="2560" y="360"/>
+	</line>
+</relationship>
 
 <table name="horario_sucursal" layers="0" collapse-mode="2" max-obj-count="8" z-value="0">
 	<schema name="parqueadero"/>
 	<role name="parkud_db_admin"/>
 	<comment> <![CDATA[Determina el horario de una sucursal. El horario puede variar todos los días.]]> </comment>
-	<position x="1540" y="760"/>
+	<position x="1560" y="800"/>
 	<column name="k_horario_sucursal" not-null="true">
 		<type name="integer" length="0"/>
 		<comment> <![CDATA[Residuo de la tabla Horario Sucursal.]]> </comment>
@@ -567,7 +592,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<schema name="parqueadero"/>
 	<role name="parkud_db_admin"/>
 	<comment> <![CDATA[Almacena el día de la semana.]]> </comment>
-	<position x="2220" y="720"/>
+	<position x="2020" y="800"/>
 	<column name="k_dia_semana" not-null="true">
 		<type name="varchar" length="9"/>
 		<comment> <![CDATA[Clave primaria de la tabla Día Semana. También almacena el día de la semana.]]> </comment>
@@ -597,13 +622,18 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	 src-fk-pattern="{st}_fk"
 	 src-table="parqueadero.dia_semana"
 	 dst-table="parqueadero.horario_sucursal"
-	 src-required="true" dst-required="false"/>
+	 src-required="true" dst-required="false">
+	<line>
+		<position x="2020" y="880"/>
+	<position x="1880" y="880"/>
+	</line>
+</relationship>
 
 <table name="horario_empleado" layers="0" collapse-mode="2" max-obj-count="7" z-value="0">
 	<schema name="parqueadero"/>
 	<role name="parkud_db_admin"/>
 	<comment> <![CDATA[Almacena el horario de un empleado por día.]]> </comment>
-	<position x="2200" y="920"/>
+	<position x="2000" y="1060"/>
 	<column name="k_horario_empleado" not-null="true">
 		<type name="integer" length="0"/>
 		<comment> <![CDATA[Discriminante de la tabla Horario Empleado]]> </comment>
@@ -639,7 +669,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<schema name="parqueadero"/>
 	<role name="parkud_db_admin"/>
 	<comment> <![CDATA[Empleado que trabaja en una o varias sucursales.]]> </comment>
-	<position x="1420" y="1180"/>
+	<position x="1440" y="1220"/>
 	<column name="k_empleado" not-null="true">
 		<type name="integer" length="0"/>
 		<comment> <![CDATA[Clave primaria de la tabla Empleado.]]> </comment>
@@ -701,7 +731,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<schema name="parqueadero"/>
 	<role name="parkud_db_admin"/>
 	<comment> <![CDATA[Tabla de rompimiento entre Empleado y Sucursal.]]> </comment>
-	<position x="1280" y="780"/>
+	<position x="1300" y="820"/>
 
 	<customidxs object-type="column">
 		<object name="k_empleado" index="1"/>
@@ -723,7 +753,12 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	 dst-table="parqueadero.trabaja"
 	 src-required="true" dst-required="false"
 	 identifier="true"
-/>
+>
+	<line>
+		<position x="1420" y="500"/>
+	<position x="1420" y="800"/>
+	</line>
+</relationship>
 
 <relationship name="empleado_trabaja" type="rel1n" layers="0"
 	 src-col-pattern="{sc}"
@@ -733,7 +768,12 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	 dst-table="parqueadero.trabaja"
 	 src-required="true" dst-required="false"
 	 identifier="true"
-/>
+>
+	<line>
+		<position x="1500" y="1200"/>
+	<position x="1500" y="960"/>
+	</line>
+</relationship>
 
 <relationship name="dia_horario_emp" type="rel1n" layers="0"
 	 src-col-pattern="{sc}"
@@ -741,13 +781,18 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	 src-fk-pattern="{st}_fk"
 	 src-table="parqueadero.dia_semana"
 	 dst-table="parqueadero.horario_empleado"
-	 src-required="true" dst-required="false"/>
+	 src-required="true" dst-required="false">
+	<line>
+		<position x="2160" y="900"/>
+	<position x="2160" y="1040"/>
+	</line>
+</relationship>
 
 <table name="cargo" layers="0" collapse-mode="2" max-obj-count="1" z-value="0">
 	<schema name="parqueadero"/>
 	<role name="parkud_db_admin"/>
 	<comment> <![CDATA[Los diferentes cargos que una sucursal tiene.]]> </comment>
-	<position x="2720" y="1320"/>
+	<position x="2500" y="1500"/>
 	<column name="k_nombre_cargo" not-null="true">
 		<type name="varchar" length="30"/>
 		<comment> <![CDATA[Nombre del cargo.]]> </comment>
@@ -761,7 +806,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<schema name="parqueadero"/>
 	<role name="parkud_db_admin"/>
 	<comment> <![CDATA[Tabla de rompimiento entre Cargo y Empleado.]]> </comment>
-	<position x="2220" y="1240"/>
+	<position x="2000" y="1420"/>
 	<column name="fecha_inicio_cargo" not-null="true">
 		<type name="date" length="0"/>
 		<comment> <![CDATA[Fecha de inicio del cargo.]]> </comment>
@@ -800,6 +845,10 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	 src-required="true" dst-required="false"
 	 identifier="true"
 >
+	<line>
+		<position x="2500" y="1520"/>
+	<position x="2300" y="1520"/>
+	</line>
 	<label ref-type="name-label">
 		<position x="0" y="0"/>
 	</label>
@@ -813,13 +862,18 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	 dst-table="parqueadero.ejerce"
 	 src-required="true" dst-required="false"
 	 identifier="true"
-/>
+>
+	<line>
+		<position x="1820" y="1460"/>
+	<position x="2000" y="1460"/>
+	</line>
+</relationship>
 
 <table name="promocion" layers="0" collapse-mode="2" max-obj-count="7" z-value="0">
 	<schema name="parqueadero"/>
 	<role name="parkud_db_admin"/>
 	<comment> <![CDATA[Promociones de puntos de fidelización que una sucursal puede ofrecer.]]> </comment>
-	<position x="520" y="200"/>
+	<position x="540" y="240"/>
 	<column name="k_promocion" not-null="true">
 		<type name="integer" length="0"/>
 		<comment> <![CDATA[Clave primaria de la tabla Promoción.]]> </comment>
@@ -863,14 +917,19 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	 src-fk-pattern="{st}_fk"
 	 src-table="parqueadero.sucursal"
 	 dst-table="parqueadero.promocion"
-	 src-required="true" dst-required="false"/>
+	 src-required="true" dst-required="false">
+	<line>
+		<position x="1260" y="360"/>
+	<position x="860" y="360"/>
+	</line>
+</relationship>
 
 <table name="promocion_por_tiempo" layers="0" collapse-mode="2" max-obj-count="8" z-value="0">
 	<schema name="parqueadero"/>
 	<role name="parkud_db_admin"/>
 	<comment> <![CDATA[Promoción que da puntos de fidelización por tiempo reservado.
 ]]> </comment>
-	<position x="40" y="340"/>
+	<position x="60" y="380"/>
 	<column name="puntos_por_minuto" not-null="true">
 		<type name="numeric" length="8"/>
 		<comment> <![CDATA[Indica cuántos puntos por minuto otorga la promoción.]]> </comment>
@@ -915,6 +974,10 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	 src-required="true" dst-required="false"
 	 identifier="true"
 >
+	<line>
+		<position x="540" y="420"/>
+	<position x="400" y="420"/>
+	</line>
 	<label ref-type="name-label">
 		<position x="6.08823" y="-3.048"/>
 	</label>
@@ -924,7 +987,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<schema name="parqueadero"/>
 	<role name="parkud_db_admin"/>
 	<comment> <![CDATA[Promoción que da puntos de fidelización por reservar un parqueadero.]]> </comment>
-	<position x="40" y="60"/>
+	<position x="60" y="100"/>
 	<column name="puntos_por_reserva" not-null="true">
 		<type name="numeric" length="8"/>
 		<comment> <![CDATA[Los puntos acumulados por reservar.]]> </comment>
@@ -968,13 +1031,18 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	 dst-table="parqueadero.promocion_por_reserva"
 	 src-required="true" dst-required="false"
 	 identifier="true"
-/>
+>
+	<line>
+		<position x="540" y="280"/>
+	<position x="400" y="280"/>
+	</line>
+</relationship>
 
 <table name="tarjeta_pago" layers="0" collapse-mode="2" rls-enabled="true" max-obj-count="10" z-value="0">
 	<schema name="parqueadero"/>
 	<role name="parkud_db_admin"/>
 	<comment> <![CDATA[Las diferentes tarjetas que un cliente puede tener asociadas.]]> </comment>
-	<position x="1000" y="1020"/>
+	<position x="1020" y="1060"/>
 	<column name="k_tarjeta_pago" not-null="true">
 		<type name="integer" length="0"/>
 		<comment> <![CDATA[Clave primaria de la tabla Tarjeta Pago.]]> </comment>
@@ -1026,13 +1094,18 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	 src-fk-pattern="{st}_fk"
 	 src-table="parqueadero.cliente"
 	 dst-table="parqueadero.tarjeta_pago"
-	 src-required="true" dst-required="false"/>
+	 src-required="true" dst-required="false">
+	<line>
+		<position x="1180" y="1600"/>
+	<position x="1180" y="1380"/>
+	</line>
+</relationship>
 
 <table name="vehiculo" layers="0" collapse-mode="2" rls-enabled="true" max-obj-count="12" z-value="0">
 	<schema name="parqueadero"/>
 	<role name="parkud_db_admin"/>
 	<comment> <![CDATA[Los vehículos que un cliente parquea en una sucursal.]]> </comment>
-	<position x="480" y="1840"/>
+	<position x="500" y="1880"/>
 	<column name="k_vehiculo" not-null="true">
 		<type name="integer" length="0"/>
 		<comment> <![CDATA[Clave primaria de la tabla Vehículo.]]> </comment>
@@ -1088,7 +1161,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<schema name="parqueadero"/>
 	<role name="parkud_db_admin"/>
 	<comment> <![CDATA[Tabla que almacena las principales marcas de vehículos en el mundo.]]> </comment>
-	<position x="500" y="2420"/>
+	<position x="520" y="2420"/>
 	<column name="k_marca_vehiculo" not-null="true">
 		<type name="varchar" length="40"/>
 		<comment> <![CDATA[Clave primaria de la tabla Marca Vehículo, se corresponde con el nombre de la marca.]]> </comment>
@@ -1116,7 +1189,15 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	 src-fk-pattern="{st}_fk"
 	 src-table="parqueadero.cliente"
 	 dst-table="parqueadero.vehiculo"
-	 src-required="true" dst-required="false"/>
+	 src-required="true" dst-required="false">
+	<line>
+		<position x="980" y="1960"/>
+	<position x="820" y="1960"/>
+	</line>
+	<label ref-type="name-label">
+		<position x="-5.44745" y="9.85674"/>
+	</label>
+</relationship>
 
 <index name="depto_pais_ixfk" table="parqueadero.departamento"
 	 concurrent="false" unique="false" fast-update="false" buffering="false"
@@ -1212,7 +1293,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<schema name="parqueadero"/>
 	<role name="parkud_db_admin"/>
 	<comment> <![CDATA[Almacena los datos de fidelización de un cliente.]]> </comment>
-	<position x="360" y="1520"/>
+	<position x="460" y="1580"/>
 	<column name="k_fidelizacion" not-null="true">
 		<type name="integer" length="0"/>
 		<comment> <![CDATA[Clave primaria de la tabla Fidelización Cliente.]]> </comment>
@@ -1252,7 +1333,12 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	 src-fk-pattern="{st}_fk"
 	 src-table="parqueadero.promocion"
 	 dst-table="parqueadero.reserva"
-	 src-required="false" dst-required="false"/>
+	 src-required="false" dst-required="false">
+	<line>
+		<position x="700" y="500"/>
+	<position x="700" y="700"/>
+	</line>
+</relationship>
 
 <relationship name="cliente_puntos" type="rel1n" layers="0"
 	 src-col-pattern="{sc}"
@@ -1260,7 +1346,12 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	 src-fk-pattern="{st}_fk"
 	 src-table="parqueadero.cliente"
 	 dst-table="parqueadero.fidelizacion_cliente"
-	 src-required="true" dst-required="false"/>
+	 src-required="true" dst-required="false">
+	<line>
+		<position x="980" y="1740"/>
+	<position x="780" y="1740"/>
+	</line>
+</relationship>
 
 <relationship name="fidelizacion_cliente_has_many_reserva" type="rel1n" layers="0"
 	 src-col-pattern="{sc}"
@@ -1268,7 +1359,12 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	 src-fk-pattern="{st}_fk"
 	 src-table="parqueadero.fidelizacion_cliente"
 	 dst-table="parqueadero.reserva"
-	 src-required="false" dst-required="false"/>
+	 src-required="false" dst-required="false">
+	<line>
+		<position x="640" y="1560"/>
+	<position x="640" y="1460"/>
+	</line>
+</relationship>
 
 <table name="audit_vehiculo" layers="0" collapse-mode="2" max-obj-count="9" z-value="0">
 	<schema name="auditoria"/>
@@ -1317,8 +1413,8 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</customidxs>
 
 	<customidxs object-type="constraint">
-		<object name="cliente_fk" index="4"/>
-		<object name="vehiculo_fk" index="1"/>
+		<object name="cliente_fk" index="1"/>
+		<object name="vehiculo_fk" index="2"/>
 	</customidxs>
 </table>
 
@@ -1328,7 +1424,12 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	 src-fk-pattern="{st}_fk"
 	 src-table="parqueadero.vehiculo"
 	 dst-table="auditoria.audit_vehiculo"
-	 src-required="false" dst-required="false"/>
+	 src-required="false" dst-required="false">
+	<line>
+		<position x="820" y="2200"/>
+	<position x="980" y="2200"/>
+	</line>
+</relationship>
 
 <relationship name="audit_vehiculo_cliente" type="rel1n" layers="0"
 	 src-col-pattern="{sc}"
@@ -1338,7 +1439,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	 dst-table="auditoria.audit_vehiculo"
 	 src-required="true" dst-required="false">
 	<line>
-		<position x="1160" y="1980"/>
+		<position x="1160" y="2000"/>
 	<position x="1160" y="2100"/>
 	</line>
 	<label ref-type="name-label">
@@ -1346,11 +1447,11 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</label>
 </relationship>
 
-<table name="audit_usuario" layers="0" collapse-mode="2" max-obj-count="7" z-value="0">
+<table name="audit_usuario" layers="0" collapse-mode="2" max-obj-count="8" z-value="0">
 	<schema name="auditoria"/>
 	<role name="parkud_db_admin"/>
 	<comment> <![CDATA[Tabla encargada de auditar los inicios de sesión realizados por los usuarios.]]> </comment>
-	<position x="1440" y="1680"/>
+	<position x="1460" y="1680"/>
 	<column name="k_auditoria_usuario" not-null="true">
 		<type name="integer" length="0"/>
 		<comment> <![CDATA[Clave primaria de la tabla Auditoría Usuario]]> </comment>
@@ -1367,8 +1468,16 @@ CAUTION: Do not modify this file unless you know what you are doing.
 		<type name="timestamp" length="0"/>
 		<comment> <![CDATA[Fecha y hora en que se hizo la auditoría.]]> </comment>
 	</column>
+	<column name="tipo_transaccion_cliente" not-null="true">
+		<type name="varchar" length="20"/>
+		<comment> <![CDATA[Valor que identifica la transacción que hizo el cliente auditado.]]> </comment>
+	</column>
 	<constraint name="usuario_pk" type="pk-constr" table="auditoria.audit_usuario">
 		<columns names="k_auditoria_usuario" ref-type="src-columns"/>
+	</constraint>
+	<constraint name="tipo_transaccion_cliente_ck" type="ck-constr" table="auditoria.audit_usuario">
+			<expression> <![CDATA[tipo_transaccion_cliente IN ('Ingreso a la app', 'Registro')]]> </expression>
+		<comment> <![CDATA[Verifica que el tipo de transacción del cliente esté dentro de los rangos válidos.]]> </comment>
 	</constraint>
 
 	<customidxs object-type="column">
@@ -1388,12 +1497,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	 src-fk-pattern="{st}_fk"
 	 src-table="parqueadero.empleado"
 	 dst-table="auditoria.audit_usuario"
-	 src-required="false" dst-required="false">
-	<line>
-		<position x="1620" y="1580"/>
-	<position x="1620" y="1680"/>
-	</line>
-</relationship>
+	 src-required="false" dst-required="false"/>
 
 <relationship name="audit_usuario_cliente" type="rel1n" layers="0"
 	 src-col-pattern="{sc}"
@@ -1401,12 +1505,17 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	 src-fk-pattern="{st}_fk"
 	 src-table="parqueadero.cliente"
 	 dst-table="auditoria.audit_usuario"
-	 src-required="false" dst-required="false"/>
+	 src-required="false" dst-required="false">
+	<line>
+		<position x="1360" y="1820"/>
+	<position x="1460" y="1820"/>
+	</line>
+</relationship>
 
 <table name="audit_reserva" layers="0" collapse-mode="2" max-obj-count="12" z-value="0">
 	<schema name="auditoria"/>
 	<role name="parkud_db_admin"/>
-	<position x="60" y="780"/>
+	<position x="80" y="840"/>
 	<column name="k_auditoria_reserva" not-null="true">
 		<type name="bigint" length="0"/>
 		<comment> <![CDATA[Clave primaria de la tabla Auditoría Reserva.]]> </comment>
@@ -1443,7 +1552,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 		<comment> <![CDATA[Verifica que el valor de tipo de vehículo sea válido.]]> </comment>
 	</constraint>
 	<constraint name="tipo_transaccion_reserva_ck" type="ck-constr" table="auditoria.audit_reserva">
-			<expression> <![CDATA[tipo_transaccion_reserva in ('Modificación', 'Eliminación', 'Cancelación')]]> </expression>
+			<expression> <![CDATA[tipo_transaccion_reserva in ('Creación','Modificación', 'Eliminación', 'Cancelación')]]> </expression>
 		<comment> <![CDATA[Verifica que el valor del tipo de transacción de la tabla de reserva sea válido.]]> </comment>
 	</constraint>
 
@@ -1468,8 +1577,8 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	 dst-table="auditoria.audit_reserva"
 	 src-required="true" dst-required="false">
 	<line>
-		<position x="520" y="1020"/>
-	<position x="420" y="1020"/>
+		<position x="540" y="1080"/>
+	<position x="440" y="1080"/>
 	</line>
 </relationship>
 
@@ -1495,7 +1604,12 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	 src-fk-pattern="{st}_fk"
 	 src-table="parqueadero.slot_parqueadero"
 	 dst-table="parqueadero.reserva"
-	 src-required="true" dst-required="false"/>
+	 src-required="true" dst-required="false">
+	<line>
+		<position x="980" y="980"/>
+	<position x="880" y="980"/>
+	</line>
+</relationship>
 
 <index name="fidelizacion_cliente_ixfk" table="parqueadero.fidelizacion_cliente"
 	 concurrent="false" unique="false" fast-update="false" buffering="false"
@@ -1704,7 +1818,12 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	 dst-table="parqueadero.horario_empleado"
 	 src-required="true" dst-required="false"
 	 identifier="true"
-/>
+>
+	<line>
+		<position x="1820" y="1280"/>
+	<position x="2000" y="1280"/>
+	</line>
+</relationship>
 
 <sequence name="horario_empleado_sq" cycle="false" start="1" increment="1" min-value="0" max-value="2147483647" cache="1" owner-col="parqueadero.horario_empleado.k_horario_empleado">
 	<schema name="parqueadero"/>
@@ -1738,7 +1857,12 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	 src-fk-pattern="{st}_fk"
 	 src-table="parqueadero.tarjeta_pago"
 	 dst-table="parqueadero.reserva"
-	 src-required="true" dst-required="false"/>
+	 src-required="true" dst-required="false">
+	<line>
+		<position x="1020" y="1140"/>
+	<position x="880" y="1140"/>
+	</line>
+</relationship>
 
 <index name="sucursal_direccion_ixfk" table="parqueadero.sucursal"
 	 concurrent="false" unique="false" fast-update="false" buffering="false"
@@ -1755,6 +1879,15 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<comment> <![CDATA[Índice de la llave foránea de la tabla Cliente del esquema Parqueadero.]]> </comment>
 		<idxelement use-sorting="true" nulls-first="false" asc-order="true">
 			<column name="k_cliente"/>
+		</idxelement>
+</index>
+
+<index name="reserva_tarjeta_pago_ixfk" table="parqueadero.reserva"
+	 concurrent="false" unique="false" fast-update="false" buffering="false"
+	 index-type="btree" factor="0">
+	<comment> <![CDATA[Índice de la llave foránea de la tabla Tarjeta Pago.]]> </comment>
+		<idxelement use-sorting="true" nulls-first="false" asc-order="true">
+			<column name="k_tarjeta_pago"/>
 		</idxelement>
 </index>
 
@@ -2477,5 +2610,10 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<object name="parqueadero.horario_empleado_sq" type="sequence"/>
 	<roles names="super_admin_role"/>
 	<privileges usage="true"/>
+</permission>
+<permission>
+	<object name="temporal" type="schema"/>
+	<roles names="user_role,admin_role,super_admin_role,operador_role"/>
+	<privileges create="true" usage="true"/>
 </permission>
 </dbmodel>
