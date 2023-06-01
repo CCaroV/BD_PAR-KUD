@@ -2618,7 +2618,7 @@ INSERT INTO PARQUEADERO.EMPLEADO(
     'Morera',
     'Díaz',
     3001479652,
-    'anresxoxo@gnalga.com'
+    ( SELECT PARQUEADERO.PGP_SYM_ENCRYPT('anresxoxo@gnalga.com'::VARCHAR, 'AES_KEY'::VARCHAR))
 );
 
 INSERT INTO PARQUEADERO.EJERCE(

@@ -182,12 +182,45 @@ EXCEPTION
     -- Excepciones
     WHEN NO_DATA_FOUND THEN
         ROLLBACK;
-        RAISE EXCEPTION 'El usuario actual no está registrado como cliente, %/%', SQLSTATE, SQLERRM;
+        RAISE EXCEPTION 'El usuario actual no tiene ningún rol en la aplicación, %/%', SQLSTATE, SQLERRM;
     WHEN TOO_MANY_ROWS THEN
         ROLLBACK;
-        RAISE EXCEPTION 'Hay inconsistencias en la BD, tabla cliente: hay un correo repetido, %/%', SQLSTATE, SQLERRM;
+        RAISE EXCEPTION 'Hay inconsistencias en la BD: hay un correo repetido, %/%', SQLSTATE, SQLERRM;
     WHEN OTHERS THEN
         ROLLBACK;
         RAISE EXCEPTION 'RETORNAR_LLAVE_TEMPORAL_FU ha ocurrido un error: %/%', SQLSTATE, SQLERRM;
 END;
 $$;
+
+CREATE OR REPLACE FUNCTION PARQUEADERO.VERIFICAR_CORREO_FU(
+    IN CORREO_P VARCHAR
+)
+RETURNS BOOLEAN
+LANGUAGE PLPGSQL
+AS $$
+BEGIN
+    -- Verifica si el correo existe en la tabla de clientes o empleados
+    IF EXISTS (
+        SELECT 1
+        FROM PARQUEADERO.CLIENTE
+        WHERE PARQUEADERO.PGP_SYM_DECRYPT(CORREO_CLIENTE, 'AES_KEY') = CORREO_P
+    ) THEN
+        RETURN TRUE;
+    ELSIF EXISTS (
+        SELECT 1
+        FROM PARQUEADERO.EMPLEADO
+        WHERE PARQUEADERO.PGP_SYM_DECRYPT(CORREO_EMPLEADO, 'AES_KEY') = CORREO_P
+    ) THEN
+        RETURN TRUE;
+    END IF;
+    RETURN FALSE;
+EXCEPTION
+    -- Excepciones
+    WHEN OTHERS THEN
+        ROLLBACK;
+        RAISE EXCEPTION 'VERIFICAR_CORREO_FU ha ocurrido un error: %/%', SQLSTATE, SQLERRM;
+END;
+$$;
+
+
+    

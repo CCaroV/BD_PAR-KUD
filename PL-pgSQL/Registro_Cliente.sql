@@ -19,11 +19,18 @@ LANGUAGE PLPGSQL
 AS $$
 DECLARE
     -- Declaración de variables locales
-    K_CLIENTE_L PARQUEADERO.CLIENTE.K_CLIENTE%TYPE;
+    CORREO_EXISTE_L BOOLEAN;
     CORREO_ENCRIPTADO_L BYTEA := PARQUEADERO.PGP_SYM_ENCRYPT(CORREO_CLIENTE_P::VARCHAR, 'AES_KEY'::VARCHAR);
     FECHA_CLAVE_L TIMESTAMP := '2000-01-01 00:00';
     CLAVE_ALEATORIA_L TEXT;
 BEGIN
+    -- Verifica que el correo no esté registrado en la BD
+    SELECT PARQUEADERO.VERIFICAR_CORREO_FU(CORREO_CLIENTE_P) INTO CORREO_EXISTE_L;
+    IF CORREO_EXISTE_L = TRUE THEN
+        -- Devuelve un mensaje de correo ya registrado
+        RETURN 'CORREO_REGISTRADO';
+    END IF;
+
     -- Genera una clave aleatoria para el usuario nuevo
     SELECT PARQUEADERO.CLAVE_ALEATORIA_FU(12) INTO CLAVE_ALEATORIA_L;
 
@@ -50,11 +57,12 @@ BEGIN
         APELLIDO2_CLIENTE_P,
         TELEFONO_CLIENTE_P,
         CORREO_ENCRIPTADO_L
-    ) RETURNING K_CLIENTE INTO K_CLIENTE_L;
+    );
 
     -- Devuelve la clave generada
     RETURN CLAVE_ALEATORIA_L;
 EXCEPTION
+    -- Excepciones
     WHEN OTHERS THEN
         ROLLBACK;
         RAISE EXCEPTION 'CREAR_CLIENTE_FU ha ocurrido un error: %/%', SQLSTATE, SQLERRM;
