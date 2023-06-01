@@ -87,7 +87,7 @@ LANGUAGE PLPGSQL
 AS $$
 BEGIN
     -- Crea la tabla temporal
-    CREATE TEMPORARY TABLE TEMPORAL.PK_USUARIO(
+    CREATE TEMPORARY TABLE PG_TEMP.PK_USUARIO(
         K_USUARIO_G INTEGER PRIMARY KEY
     );
 EXCEPTION
@@ -117,10 +117,10 @@ BEGIN
     WHERE PARQUEADERO.PGP_SYM_DECRYPT(CORREO_CLIENTE, 'AES_KEY') = CURRENT_USER;
 
     -- Crea la tabla temporal del cliente
-    PERFORM PARQUEADERO.CREAR_TABLA_TEMP_USUARIO_PR();
+    CALL PARQUEADERO.CREAR_TABLA_TEMP_USUARIO_PR();
 
     -- Inserta la clave primaria en la tabla temporal del cliente
-    INSERT INTO TEMPORAL.PK_USUARIO VALUES(K_CLIENTE_L);
+    INSERT INTO PG_TEMP.PK_USUARIO VALUES(K_CLIENTE_L);
 EXCEPTION
     -- Excepciones
     WHEN OTHERS THEN
@@ -148,10 +148,10 @@ BEGIN
     WHERE PARQUEADERO.PGP_SYM_DECRYPT(CORREO_EMPLEADO, 'AES_KEY') = CURRENT_USER;
 
     -- Crea la tabla temporal del empleado
-    PERFORM PARQUEADERO.CREAR_TABLA_TEMP_USUARIO_PR();
+    CALL PARQUEADERO.CREAR_TABLA_TEMP_USUARIO_PR();
 
     -- Inserta la clave primaria en la tabla temporal del empleado
-    INSERT INTO TEMPORAL.PK_USUARIO VALUES(K_EMPLEADO_L);
+    INSERT INTO PG_TEMP.PK_USUARIO VALUES(K_EMPLEADO_L);
 EXCEPTION
     -- Excepciones
     WHEN OTHERS THEN
@@ -163,3 +163,31 @@ $$;
 COMMENT ON PROCEDURE PARQUEADERO.INSERTAR_LLAVE_EMPLEADO_PR IS E'Procedimiento para insertar la llave primaria de un empleado conectado en la BD en la tabla temporal de llave primaria.';
 
 ALTER PROCEDURE PARQUEADERO.INSERTAR_LLAVE_EMPLEADO_PR OWNER TO PARKUD_DB_ADMIN;
+
+CREATE OR REPLACE FUNCTION PARQUEADERO.RETORNAR_LLAVE_TEMPORAL_FU()
+RETURNS INTEGER
+LANGUAGE PLPGSQL
+AS $$
+DECLARE
+    -- Declaración de variables locales
+    K_USUARIO_L INTEGER;
+BEGIN
+    -- Selecciona la clave primaria del usuario conectado
+    SELECT K_USUARIO_G INTO STRICT K_USUARIO_L
+    FROM PG_TEMP.PK_USUARIO;
+
+    -- Retorna la clave primaria
+    RETURN K_USUARIO_L;
+EXCEPTION
+    -- Excepciones
+    WHEN NO_DATA_FOUND THEN
+        ROLLBACK;
+        RAISE EXCEPTION 'El usuario actual no está registrado como cliente, %/%', SQLSTATE, SQLERRM;
+    WHEN TOO_MANY_ROWS THEN
+        ROLLBACK;
+        RAISE EXCEPTION 'Hay inconsistencias en la BD, tabla cliente: hay un correo repetido, %/%', SQLSTATE, SQLERRM;
+    WHEN OTHERS THEN
+        ROLLBACK;
+        RAISE EXCEPTION 'RETORNAR_LLAVE_TEMPORAL_FU ha ocurrido un error: %/%', SQLSTATE, SQLERRM;
+END;
+$$;

@@ -9,6 +9,8 @@ SELECT
 -- Para cambiar su clave y que esta se vuelva válida:
 CALL PARQUEADERO.PRIMER_CAMBIO_CLAVE_PR('chcarov@udistrital.edu.co', '1234');
 
+CALL AUDITORIA.AUDIT_INGRESO_USUARIO_PR();
+
 -- Para agregar un vehículo:
 CALL PARQUEADERO.AGREGAR_VEHICULO_PR('Automóvil', 'CFD256', 'Christian', NULL, 'Caro', 'Vargas', 'Audi', 'Negro');
 CALL PARQUEADERO.AGREGAR_VEHICULO_PR('SUV', 'BWD456', 'Christian', NULL, 'Caro', 'Vargas', 'Skoda', 'Negro');
@@ -34,9 +36,5 @@ CALL PARQUEADERO.INSERTAR_METODO_PAGO_PR('Christian', 'Caro', '5540500001000004'
 
 CALL PARQUEADERO.CREAR_RESERVA_PR('Automóvil', 'Audi - CFD256', TRUE, 'Bogotá, D.C.', 'Sucursal Kennedy', 'Carrera 77B # 58C - 41', '2023-05-29', '13:00', '0004', 'MasterCard', 'Christian', 'Caro', 0);
 CALL PARQUEADERO.CREAR_RESERVA_PR('SUV', 'BMW - FDS123', TRUE, 'Bogotá, D.C.', 'Sucursal Chapinero', 'Carrera 7B # 45A - 23', '2023-06-01', '08:00', '0004', 'MasterCard', 'Christian', 'Caro', 0);
-
-SELECT AUDITORIA.MOSTRAR_AUDITORIA_FU();
-
-SELECT * FROM PARQUEADERO.TARIFA_MINUTO;
 
 SELECT AUDITORIA.MOSTRAR_AUDITORIA_FU();

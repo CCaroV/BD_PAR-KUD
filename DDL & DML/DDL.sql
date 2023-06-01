@@ -84,16 +84,7 @@ ALTER SCHEMA auditoria OWNER TO parkud_db_admin;
 COMMENT ON SCHEMA auditoria IS E'Esquema de auditoría de la BD de parqueaderos.';
 -- ddl-end --
 
--- object: temporal | type: SCHEMA --
--- DROP SCHEMA IF EXISTS temporal CASCADE;
-CREATE SCHEMA temporal;
--- ddl-end --
-ALTER SCHEMA temporal OWNER TO parkud_db_admin;
--- ddl-end --
-COMMENT ON SCHEMA temporal IS E'Esquema para la creación de objetos temporales.';
--- ddl-end --
-
-SET search_path TO pg_catalog,public,parqueadero,auditoria,temporal;
+SET search_path TO pg_catalog,public,parqueadero,auditoria;
 -- ddl-end --
 
 -- object: parqueadero.pais | type: TABLE --
@@ -1145,7 +1136,7 @@ CREATE TABLE auditoria.audit_usuario (
 	fecha_audit_usuario timestamp NOT NULL,
 	tipo_transaccion_cliente varchar(20) NOT NULL,
 	CONSTRAINT usuario_pk PRIMARY KEY (k_auditoria_usuario),
-	CONSTRAINT tipo_transaccion_cliente_ck CHECK (tipo_transaccion_cliente IN ('Ingreso a la app', 'Registro'))
+	CONSTRAINT tipo_transaccion_cliente_ck CHECK (tipo_transaccion_cliente IN ('Ingreso', 'Registro'))
 );
 -- ddl-end --
 COMMENT ON TABLE auditoria.audit_usuario IS E'Tabla encargada de auditar los inicios de sesión realizados por los usuarios.';
@@ -2617,12 +2608,6 @@ GRANT USAGE
 GRANT USAGE
    ON SEQUENCE parqueadero.horario_empleado_sq
    TO super_admin_role;
--- ddl-end --
-
--- object: "grant_CU_49b494ce61" | type: PERMISSION --
-GRANT CREATE,USAGE
-   ON SCHEMA temporal
-   TO user_role,admin_role,super_admin_role,operador_role;
 -- ddl-end --
 
 

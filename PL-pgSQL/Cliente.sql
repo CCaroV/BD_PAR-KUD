@@ -13,9 +13,7 @@ DECLARE
     K_CLIENTE_L PARQUEADERO.CLIENTE.K_CLIENTE%TYPE;
 BEGIN
     -- Recupera la clave primaria del cliente conectado a la BD
-    SELECT K_CLIENTE INTO STRICT K_CLIENTE_L
-    FROM PARQUEADERO.CLIENTE
-    WHERE PARQUEADERO.PGP_SYM_DECRYPT(CORREO_CLIENTE, 'AES_KEY') = CURRENT_USER;
+    K_CLIENTE_L := PARQUEADERO.RETORNAR_LLAVE_TEMPORAL_FU();
 
     -- Inserta en un JSON el resultado de la consulta
     SELECT JSON_AGG(ROW_TO_JSON(T)) INTO RESULTADO_L 
@@ -36,12 +34,6 @@ BEGIN
     RETURN RESULTADO_L;
 EXCEPTION
     -- Excepciones
-    WHEN NO_DATA_FOUND THEN
-        ROLLBACK;
-        RAISE EXCEPTION 'El usuario actual no está registrado como cliente, %/%', SQLSTATE, SQLERRM;
-    WHEN TOO_MANY_ROWS THEN
-        ROLLBACK;
-        RAISE EXCEPTION 'Hay inconsistencias en la BD, tabla cliente: hay un correo repetido, %/%', SQLSTATE, SQLERRM;
     WHEN OTHERS THEN
         ROLLBACK;
         RAISE EXCEPTION 'MOSTRAR_VEHICULOS_CLIENTE_FU ha ocurrido un error: %/%', SQLSTATE, SQLERRM;

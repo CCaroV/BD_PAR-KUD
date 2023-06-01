@@ -3,7 +3,7 @@
 CAUTION: Do not modify this file unless you know what you are doing.
  Unexpected results may occur if the code is changed deliberately.
 -->
-<dbmodel pgmodeler-ver="1.0.2" use-changelog="false" last-position="262,0" last-zoom="1.4" max-obj-count="174"
+<dbmodel pgmodeler-ver="1.0.2" use-changelog="false" last-position="442,1777" last-zoom="1.4" max-obj-count="172"
 	 default-schema="parqueadero" default-owner="parkud_db_admin"
 	 layers="Default layer"
 	 active-layers="0"
@@ -58,11 +58,6 @@ CAUTION: Do not modify this file unless you know what you are doing.
 <schema name="auditoria" layers="0" fill-color="#e1e1e1">
 	<role name="parkud_db_admin"/>
 	<comment> <![CDATA[Esquema de auditoría de la BD de parqueaderos. ]]> </comment>
-</schema>
-
-<schema name="temporal" layers="0" fill-color="#e1e1e1">
-	<role name="parkud_db_admin"/>
-	<comment> <![CDATA[Esquema para la creación de objetos temporales.]]> </comment>
 </schema>
 
 <table name="pais" layers="0" collapse-mode="2" max-obj-count="2" z-value="0">
@@ -1476,7 +1471,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 		<columns names="k_auditoria_usuario" ref-type="src-columns"/>
 	</constraint>
 	<constraint name="tipo_transaccion_cliente_ck" type="ck-constr" table="auditoria.audit_usuario">
-			<expression> <![CDATA[tipo_transaccion_cliente IN ('Ingreso a la app', 'Registro')]]> </expression>
+			<expression> <![CDATA[tipo_transaccion_cliente IN ('Ingreso', 'Registro')]]> </expression>
 		<comment> <![CDATA[Verifica que el tipo de transacción del cliente esté dentro de los rangos válidos.]]> </comment>
 	</constraint>
 
@@ -2610,10 +2605,5 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<object name="parqueadero.horario_empleado_sq" type="sequence"/>
 	<roles names="super_admin_role"/>
 	<privileges usage="true"/>
-</permission>
-<permission>
-	<object name="temporal" type="schema"/>
-	<roles names="user_role,admin_role,super_admin_role,operador_role"/>
-	<privileges create="true" usage="true"/>
 </permission>
 </dbmodel>

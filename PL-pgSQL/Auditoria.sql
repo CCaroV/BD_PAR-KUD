@@ -125,7 +125,7 @@ BEGIN
             (SELECT CURRENT_TIMESTAMP AT TIME ZONE 'America/Bogota'),
             'Ingreso'
         );
-        PERFORM PARQUEADERO.INSERTAR_LLAVE_CLIENTE_PR();
+        CALL PARQUEADERO.INSERTAR_LLAVE_CLIENTE_PR();
 
     -- Si es un operador, administrador o súper administrador
     ELSIF ROL_USUARIO_L = LOWER(TRIM('OPERADOR_ROLE'))
@@ -147,7 +147,7 @@ BEGIN
             (SELECT CURRENT_TIMESTAMP AT TIME ZONE 'America/Bogota'),
             'Ingreso'
         );
-        PERFORM PARQUEADERO.INSERTAR_LLAVE_EMPLEADO_PR();
+        CALL PARQUEADERO.INSERTAR_LLAVE_EMPLEADO_PR();
     END IF;
 EXCEPTION
     -- Excepciones
