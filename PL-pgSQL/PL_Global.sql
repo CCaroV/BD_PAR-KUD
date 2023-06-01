@@ -25,12 +25,12 @@ BEGIN
 
     -- Devuelve la clave generada
     RETURN RESULT;
-END;
 EXCEPTION
     -- Excepciones
     WHEN OTHERS THEN
         ROLLBACK;
         RAISE EXCEPTION 'CLAVE_ALEATORIA_FU ha ocurrido un error: %/%', SQLSTATE, SQLERRM;
+END;
 $$;
 
 COMMENT ON FUNCTION PARQUEADERO.CLAVE_ALEATORIA_FU IS E'Función que crea una cadena de carácteres aleatoria dado un tamaño.';
@@ -68,12 +68,12 @@ BEGIN
     ELSE
         RETURN NULL;
     END IF;
-END;
 EXCEPTION
     -- Excepciones
     WHEN OTHERS THEN
         ROLLBACK;
         RAISE EXCEPTION 'OBTENER_DIA_FECHA_FU ha ocurrido un error: %/%', SQLSTATE, SQLERRM;
+END;
 $$;
 
 COMMENT ON FUNCTION PARQUEADERO.OBTENER_DIA_FECHA_FU IS E'Función que devuelve el día de la semana con su respectivo nombre dada una fecha.';
@@ -145,7 +145,7 @@ BEGIN
     -- Recupera la clave primaria del empleado conectado a la BD
     SELECT K_EMPLEADO INTO STRICT K_EMPLEADO_L
     FROM PARQUEADERO.EMPLEADO
-    WHERE PARQUEADERO.PGP_SYM_DECRYPT(CORREO_CLIENTE, 'AES_KEY') = CURRENT_USER;
+    WHERE PARQUEADERO.PGP_SYM_DECRYPT(CORREO_EMPLEADO, 'AES_KEY') = CURRENT_USER;
 
     -- Crea la tabla temporal del empleado
     PERFORM PARQUEADERO.CREAR_TABLA_TEMP_USUARIO_PR();
