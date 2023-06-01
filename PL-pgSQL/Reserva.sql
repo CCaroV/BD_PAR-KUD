@@ -95,6 +95,10 @@ BEGIN
             AND (CIUDAD_P IS NULL OR C.NOMBRE_CIUDAD = CIUDAD_P)
             AND (ES_PARQ_CUBIERTO_P IS NULL OR SP.ES_CUBIERTO = ES_PARQ_CUBIERTO_P)
             AND (NOMBRE_SUCURSAL_P IS NULL OR S.NOMBRE_SUCURSAL = NOMBRE_SUCURSAL_P)
+        GROUP BY "Ciudad",
+            "Tipo sucursal",
+            "Nombre sucursal"
+        HAVING (COUNT(DISTINCT SP.K_SLOT_PARQUEADERO) - COUNT(DISTINCT R.K_RESERVA)) > 0
     ) T;
 
     -- Devuelve el JSON con la información de la consulta
