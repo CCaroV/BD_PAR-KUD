@@ -161,6 +161,47 @@ COMMENT ON PROCEDURE AUDITORIA.AUDIT_INGRESO_USUARIO_PR IS E'Procedimiento de au
 
 ALTER PROCEDURE AUDITORIA.AUDIT_INGRESO_USUARIO_PR OWNER TO PARKUD_DB_ADMIN;
 
+-- Se requiere registrar los usuarios que se registran en la aplicación.
+-- El siguiente trigger audita los registros hechos por clientes nuevos.
+CREATE OR REPLACE FUNCTION AUDITORIA.AUDIT_REGISTRO_CLIENTE_TR()
+RETURNS TRIGGER
+LANGUAGE PLPGSQL
+AS $$
+BEGIN
+    -- Audita el registro del usuario
+    INSERT INTO AUDITORIA.AUDIT_USUARIO (
+        K_EMPLEADO,
+        K_CLIENTE,
+        NOMBRE_USUARIO,
+        DIRECCION_IP,
+        FECHA_AUDIT_USUARIO,
+        TIPO_TRANSACCION_CLIENTE
+    )
+    VALUES (
+        NULL,
+        NEW.K_CLIENTE,
+        (SELECT PARQUEADERO.PGP_SYM_DECRYPT(NEW.CORREO_CLIENTE, 'AES_KEY')),
+        (SELECT INET_CLIENT_ADDR()),
+        (SELECT CURRENT_TIMESTAMP AT TIME ZONE 'America/Bogota'),
+        'Registro'
+    );
+EXCEPTION
+    -- Excepciones
+    WHEN OTHERS THEN
+        ROLLBACK;
+        RAISE EXCEPTION 'AUDIT_REGISTRO_CLIENTE_TR ha ocurrido un error: %/%', SQLSTATE, SQLERRM;
+END;
+$$;
+
+COMMENT ON PROCEDURE AUDITORIA.AUDIT_REGISTRO_CLIENTE_TR IS E'Trigger de auditoría para los clientes que se registran en la aplicación.';
+
+ALTER PROCEDURE AUDITORIA.AUDIT_REGISTRO_CLIENTE_TR OWNER TO PARKUD_DB_ADMIN;
+
+CREATE OR REPLACE TRIGGER AUDIT_REGISTRO_CLIENTE_TR
+    AFTER INSERT ON PARQUEADERO.CLIENTE
+    FOR EACH ROW
+    EXECUTE FUNCTION AUDITORIA.AUDIT_REGISTRO_CLIENTE_TR();
+
 
 -- Los administradores y gerentes requieren ver el flujo transaccional auditado.
 -- La siguiente función devuelve todas las transacciones auditadas de la BD.

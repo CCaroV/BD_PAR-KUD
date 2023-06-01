@@ -52,24 +52,6 @@ BEGIN
         CORREO_ENCRIPTADO_L
     ) RETURNING K_CLIENTE INTO K_CLIENTE_L;
 
-    -- Audita el registro del usuario
-    INSERT INTO AUDITORIA.AUDIT_USUARIO (
-        K_EMPLEADO,
-        K_CLIENTE,
-        NOMBRE_USUARIO,
-        DIRECCION_IP,
-        FECHA_AUDIT_USUARIO,
-        TIPO_TRANSACCION_CLIENTE
-    )
-    VALUES (
-        NULL,
-        K_CLIENTE_L,
-        (SELECT USER),
-        (SELECT INET_CLIENT_ADDR()),
-        (SELECT CURRENT_TIMESTAMP AT TIME ZONE 'America/Bogota'),
-        'Registro'
-    );
-
     -- Devuelve la clave generada
     RETURN CLAVE_ALEATORIA_L;
 EXCEPTION
