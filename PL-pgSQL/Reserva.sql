@@ -360,9 +360,6 @@ BEGIN
     );
 EXCEPTION
     -- Excepciones
-    WHEN UNDEFINED_TABLE THEN
-        ROLLBACK;
-        RAISE EXCEPTION 'Error en la recuperación de la PK del usuario.';
     WHEN NO_DATA_FOUND THEN
         ROLLBACK;
         RAISE EXCEPTION 'Método de pago no encontrado.';

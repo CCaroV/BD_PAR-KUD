@@ -91,6 +91,107 @@ CREATE OR REPLACE TRIGGER AUDIT_VEHICULO_TR
     FOR EACH ROW
     EXECUTE FUNCTION AUDITORIA.AUDIT_VEHICULO_TR();
 
+-- Se requiere auditar las reservas realizadas por los usuarios en la aplicación.
+-- El siguiente trigger registra cuando una reserva es realiazada.
+CREATE OR REPLACE FUNCTION AUDITORIA.AUDIT_RESERVAS()
+RETURNS TRIGGER
+LANGUAGE PLPGSQL
+PARALLEL UNSAFE
+AS $$
+BEGIN
+    CASE TG_OP
+        -- En caso de que se esté insertando una reserva
+        WHEN 'INSERT' THEN
+            INSERT INTO AUDITORIA.AUDIT_RESERVA (
+                K_RESERVA,
+                K_CLIENTE,
+                K_SUCURSAL,
+                FECHA_AUDIT_RESERVA,
+                CIUDAD_AUDIT_RESERVA,
+                SUCURSAL_AUDIT_RESERVA,
+                TIPO_VEHICULO_RESERVA,
+                TIPO_TRANSACCION_RESERVA,
+                NOMBRE_USUARIO_RESERVA
+            ) VALUES (
+                NEW.K_RESERVA,
+                NEW.K_CLIENTE,
+                NEW.K_SUCURSAL,
+                (SELECT CURRENT_TIMESTAMP AT TIME ZONE 'America/Bogota'),
+                (SELECT C.NOMBRE_CIUDAD 
+                FROM PARQUEADERO.PAIS P 
+                    INNER JOIN PARQUEADERO.DEPARTAMENTO DP ON P.K_PAIS = DP.K_PAIS
+                    INNER JOIN PARQUEADERO.CIUDAD C ON DP.K_DEPARTAMENTO = C.K_DEPARTAMENTO
+                    INNER JOIN PARQUEADERO.DIRECCION D ON C.K_CIUDAD = D.K_CIUDAD
+                    INNER JOIN PARQUEADERO.SUCURSAL S ON D.K_DIRECCION = S.K_DIRECCION
+                WHERE K_SUCURSAL = NEW.K_SUCURSAL),
+                (SELECT S.NOMBRE_SUCURSAL
+                FROM PARQUEADERO.PAIS P 
+                    INNER JOIN PARQUEADERO.DEPARTAMENTO DP ON P.K_PAIS = DP.K_PAIS
+                    INNER JOIN PARQUEADERO.CIUDAD C ON DP.K_DEPARTAMENTO = C.K_DEPARTAMENTO
+                    INNER JOIN PARQUEADERO.DIRECCION D ON C.K_CIUDAD = D.K_CIUDAD
+                    INNER JOIN PARQUEADERO.SUCURSAL S ON D.K_DIRECCION = S.K_DIRECCION
+                WHERE K_SUCURSAL = NEW.K_SUCURSAL),
+                (SELECT V.TIPO_VEHICULO
+                FROM PARQUEADERO.CLIENTE C
+                    INNER JOIN PARQUEADERO.VEHICULO V ON C.K_CLIENTE = V.K_CLIENTE
+                WHERE C.K_CLIENTE = NEW.K_CLIENTE
+                    AND NEW.PLACA_VEHICULO = V.PLACA_VEHICULO),
+                'Creación',
+                (SELECT USER)
+            );
+        WHEN 'UPDATE' THEN
+            INSERT INTO AUDITORIA.AUDIT_RESERVA (
+                K_RESERVA,
+                K_CLIENTE,
+                K_SUCURSAL,
+                FECHA_AUDIT_RESERVA,
+                CIUDAD_AUDIT_RESERVA,
+                SUCURSAL_AUDIT_RESERVA,
+                TIPO_VEHICULO_RESERVA,
+                TIPO_TRANSACCION_RESERVA,
+                NOMBRE_USUARIO_RESERVA
+            ) VALUES (
+                NEW.K_RESERVA,
+                NEW.K_CLIENTE,
+                NEW.K_SUCURSAL,
+                (SELECT CURRENT_TIMESTAMP AT TIME ZONE 'America/Bogota'),
+                (SELECT C.NOMBRE_CIUDAD 
+                FROM PARQUEADERO.PAIS P 
+                    INNER JOIN PARQUEADERO.DEPARTAMENTO DP ON P.K_PAIS = DP.K_PAIS
+                    INNER JOIN PARQUEADERO.CIUDAD C ON DP.K_DEPARTAMENTO = C.K_DEPARTAMENTO
+                    INNER JOIN PARQUEADERO.DIRECCION D ON C.K_CIUDAD = D.K_CIUDAD
+                    INNER JOIN PARQUEADERO.SUCURSAL S ON D.K_DIRECCION = S.K_DIRECCION
+                WHERE K_SUCURSAL = NEW.K_SUCURSAL),
+                (SELECT S.NOMBRE_SUCURSAL
+                FROM PARQUEADERO.PAIS P 
+                    INNER JOIN PARQUEADERO.DEPARTAMENTO DP ON P.K_PAIS = DP.K_PAIS
+                    INNER JOIN PARQUEADERO.CIUDAD C ON DP.K_DEPARTAMENTO = C.K_DEPARTAMENTO
+                    INNER JOIN PARQUEADERO.DIRECCION D ON C.K_CIUDAD = D.K_CIUDAD
+                    INNER JOIN PARQUEADERO.SUCURSAL S ON D.K_DIRECCION = S.K_DIRECCION
+                WHERE K_SUCURSAL = NEW.K_SUCURSAL),
+                (SELECT V.TIPO_VEHICULO
+                FROM PARQUEADERO.CLIENTE C
+                    INNER JOIN PARQUEADERO.VEHICULO V ON C.K_CLIENTE = V.K_CLIENTE
+                WHERE C.K_CLIENTE = NEW.K_CLIENTE
+                    AND NEW.PLACA_VEHICULO = V.PLACA_VEHICULO),
+                'Modificación',
+                (SELECT USER)
+            );
+    END CASE;
+
+    -- Continúa con la transacción.
+    RETURN NEW;
+END;
+$$;
+
+COMMENT ON FUNCTION AUDITORIA.AUDIT_RESERVAS IS E'Trigger de auditoría de reservas.';
+
+ALTER FUNCTION AUDITORIA.AUDIT_RESERVAS OWNER TO PARKUD_DB_ADMIN ;
+
+CREATE OR REPLACE TRIGGER AUDIT_RESERVAS
+    AFTER INSERT OR UPDATE ON PARQUEADERO.RESERVA
+    FOR EACH ROW
+    EXECUTE FUNCTION AUDITORIA.AUDIT_RESERVAS();
 
 -- Se requiere registrar la dirección IP de los clientes que entran a la aplicación.
 -- El siguiente procedimiento audita los inicios de sesión y las direcciones IP de los clientes.
