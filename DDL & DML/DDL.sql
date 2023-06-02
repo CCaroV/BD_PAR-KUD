@@ -2797,6 +2797,24 @@ GRANT SELECT
    TO operador_role;
 -- ddl-end --
 
+-- object: "grant_U_4da3bf0fd0" | type: PERMISSION --
+GRANT USAGE
+   ON SCHEMA auditoria
+   TO manage_account_user;
+-- ddl-end --
+
+-- object: grant_a_cab836193d | type: PERMISSION --
+GRANT INSERT
+   ON TABLE auditoria.audit_usuario
+   TO manage_account_user;
+-- ddl-end --
+
+-- object: "grant_U_442a08b980" | type: PERMISSION --
+GRANT USAGE
+   ON SEQUENCE auditoria.usuario_sq
+   TO manage_account_user;
+-- ddl-end --
+
 -- object: revoke_rwx_e369c9da65 | type: PERMISSION --
 REVOKE SELECT(numero_tarjeta),UPDATE(numero_tarjeta),REFERENCES(numero_tarjeta)
    ON TABLE parqueadero.tarjeta_pago
@@ -2861,24 +2879,6 @@ REVOKE SELECT(tipo_identificacion_cliente)
 REVOKE SELECT(numero_identificacion_cliente)
    ON TABLE parqueadero.cliente
    FROM operador_role;
--- ddl-end --
-
--- object: "grant_U_4da3bf0fd0" | type: PERMISSION --
-GRANT USAGE
-   ON SCHEMA auditoria
-   TO manage_account_user;
--- ddl-end --
-
--- object: grant_a_cab836193d | type: PERMISSION --
-GRANT INSERT
-   ON TABLE auditoria.audit_usuario
-   TO manage_account_user;
--- ddl-end --
-
--- object: "grant_U_442a08b980" | type: PERMISSION --
-GRANT USAGE
-   ON SEQUENCE auditoria.usuario_sq
-   TO manage_account_user;
 -- ddl-end --
 
 
