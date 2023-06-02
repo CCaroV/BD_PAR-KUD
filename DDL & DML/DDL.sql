@@ -15,7 +15,8 @@ COMMENT ON ROLE parkud_db_admin IS E'El administrador de la base de datos de PAR
 
 -- object: admin_role | type: ROLE --
 -- DROP ROLE IF EXISTS admin_role;
-CREATE ROLE admin_role WITH ;
+CREATE ROLE admin_role WITH 
+	CREATEROLE;
 -- ddl-end --
 COMMENT ON ROLE admin_role IS E'Rol de administrador en la base de datos.';
 -- ddl-end --
@@ -1699,7 +1700,7 @@ COMMENT ON POLICY reserva_cliente_pl ON parqueadero.reserva IS E'Política que s
 -- DROP POLICY IF EXISTS operador_horario_pl ON parqueadero.horario_empleado CASCADE;
 CREATE POLICY operador_horario_pl ON parqueadero.horario_empleado
 	AS PERMISSIVE
-	FOR ALL
+	FOR SELECT
 	TO operador_role
 	USING (K_EMPLEADO IN (SELECT K_EMPLEADO FROM PARQUEADERO.EMPLEADO WHERE PARQUEADERO.PGP_SYM_DECRYPT(CORREO_EMPLEADO, 'AES_KEY') = CURRENT_USER));
 -- ddl-end --
@@ -1746,15 +1747,177 @@ USING btree
 COMMENT ON INDEX parqueadero.reserva_tarjeta_pago_ixfk IS E'Índice de la llave foránea de la tabla Tarjeta Pago.';
 -- ddl-end --
 
+-- object: cliente_select_pl | type: POLICY --
+-- DROP POLICY IF EXISTS cliente_select_pl ON parqueadero.cliente CASCADE;
+CREATE POLICY cliente_select_pl ON parqueadero.cliente
+	AS PERMISSIVE
+	FOR SELECT
+	TO super_admin_role, operador_role, admin_role
+	USING (TRUE);
+-- ddl-end --
+COMMENT ON POLICY cliente_select_pl ON parqueadero.cliente IS E'Política que permite a los roles pertinentes seleccionar datos de la tabla Cliente.';
+-- ddl-end --
+
+-- object: cliente_insert_pl | type: POLICY --
+-- DROP POLICY IF EXISTS cliente_insert_pl ON parqueadero.cliente CASCADE;
+CREATE POLICY cliente_insert_pl ON parqueadero.cliente
+	AS PERMISSIVE
+	FOR INSERT
+	TO manage_account_user, super_admin_role, admin_role
+	WITH CHECK (TRUE);
+-- ddl-end --
+COMMENT ON POLICY cliente_insert_pl ON parqueadero.cliente IS E'Política que permite a los roles pertinentes insertar datos en la tabla del cliente.';
+-- ddl-end --
+
+-- object: cliente_update_pl | type: POLICY --
+-- DROP POLICY IF EXISTS cliente_update_pl ON parqueadero.cliente CASCADE;
+CREATE POLICY cliente_update_pl ON parqueadero.cliente
+	AS PERMISSIVE
+	FOR UPDATE
+	TO super_admin_role, admin_role
+	USING (TRUE)
+	WITH CHECK (TRUE);
+-- ddl-end --
+COMMENT ON POLICY cliente_update_pl ON parqueadero.cliente IS E'Política que permite a los roles pertinentes actualizar datos de la tabla Cliente.';
+-- ddl-end --
+
+-- object: vehiculo_select_pl | type: POLICY --
+-- DROP POLICY IF EXISTS vehiculo_select_pl ON parqueadero.vehiculo CASCADE;
+CREATE POLICY vehiculo_select_pl ON parqueadero.vehiculo
+	AS PERMISSIVE
+	FOR SELECT
+	TO operador_role, admin_role, super_admin_role
+	USING (TRUE);
+-- ddl-end --
+COMMENT ON POLICY vehiculo_select_pl ON parqueadero.vehiculo IS E'Política que permite a los roles pertinentes seleccionar datos de la tabla Vehículo.';
+-- ddl-end --
+
+-- object: vehiculo_insert_pl | type: POLICY --
+-- DROP POLICY IF EXISTS vehiculo_insert_pl ON parqueadero.vehiculo CASCADE;
+CREATE POLICY vehiculo_insert_pl ON parqueadero.vehiculo
+	AS PERMISSIVE
+	FOR INSERT
+	TO super_admin_role, admin_role
+	WITH CHECK (TRUE);
+-- ddl-end --
+COMMENT ON POLICY vehiculo_insert_pl ON parqueadero.vehiculo IS E'Política que permite a los roles pertinentes insertar datos de la tabla Vehículo.';
+-- ddl-end --
+
+-- object: vehiculo_update_pl | type: POLICY --
+-- DROP POLICY IF EXISTS vehiculo_update_pl ON parqueadero.vehiculo CASCADE;
+CREATE POLICY vehiculo_update_pl ON parqueadero.vehiculo
+	AS PERMISSIVE
+	FOR UPDATE
+	TO super_admin_role, admin_role
+	USING (TRUE)
+	WITH CHECK (TRUE);
+-- ddl-end --
+COMMENT ON POLICY vehiculo_update_pl ON parqueadero.vehiculo IS E'Política que permite a los roles pertinentes actualizar datos de la tabla Vehículo.';
+-- ddl-end --
+
+-- object: vehiculo_delete_pl | type: POLICY --
+-- DROP POLICY IF EXISTS vehiculo_delete_pl ON parqueadero.vehiculo CASCADE;
+CREATE POLICY vehiculo_delete_pl ON parqueadero.vehiculo
+	AS PERMISSIVE
+	FOR DELETE
+	TO super_admin_role
+	USING (TRUE);
+-- ddl-end --
+COMMENT ON POLICY vehiculo_delete_pl ON parqueadero.vehiculo IS E'Política que permite a los roles pertinentes eliminar datos de la tabla Vehículo.';
+-- ddl-end --
+
+-- object: empleado_select_pl | type: POLICY --
+-- DROP POLICY IF EXISTS empleado_select_pl ON parqueadero.empleado CASCADE;
+CREATE POLICY empleado_select_pl ON parqueadero.empleado
+	AS PERMISSIVE
+	FOR SELECT
+	TO super_admin_role, admin_role
+	USING (TRUE);
+-- ddl-end --
+COMMENT ON POLICY empleado_select_pl ON parqueadero.empleado IS E'Política que permite a los roles pertinentes seleccionar datos de la tabla Empleado.';
+-- ddl-end --
+
+-- object: empleado_insert_pl | type: POLICY --
+-- DROP POLICY IF EXISTS empleado_insert_pl ON parqueadero.empleado CASCADE;
+CREATE POLICY empleado_insert_pl ON parqueadero.empleado
+	AS PERMISSIVE
+	FOR INSERT
+	TO super_admin_role, admin_role
+	WITH CHECK (TRUE);
+-- ddl-end --
+COMMENT ON POLICY empleado_insert_pl ON parqueadero.empleado IS E'Política que permite a los roles pertinentes insertar datos de la tabla Empleado.';
+-- ddl-end --
+
+-- object: empleado_update_pl | type: POLICY --
+-- DROP POLICY IF EXISTS empleado_update_pl ON parqueadero.empleado CASCADE;
+CREATE POLICY empleado_update_pl ON parqueadero.empleado
+	AS PERMISSIVE
+	FOR UPDATE
+	TO super_admin_role, admin_role
+	USING (TRUE)
+	WITH CHECK (TRUE);
+-- ddl-end --
+COMMENT ON POLICY empleado_update_pl ON parqueadero.empleado IS E'Política que permite a los roles pertinentes actualizar datos de la tabla Empleado.';
+-- ddl-end --
+
+-- object: empleado_delete | type: POLICY --
+-- DROP POLICY IF EXISTS empleado_delete ON parqueadero.empleado CASCADE;
+CREATE POLICY empleado_delete ON parqueadero.empleado
+	AS PERMISSIVE
+	FOR DELETE
+	TO super_admin_role
+	USING (TRUE);
+-- ddl-end --
+COMMENT ON POLICY empleado_delete ON parqueadero.empleado IS E'Política que permite a los roles pertinentes eliminar datos de la tabla Empleado.';
+-- ddl-end --
+
+-- object: cliente_delete_pl | type: POLICY --
+-- DROP POLICY IF EXISTS cliente_delete_pl ON parqueadero.cliente CASCADE;
+CREATE POLICY cliente_delete_pl ON parqueadero.cliente
+	AS PERMISSIVE
+	FOR DELETE
+	TO super_admin_role
+	USING (TRUE);
+-- ddl-end --
+COMMENT ON POLICY cliente_delete_pl ON parqueadero.cliente IS E'Política que permite a los roles pertinentes eliminar datos de la tabla Cliente.';
+-- ddl-end --
+
+-- object: reserva_select_pl | type: POLICY --
+-- DROP POLICY IF EXISTS reserva_select_pl ON parqueadero.reserva CASCADE;
+CREATE POLICY reserva_select_pl ON parqueadero.reserva
+	AS PERMISSIVE
+	FOR SELECT
+	TO admin_role, operador_role, super_admin_role
+	USING (TRUE);
+-- ddl-end --
+COMMENT ON POLICY reserva_select_pl ON parqueadero.reserva IS E'Política que permite a los roles pertinentes seleccionar datos de la tabla Reserva.';
+-- ddl-end --
+
+-- object: reserva_insert_pl | type: POLICY --
+-- DROP POLICY IF EXISTS reserva_insert_pl ON parqueadero.reserva CASCADE;
+CREATE POLICY reserva_insert_pl ON parqueadero.reserva
+	AS PERMISSIVE
+	FOR INSERT
+	TO super_admin_role, admin_role
+	WITH CHECK (TRUE);
+-- ddl-end --
+COMMENT ON POLICY reserva_insert_pl ON parqueadero.reserva IS E'Política que permite a los roles pertinentes insertar datos de la tabla Reserva.';
+-- ddl-end --
+
+-- object: reserva_update_pl | type: POLICY --
+-- DROP POLICY IF EXISTS reserva_update_pl ON parqueadero.reserva CASCADE;
+CREATE POLICY reserva_update_pl ON parqueadero.reserva
+	AS PERMISSIVE
+	FOR UPDATE
+	TO super_admin_role, admin_role
+	USING (TRUE);
+-- ddl-end --
+COMMENT ON POLICY reserva_update_pl ON parqueadero.reserva IS E'Política que permite a los roles pertinentes actualizar datos de la tabla Reserva.';
+-- ddl-end --
+
 -- object: "grant_U_ad498d56ef" | type: PERMISSION --
 GRANT USAGE
    ON SCHEMA parqueadero
-   TO user_role;
--- ddl-end --
-
--- object: grant_raw_bc7fd06f04 | type: PERMISSION --
-GRANT SELECT,INSERT,UPDATE
-   ON TABLE parqueadero.cliente
    TO user_role;
 -- ddl-end --
 
@@ -1767,12 +1930,6 @@ GRANT SELECT,INSERT,UPDATE
 -- object: grant_rawd_f5b271ce19 | type: PERMISSION --
 GRANT SELECT,INSERT,UPDATE,DELETE
    ON TABLE parqueadero.tarjeta_pago
-   TO user_role;
--- ddl-end --
-
--- object: grant_rawd_fce1799191 | type: PERMISSION --
-GRANT SELECT,INSERT,UPDATE,DELETE
-   ON TABLE parqueadero.vehiculo
    TO user_role;
 -- ddl-end --
 
@@ -1842,12 +1999,6 @@ GRANT USAGE
    TO manage_account_user;
 -- ddl-end --
 
--- object: grant_a_b6821eb769 | type: PERMISSION --
-GRANT INSERT
-   ON TABLE parqueadero.cliente
-   TO manage_account_user;
--- ddl-end --
-
 -- object: "grant_U_b79e3d979b" | type: PERMISSION --
 GRANT USAGE
    ON SEQUENCE parqueadero.cliente_sq
@@ -1893,18 +2044,6 @@ GRANT SELECT,INSERT,UPDATE
 -- object: grant_raw_ae364acded | type: PERMISSION --
 GRANT SELECT,INSERT,UPDATE
    ON TABLE parqueadero.reserva
-   TO admin_role;
--- ddl-end --
-
--- object: grant_r_05708b9cdf | type: PERMISSION --
-GRANT SELECT
-   ON TABLE parqueadero.cliente
-   TO admin_role;
--- ddl-end --
-
--- object: grant_r_cdf7aa8a7a | type: PERMISSION --
-GRANT SELECT
-   ON TABLE parqueadero.vehiculo
    TO admin_role;
 -- ddl-end --
 
@@ -2091,18 +2230,6 @@ GRANT SELECT,INSERT,UPDATE
 -- object: grant_r_bfb876c072 | type: PERMISSION --
 GRANT SELECT
    ON TABLE parqueadero.reserva
-   TO operador_role;
--- ddl-end --
-
--- object: grant_r_418b521192 | type: PERMISSION --
-GRANT SELECT
-   ON TABLE parqueadero.vehiculo
-   TO super_admin_role;
--- ddl-end --
-
--- object: grant_r_abf2d71493 | type: PERMISSION --
-GRANT SELECT
-   ON TABLE parqueadero.vehiculo
    TO operador_role;
 -- ddl-end --
 
@@ -2608,6 +2735,132 @@ GRANT USAGE
 GRANT USAGE
    ON SEQUENCE parqueadero.horario_empleado_sq
    TO super_admin_role;
+-- ddl-end --
+
+-- object: revoke_rwx_e369c9da65 | type: PERMISSION --
+REVOKE SELECT(numero_tarjeta),UPDATE(numero_tarjeta),REFERENCES(numero_tarjeta)
+   ON TABLE parqueadero.tarjeta_pago
+   FROM user_role;
+-- ddl-end --
+
+-- object: revoke_rawx_6332f16e0d | type: PERMISSION --
+REVOKE SELECT(numero_tarjeta),INSERT(numero_tarjeta),UPDATE(numero_tarjeta),REFERENCES(numero_tarjeta)
+   ON TABLE parqueadero.tarjeta_pago
+   FROM super_admin_role;
+-- ddl-end --
+
+-- object: revoke_rwx_f78106da68 | type: PERMISSION --
+REVOKE SELECT(mes_vencimiento),UPDATE(mes_vencimiento),REFERENCES(mes_vencimiento)
+   ON TABLE parqueadero.tarjeta_pago
+   FROM operador_role;
+-- ddl-end --
+
+-- object: revoke_rawx_ad847dfda6 | type: PERMISSION --
+REVOKE SELECT(mes_vencimiento),INSERT(mes_vencimiento),UPDATE(mes_vencimiento),REFERENCES(mes_vencimiento)
+   ON TABLE parqueadero.tarjeta_pago
+   FROM super_admin_role;
+-- ddl-end --
+
+-- object: revoke_rwx_18c4d3d6ed | type: PERMISSION --
+REVOKE SELECT(anio_vencimiento),UPDATE(anio_vencimiento),REFERENCES(anio_vencimiento)
+   ON TABLE parqueadero.tarjeta_pago
+   FROM user_role;
+-- ddl-end --
+
+-- object: revoke_rawx_5b3277dcb7 | type: PERMISSION --
+REVOKE SELECT(anio_vencimiento),INSERT(anio_vencimiento),UPDATE(anio_vencimiento),REFERENCES(anio_vencimiento)
+   ON TABLE parqueadero.tarjeta_pago
+   FROM super_admin_role;
+-- ddl-end --
+
+-- object: revoke_rawx_7e3bc53a83 | type: PERMISSION --
+REVOKE SELECT(apellido_duenio_tarjeta),INSERT(apellido_duenio_tarjeta),UPDATE(apellido_duenio_tarjeta),REFERENCES(apellido_duenio_tarjeta)
+   ON TABLE parqueadero.tarjeta_pago
+   FROM super_admin_role;
+-- ddl-end --
+
+-- object: revoke_rawx_53615802c1 | type: PERMISSION --
+REVOKE SELECT(nombre_duenio_tarjeta),INSERT(nombre_duenio_tarjeta),UPDATE(nombre_duenio_tarjeta),REFERENCES(nombre_duenio_tarjeta)
+   ON TABLE parqueadero.tarjeta_pago
+   FROM super_admin_role;
+-- ddl-end --
+
+-- object: revoke_rawx_334e594a21 | type: PERMISSION --
+REVOKE SELECT(ultimos_cuatro_digitos),INSERT(ultimos_cuatro_digitos),UPDATE(ultimos_cuatro_digitos),REFERENCES(ultimos_cuatro_digitos)
+   ON TABLE parqueadero.tarjeta_pago
+   FROM super_admin_role;
+-- ddl-end --
+
+-- object: grant_r_cd5524e76e | type: PERMISSION --
+GRANT SELECT
+   ON TABLE parqueadero.tarjeta_pago
+   TO super_admin_role;
+-- ddl-end --
+
+-- object: grant_rawd_b89557d3ff | type: PERMISSION --
+GRANT SELECT,INSERT,UPDATE,DELETE
+   ON TABLE parqueadero.cliente
+   TO super_admin_role;
+-- ddl-end --
+
+-- object: grant_raw_05708b9cdf | type: PERMISSION --
+GRANT SELECT,INSERT,UPDATE
+   ON TABLE parqueadero.cliente
+   TO admin_role;
+-- ddl-end --
+
+-- object: grant_raw_bc7fd06f04 | type: PERMISSION --
+GRANT SELECT,INSERT,UPDATE
+   ON TABLE parqueadero.cliente
+   TO user_role;
+-- ddl-end --
+
+-- object: grant_a_b6821eb769 | type: PERMISSION --
+GRANT INSERT
+   ON TABLE parqueadero.cliente
+   TO manage_account_user;
+-- ddl-end --
+
+-- object: grant_rawd_fce1799191 | type: PERMISSION --
+GRANT SELECT,INSERT,UPDATE,DELETE
+   ON TABLE parqueadero.vehiculo
+   TO user_role;
+-- ddl-end --
+
+-- object: grant_r_abf2d71493 | type: PERMISSION --
+GRANT SELECT
+   ON TABLE parqueadero.vehiculo
+   TO operador_role;
+-- ddl-end --
+
+-- object: grant_raw_cdf7aa8a7a | type: PERMISSION --
+GRANT SELECT,INSERT,UPDATE
+   ON TABLE parqueadero.vehiculo
+   TO admin_role;
+-- ddl-end --
+
+-- object: grant_rawd_418b521192 | type: PERMISSION --
+GRANT SELECT,INSERT,UPDATE,DELETE
+   ON TABLE parqueadero.vehiculo
+   TO super_admin_role;
+-- ddl-end --
+
+-- object: grant_r_0af199fdda | type: PERMISSION --
+GRANT SELECT
+   ON TABLE parqueadero.cliente
+   TO operador_role;
+-- ddl-end --
+
+-- object: revoke_r_96809283d1 | type: PERMISSION --
+REVOKE SELECT(tipo_identificacion_cliente)
+   ON TABLE parqueadero.cliente
+   FROM operador_role;
+-- ddl-end --
+
+-- object: revoke_r_6a64655b93 | type: PERMISSION --
+REVOKE SELECT(numero_identificacion_cliente)
+   ON TABLE parqueadero.cliente
+   FROM operador_role;
 -- ddl-end --
 
 

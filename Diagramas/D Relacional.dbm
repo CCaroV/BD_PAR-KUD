@@ -3,7 +3,7 @@
 CAUTION: Do not modify this file unless you know what you are doing.
  Unexpected results may occur if the code is changed deliberately.
 -->
-<dbmodel pgmodeler-ver="1.0.2" use-changelog="false" last-position="442,1777" last-zoom="1.4" max-obj-count="172"
+<dbmodel pgmodeler-ver="1.0.2" use-changelog="false" last-position="0,434" last-zoom="0.75" max-obj-count="189"
 	 default-schema="parqueadero" default-owner="parkud_db_admin"
 	 layers="Default layer"
 	 active-layers="0"
@@ -17,7 +17,8 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<comment> <![CDATA[El administrador de la base de datos de PAR-KUD.]]> </comment>
 </role>
 
-<role name="admin_role">
+<role name="admin_role"
+ createrole="true">
 	<comment> <![CDATA[Rol de administrador en la base de datos.]]> </comment>
 </role>
 
@@ -136,12 +137,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	 src-fk-pattern="{st}_fk"
 	 src-table="parqueadero.pais"
 	 dst-table="parqueadero.departamento"
-	 src-required="true" dst-required="false">
-	<line>
-		<position x="2540" y="1080"/>
-	<position x="2540" y="960"/>
-	</line>
-</relationship>
+	 src-required="true" dst-required="false"/>
 
 <relationship name="contiene" type="rel1n" layers="0"
 	 src-col-pattern="{sc}"
@@ -149,12 +145,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	 src-fk-pattern="{st}_fk"
 	 src-table="parqueadero.departamento"
 	 dst-table="parqueadero.ciudad"
-	 src-required="true" dst-required="false">
-	<line>
-		<position x="2440" y="760"/>
-	<position x="2440" y="640"/>
-	</line>
-</relationship>
+	 src-required="true" dst-required="false"/>
 
 <table name="sucursal" layers="0" collapse-mode="2" max-obj-count="7" z-value="0">
 	<schema name="parqueadero"/>
@@ -203,7 +194,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<schema name="parqueadero"/>
 	<role name="parkud_db_admin"/>
 	<comment> <![CDATA[Las diferentes reservas que un cliente puede hacer de un parqueadero.]]> </comment>
-	<position x="540" y="720"/>
+	<position x="540" y="640"/>
 	<column name="k_reserva" not-null="true">
 		<type name="bigint" length="0"/>
 		<comment> <![CDATA[Clave primaria de la tabla Parqueadero.]]> </comment>
@@ -332,7 +323,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<schema name="parqueadero"/>
 	<role name="parkud_db_admin"/>
 	<comment> <![CDATA[Los clientes que reservan parqueaderos en el sistema.]]> </comment>
-	<position x="980" y="1620"/>
+	<position x="980" y="1540"/>
 	<column name="k_cliente" not-null="true">
 		<type name="integer" length="0"/>
 		<comment> <![CDATA[Clave primaria de la tabla Cliente.]]> </comment>
@@ -461,12 +452,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	 src-fk-pattern="{st}_fk"
 	 src-table="parqueadero.sucursal"
 	 dst-table="parqueadero.direccion"
-	 src-required="false" dst-required="true">
-	<line>
-		<position x="1580" y="440"/>
-	<position x="1760" y="440"/>
-	</line>
-</relationship>
+	 src-required="false" dst-required="true"/>
 
 <table name="tarifa_minuto" layers="0" collapse-mode="2" max-obj-count="12" z-value="0">
 	<schema name="parqueadero"/>
@@ -536,12 +522,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	 src-fk-pattern="{st}_fk"
 	 src-table="parqueadero.sucursal"
 	 dst-table="parqueadero.tarifa_minuto"
-	 src-required="true" dst-required="false">
-	<line>
-		<position x="1580" y="360"/>
-	<position x="2560" y="360"/>
-	</line>
-</relationship>
+	 src-required="true" dst-required="false"/>
 
 <table name="horario_sucursal" layers="0" collapse-mode="2" max-obj-count="8" z-value="0">
 	<schema name="parqueadero"/>
@@ -617,12 +598,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	 src-fk-pattern="{st}_fk"
 	 src-table="parqueadero.dia_semana"
 	 dst-table="parqueadero.horario_sucursal"
-	 src-required="true" dst-required="false">
-	<line>
-		<position x="2020" y="880"/>
-	<position x="1880" y="880"/>
-	</line>
-</relationship>
+	 src-required="true" dst-required="false"/>
 
 <table name="horario_empleado" layers="0" collapse-mode="2" max-obj-count="7" z-value="0">
 	<schema name="parqueadero"/>
@@ -664,7 +640,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<schema name="parqueadero"/>
 	<role name="parkud_db_admin"/>
 	<comment> <![CDATA[Empleado que trabaja en una o varias sucursales.]]> </comment>
-	<position x="1440" y="1220"/>
+	<position x="1440" y="1140"/>
 	<column name="k_empleado" not-null="true">
 		<type name="integer" length="0"/>
 		<comment> <![CDATA[Clave primaria de la tabla Empleado.]]> </comment>
@@ -763,12 +739,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	 dst-table="parqueadero.trabaja"
 	 src-required="true" dst-required="false"
 	 identifier="true"
->
-	<line>
-		<position x="1500" y="1200"/>
-	<position x="1500" y="960"/>
-	</line>
-</relationship>
+/>
 
 <relationship name="dia_horario_emp" type="rel1n" layers="0"
 	 src-col-pattern="{sc}"
@@ -776,12 +747,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	 src-fk-pattern="{st}_fk"
 	 src-table="parqueadero.dia_semana"
 	 dst-table="parqueadero.horario_empleado"
-	 src-required="true" dst-required="false">
-	<line>
-		<position x="2160" y="900"/>
-	<position x="2160" y="1040"/>
-	</line>
-</relationship>
+	 src-required="true" dst-required="false"/>
 
 <table name="cargo" layers="0" collapse-mode="2" max-obj-count="1" z-value="0">
 	<schema name="parqueadero"/>
@@ -840,10 +806,6 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	 src-required="true" dst-required="false"
 	 identifier="true"
 >
-	<line>
-		<position x="2500" y="1520"/>
-	<position x="2300" y="1520"/>
-	</line>
 	<label ref-type="name-label">
 		<position x="0" y="0"/>
 	</label>
@@ -857,12 +819,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	 dst-table="parqueadero.ejerce"
 	 src-required="true" dst-required="false"
 	 identifier="true"
->
-	<line>
-		<position x="1820" y="1460"/>
-	<position x="2000" y="1460"/>
-	</line>
-</relationship>
+/>
 
 <table name="promocion" layers="0" collapse-mode="2" max-obj-count="7" z-value="0">
 	<schema name="parqueadero"/>
@@ -912,12 +869,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	 src-fk-pattern="{st}_fk"
 	 src-table="parqueadero.sucursal"
 	 dst-table="parqueadero.promocion"
-	 src-required="true" dst-required="false">
-	<line>
-		<position x="1260" y="360"/>
-	<position x="860" y="360"/>
-	</line>
-</relationship>
+	 src-required="true" dst-required="false"/>
 
 <table name="promocion_por_tiempo" layers="0" collapse-mode="2" max-obj-count="8" z-value="0">
 	<schema name="parqueadero"/>
@@ -969,10 +921,6 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	 src-required="true" dst-required="false"
 	 identifier="true"
 >
-	<line>
-		<position x="540" y="420"/>
-	<position x="400" y="420"/>
-	</line>
 	<label ref-type="name-label">
 		<position x="6.08823" y="-3.048"/>
 	</label>
@@ -1026,12 +974,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	 dst-table="parqueadero.promocion_por_reserva"
 	 src-required="true" dst-required="false"
 	 identifier="true"
->
-	<line>
-		<position x="540" y="280"/>
-	<position x="400" y="280"/>
-	</line>
-</relationship>
+/>
 
 <table name="tarjeta_pago" layers="0" collapse-mode="2" rls-enabled="true" max-obj-count="10" z-value="0">
 	<schema name="parqueadero"/>
@@ -1089,12 +1032,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	 src-fk-pattern="{st}_fk"
 	 src-table="parqueadero.cliente"
 	 dst-table="parqueadero.tarjeta_pago"
-	 src-required="true" dst-required="false">
-	<line>
-		<position x="1180" y="1600"/>
-	<position x="1180" y="1380"/>
-	</line>
-</relationship>
+	 src-required="true" dst-required="false"/>
 
 <table name="vehiculo" layers="0" collapse-mode="2" rls-enabled="true" max-obj-count="12" z-value="0">
 	<schema name="parqueadero"/>
@@ -1156,7 +1094,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<schema name="parqueadero"/>
 	<role name="parkud_db_admin"/>
 	<comment> <![CDATA[Tabla que almacena las principales marcas de vehículos en el mundo.]]> </comment>
-	<position x="520" y="2420"/>
+	<position x="520" y="2500"/>
 	<column name="k_marca_vehiculo" not-null="true">
 		<type name="varchar" length="40"/>
 		<comment> <![CDATA[Clave primaria de la tabla Marca Vehículo, se corresponde con el nombre de la marca.]]> </comment>
@@ -1185,10 +1123,6 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	 src-table="parqueadero.cliente"
 	 dst-table="parqueadero.vehiculo"
 	 src-required="true" dst-required="false">
-	<line>
-		<position x="980" y="1960"/>
-	<position x="820" y="1960"/>
-	</line>
 	<label ref-type="name-label">
 		<position x="-5.44745" y="9.85674"/>
 	</label>
@@ -1288,7 +1222,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<schema name="parqueadero"/>
 	<role name="parkud_db_admin"/>
 	<comment> <![CDATA[Almacena los datos de fidelización de un cliente.]]> </comment>
-	<position x="460" y="1580"/>
+	<position x="480" y="1580"/>
 	<column name="k_fidelizacion" not-null="true">
 		<type name="integer" length="0"/>
 		<comment> <![CDATA[Clave primaria de la tabla Fidelización Cliente.]]> </comment>
@@ -1328,12 +1262,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	 src-fk-pattern="{st}_fk"
 	 src-table="parqueadero.promocion"
 	 dst-table="parqueadero.reserva"
-	 src-required="false" dst-required="false">
-	<line>
-		<position x="700" y="500"/>
-	<position x="700" y="700"/>
-	</line>
-</relationship>
+	 src-required="false" dst-required="false"/>
 
 <relationship name="cliente_puntos" type="rel1n" layers="0"
 	 src-col-pattern="{sc}"
@@ -1341,12 +1270,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	 src-fk-pattern="{st}_fk"
 	 src-table="parqueadero.cliente"
 	 dst-table="parqueadero.fidelizacion_cliente"
-	 src-required="true" dst-required="false">
-	<line>
-		<position x="980" y="1740"/>
-	<position x="780" y="1740"/>
-	</line>
-</relationship>
+	 src-required="true" dst-required="false"/>
 
 <relationship name="fidelizacion_cliente_has_many_reserva" type="rel1n" layers="0"
 	 src-col-pattern="{sc}"
@@ -1354,18 +1278,13 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	 src-fk-pattern="{st}_fk"
 	 src-table="parqueadero.fidelizacion_cliente"
 	 dst-table="parqueadero.reserva"
-	 src-required="false" dst-required="false">
-	<line>
-		<position x="640" y="1560"/>
-	<position x="640" y="1460"/>
-	</line>
-</relationship>
+	 src-required="false" dst-required="false"/>
 
 <table name="audit_vehiculo" layers="0" collapse-mode="2" max-obj-count="9" z-value="0">
 	<schema name="auditoria"/>
 	<role name="parkud_db_admin"/>
 	<comment> <![CDATA[Tabla de aditoría para la tabla Vehículo del esquema Parqueadero.]]> </comment>
-	<position x="980" y="2100"/>
+	<position x="1000" y="2080"/>
 	<column name="k_auditoria_vehiculo" not-null="true">
 		<type name="integer" length="0"/>
 		<comment> <![CDATA[Clave primaria de la tabla Auditoría Vehículo.]]> </comment>
@@ -1419,12 +1338,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	 src-fk-pattern="{st}_fk"
 	 src-table="parqueadero.vehiculo"
 	 dst-table="auditoria.audit_vehiculo"
-	 src-required="false" dst-required="false">
-	<line>
-		<position x="820" y="2200"/>
-	<position x="980" y="2200"/>
-	</line>
-</relationship>
+	 src-required="false" dst-required="false"/>
 
 <relationship name="audit_vehiculo_cliente" type="rel1n" layers="0"
 	 src-col-pattern="{sc}"
@@ -1433,10 +1347,6 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	 src-table="parqueadero.cliente"
 	 dst-table="auditoria.audit_vehiculo"
 	 src-required="true" dst-required="false">
-	<line>
-		<position x="1160" y="2000"/>
-	<position x="1160" y="2100"/>
-	</line>
 	<label ref-type="name-label">
 		<position x="9.7045" y="2.10901"/>
 	</label>
@@ -1446,7 +1356,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<schema name="auditoria"/>
 	<role name="parkud_db_admin"/>
 	<comment> <![CDATA[Tabla encargada de auditar los inicios de sesión realizados por los usuarios.]]> </comment>
-	<position x="1460" y="1680"/>
+	<position x="1480" y="1740"/>
 	<column name="k_auditoria_usuario" not-null="true">
 		<type name="integer" length="0"/>
 		<comment> <![CDATA[Clave primaria de la tabla Auditoría Usuario]]> </comment>
@@ -1500,12 +1410,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	 src-fk-pattern="{st}_fk"
 	 src-table="parqueadero.cliente"
 	 dst-table="auditoria.audit_usuario"
-	 src-required="false" dst-required="false">
-	<line>
-		<position x="1360" y="1820"/>
-	<position x="1460" y="1820"/>
-	</line>
-</relationship>
+	 src-required="false" dst-required="false"/>
 
 <table name="audit_reserva" layers="0" collapse-mode="2" max-obj-count="12" z-value="0">
 	<schema name="auditoria"/>
@@ -1570,12 +1475,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	 src-fk-pattern="{st}_fk"
 	 src-table="parqueadero.reserva"
 	 dst-table="auditoria.audit_reserva"
-	 src-required="true" dst-required="false">
-	<line>
-		<position x="540" y="1080"/>
-	<position x="440" y="1080"/>
-	</line>
-</relationship>
+	 src-required="true" dst-required="false"/>
 
 <relationship name="audit_cliente_reserva" type="rel1n" layers="0"
 	 src-col-pattern="{sc}"
@@ -1599,12 +1499,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	 src-fk-pattern="{st}_fk"
 	 src-table="parqueadero.slot_parqueadero"
 	 dst-table="parqueadero.reserva"
-	 src-required="true" dst-required="false">
-	<line>
-		<position x="980" y="980"/>
-	<position x="880" y="980"/>
-	</line>
-</relationship>
+	 src-required="true" dst-required="false"/>
 
 <index name="fidelizacion_cliente_ixfk" table="parqueadero.fidelizacion_cliente"
 	 concurrent="false" unique="false" fast-update="false" buffering="false"
@@ -1813,12 +1708,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	 dst-table="parqueadero.horario_empleado"
 	 src-required="true" dst-required="false"
 	 identifier="true"
->
-	<line>
-		<position x="1820" y="1280"/>
-	<position x="2000" y="1280"/>
-	</line>
-</relationship>
+/>
 
 <sequence name="horario_empleado_sq" cycle="false" start="1" increment="1" min-value="0" max-value="2147483647" cache="1" owner-col="parqueadero.horario_empleado.k_horario_empleado">
 	<schema name="parqueadero"/>
@@ -1841,7 +1731,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<roles names="user_role"/>
 	<expression type="using-exp"> <![CDATA[K_CLIENTE IN (SELECT K_CLIENTE FROM PARQUEADERO.CLIENTE WHERE PARQUEADERO.PGP_SYM_DECRYPT(CORREO_CLIENTE, 'AES_KEY') = CURRENT_USER)]]> </expression>
 </policy>
-<policy name="operador_horario_pl" table="parqueadero.horario_empleado" command="ALL" permissive="true">
+<policy name="operador_horario_pl" table="parqueadero.horario_empleado" command="SELECT" permissive="true">
 	<comment> <![CDATA[Política que solo deja que un operador pueda ver los horarios asociados a él mismo.]]> </comment>
 	<roles names="operador_role"/>
 	<expression type="using-exp"> <![CDATA[K_EMPLEADO IN (SELECT K_EMPLEADO FROM PARQUEADERO.EMPLEADO WHERE PARQUEADERO.PGP_SYM_DECRYPT(CORREO_EMPLEADO, 'AES_KEY') = CURRENT_USER)]]> </expression>
@@ -1852,12 +1742,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	 src-fk-pattern="{st}_fk"
 	 src-table="parqueadero.tarjeta_pago"
 	 dst-table="parqueadero.reserva"
-	 src-required="true" dst-required="false">
-	<line>
-		<position x="1020" y="1140"/>
-	<position x="880" y="1140"/>
-	</line>
-</relationship>
+	 src-required="true" dst-required="false"/>
 
 <index name="sucursal_direccion_ixfk" table="parqueadero.sucursal"
 	 concurrent="false" unique="false" fast-update="false" buffering="false"
@@ -1886,15 +1771,88 @@ CAUTION: Do not modify this file unless you know what you are doing.
 		</idxelement>
 </index>
 
+<policy name="cliente_select_pl" table="parqueadero.cliente" command="SELECT" permissive="true">
+	<comment> <![CDATA[Política que permite a los roles pertinentes seleccionar datos de la tabla Cliente.]]> </comment>
+	<roles names="super_admin_role, operador_role, admin_role"/>
+	<expression type="using-exp"> <![CDATA[TRUE]]> </expression>
+</policy>
+<policy name="cliente_insert_pl" table="parqueadero.cliente" command="INSERT" permissive="true">
+	<comment> <![CDATA[Política que permite a los roles pertinentes insertar datos en la tabla del cliente.]]> </comment>
+	<roles names="manage_account_user, super_admin_role, admin_role"/>
+	<expression type="check-exp"> <![CDATA[TRUE]]> </expression>
+</policy>
+<policy name="cliente_update_pl" table="parqueadero.cliente" command="UPDATE" permissive="true">
+	<comment> <![CDATA[Política que permite a los roles pertinentes actualizar datos de la tabla Cliente.]]> </comment>
+	<roles names="super_admin_role, admin_role"/>
+	<expression type="using-exp"> <![CDATA[TRUE]]> </expression>
+	<expression type="check-exp"> <![CDATA[TRUE]]> </expression>
+</policy>
+<policy name="vehiculo_select_pl" table="parqueadero.vehiculo" command="SELECT" permissive="true">
+	<comment> <![CDATA[Política que permite a los roles pertinentes seleccionar datos de la tabla Vehículo.]]> </comment>
+	<roles names="operador_role, admin_role, super_admin_role"/>
+	<expression type="using-exp"> <![CDATA[TRUE]]> </expression>
+</policy>
+<policy name="vehiculo_insert_pl" table="parqueadero.vehiculo" command="INSERT" permissive="true">
+	<comment> <![CDATA[Política que permite a los roles pertinentes insertar datos de la tabla Vehículo.]]> </comment>
+	<roles names="super_admin_role, admin_role"/>
+	<expression type="check-exp"> <![CDATA[TRUE]]> </expression>
+</policy>
+<policy name="vehiculo_update_pl" table="parqueadero.vehiculo" command="UPDATE" permissive="true">
+	<comment> <![CDATA[Política que permite a los roles pertinentes actualizar datos de la tabla Vehículo.]]> </comment>
+	<roles names="super_admin_role, admin_role"/>
+	<expression type="using-exp"> <![CDATA[TRUE]]> </expression>
+	<expression type="check-exp"> <![CDATA[TRUE]]> </expression>
+</policy>
+<policy name="vehiculo_delete_pl" table="parqueadero.vehiculo" command="DELETE" permissive="true">
+	<comment> <![CDATA[Política que permite a los roles pertinentes eliminar datos de la tabla Vehículo.]]> </comment>
+	<roles names="super_admin_role"/>
+	<expression type="using-exp"> <![CDATA[TRUE]]> </expression>
+</policy>
+<policy name="empleado_select_pl" table="parqueadero.empleado" command="SELECT" permissive="true">
+	<comment> <![CDATA[Política que permite a los roles pertinentes seleccionar datos de la tabla Empleado.]]> </comment>
+	<roles names="super_admin_role, admin_role"/>
+	<expression type="using-exp"> <![CDATA[TRUE]]> </expression>
+</policy>
+<policy name="empleado_insert_pl" table="parqueadero.empleado" command="INSERT" permissive="true">
+	<comment> <![CDATA[Política que permite a los roles pertinentes insertar datos de la tabla Empleado.]]> </comment>
+	<roles names="super_admin_role, admin_role"/>
+	<expression type="check-exp"> <![CDATA[TRUE]]> </expression>
+</policy>
+<policy name="empleado_update_pl" table="parqueadero.empleado" command="UPDATE" permissive="true">
+	<comment> <![CDATA[Política que permite a los roles pertinentes actualizar datos de la tabla Empleado.]]> </comment>
+	<roles names="super_admin_role, admin_role"/>
+	<expression type="using-exp"> <![CDATA[TRUE]]> </expression>
+	<expression type="check-exp"> <![CDATA[TRUE]]> </expression>
+</policy>
+<policy name="empleado_delete" table="parqueadero.empleado" command="DELETE" permissive="true">
+	<comment> <![CDATA[Política que permite a los roles pertinentes eliminar datos de la tabla Empleado.]]> </comment>
+	<roles names="super_admin_role"/>
+	<expression type="using-exp"> <![CDATA[TRUE]]> </expression>
+</policy>
+<policy name="cliente_delete_pl" table="parqueadero.cliente" command="DELETE" permissive="true">
+	<comment> <![CDATA[Política que permite a los roles pertinentes eliminar datos de la tabla Cliente.]]> </comment>
+	<roles names="super_admin_role"/>
+	<expression type="using-exp"> <![CDATA[TRUE]]> </expression>
+</policy>
+<policy name="reserva_select_pl" table="parqueadero.reserva" command="SELECT" permissive="true">
+	<comment> <![CDATA[Política que permite a los roles pertinentes seleccionar datos de la tabla Reserva.]]> </comment>
+	<roles names="admin_role, operador_role, super_admin_role"/>
+	<expression type="using-exp"> <![CDATA[TRUE]]> </expression>
+</policy>
+<policy name="reserva_insert_pl" table="parqueadero.reserva" command="INSERT" permissive="true">
+	<comment> <![CDATA[Política que permite a los roles pertinentes insertar datos de la tabla Reserva.]]> </comment>
+	<roles names="super_admin_role, admin_role"/>
+	<expression type="check-exp"> <![CDATA[TRUE]]> </expression>
+</policy>
+<policy name="reserva_update_pl" table="parqueadero.reserva" command="UPDATE" permissive="true">
+	<comment> <![CDATA[Política que permite a los roles pertinentes actualizar datos de la tabla Reserva.]]> </comment>
+	<roles names="super_admin_role, admin_role"/>
+	<expression type="using-exp"> <![CDATA[TRUE]]> </expression>
+</policy>
 <permission>
 	<object name="parqueadero" type="schema"/>
 	<roles names="user_role"/>
 	<privileges usage="true"/>
-</permission>
-<permission>
-	<object name="parqueadero.cliente" type="table"/>
-	<roles names="user_role"/>
-	<privileges select="true" insert="true" update="true"/>
 </permission>
 <permission>
 	<object name="parqueadero.reserva" type="table"/>
@@ -1903,11 +1861,6 @@ CAUTION: Do not modify this file unless you know what you are doing.
 </permission>
 <permission>
 	<object name="parqueadero.tarjeta_pago" type="table"/>
-	<roles names="user_role"/>
-	<privileges select="true" delete="true" insert="true" update="true"/>
-</permission>
-<permission>
-	<object name="parqueadero.vehiculo" type="table"/>
 	<roles names="user_role"/>
 	<privileges select="true" delete="true" insert="true" update="true"/>
 </permission>
@@ -1967,11 +1920,6 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<privileges usage="true"/>
 </permission>
 <permission>
-	<object name="parqueadero.cliente" type="table"/>
-	<roles names="manage_account_user"/>
-	<privileges insert="true"/>
-</permission>
-<permission>
 	<object name="parqueadero.cliente_sq" type="sequence"/>
 	<roles names="manage_account_user"/>
 	<privileges usage="true"/>
@@ -2010,16 +1958,6 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<object name="parqueadero.reserva" type="table"/>
 	<roles names="admin_role"/>
 	<privileges select="true" insert="true" update="true"/>
-</permission>
-<permission>
-	<object name="parqueadero.cliente" type="table"/>
-	<roles names="admin_role"/>
-	<privileges select="true"/>
-</permission>
-<permission>
-	<object name="parqueadero.vehiculo" type="table"/>
-	<roles names="admin_role"/>
-	<privileges select="true"/>
 </permission>
 <permission>
 	<object name="parqueadero.slot_parqueadero" type="table"/>
@@ -2173,16 +2111,6 @@ CAUTION: Do not modify this file unless you know what you are doing.
 </permission>
 <permission>
 	<object name="parqueadero.reserva" type="table"/>
-	<roles names="operador_role"/>
-	<privileges select="true"/>
-</permission>
-<permission>
-	<object name="parqueadero.vehiculo" type="table"/>
-	<roles names="super_admin_role"/>
-	<privileges select="true"/>
-</permission>
-<permission>
-	<object name="parqueadero.vehiculo" type="table"/>
 	<roles names="operador_role"/>
 	<privileges select="true"/>
 </permission>
@@ -2605,5 +2533,110 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<object name="parqueadero.horario_empleado_sq" type="sequence"/>
 	<roles names="super_admin_role"/>
 	<privileges usage="true"/>
+</permission>
+<permission revoke="true">
+	<object name="numero_tarjeta" parent="parqueadero.tarjeta_pago" type="column"/>
+	<roles names="user_role"/>
+	<privileges select="true" update="true" references="true"/>
+</permission>
+<permission revoke="true">
+	<object name="numero_tarjeta" parent="parqueadero.tarjeta_pago" type="column"/>
+	<roles names="super_admin_role"/>
+	<privileges select="true" insert="true" update="true" references="true"/>
+</permission>
+<permission revoke="true">
+	<object name="mes_vencimiento" parent="parqueadero.tarjeta_pago" type="column"/>
+	<roles names="operador_role"/>
+	<privileges select="true" update="true" references="true"/>
+</permission>
+<permission revoke="true">
+	<object name="mes_vencimiento" parent="parqueadero.tarjeta_pago" type="column"/>
+	<roles names="super_admin_role"/>
+	<privileges select="true" insert="true" update="true" references="true"/>
+</permission>
+<permission revoke="true">
+	<object name="anio_vencimiento" parent="parqueadero.tarjeta_pago" type="column"/>
+	<roles names="user_role"/>
+	<privileges select="true" update="true" references="true"/>
+</permission>
+<permission revoke="true">
+	<object name="anio_vencimiento" parent="parqueadero.tarjeta_pago" type="column"/>
+	<roles names="super_admin_role"/>
+	<privileges select="true" insert="true" update="true" references="true"/>
+</permission>
+<permission revoke="true">
+	<object name="apellido_duenio_tarjeta" parent="parqueadero.tarjeta_pago" type="column"/>
+	<roles names="super_admin_role"/>
+	<privileges select="true" insert="true" update="true" references="true"/>
+</permission>
+<permission revoke="true">
+	<object name="nombre_duenio_tarjeta" parent="parqueadero.tarjeta_pago" type="column"/>
+	<roles names="super_admin_role"/>
+	<privileges select="true" insert="true" update="true" references="true"/>
+</permission>
+<permission revoke="true">
+	<object name="ultimos_cuatro_digitos" parent="parqueadero.tarjeta_pago" type="column"/>
+	<roles names="super_admin_role"/>
+	<privileges select="true" insert="true" update="true" references="true"/>
+</permission>
+<permission>
+	<object name="parqueadero.tarjeta_pago" type="table"/>
+	<roles names="super_admin_role"/>
+	<privileges select="true"/>
+</permission>
+<permission>
+	<object name="parqueadero.cliente" type="table"/>
+	<roles names="super_admin_role"/>
+	<privileges select="true" delete="true" insert="true" update="true"/>
+</permission>
+<permission>
+	<object name="parqueadero.cliente" type="table"/>
+	<roles names="admin_role"/>
+	<privileges select="true" insert="true" update="true"/>
+</permission>
+<permission>
+	<object name="parqueadero.cliente" type="table"/>
+	<roles names="user_role"/>
+	<privileges select="true" insert="true" update="true"/>
+</permission>
+<permission>
+	<object name="parqueadero.cliente" type="table"/>
+	<roles names="manage_account_user"/>
+	<privileges insert="true"/>
+</permission>
+<permission>
+	<object name="parqueadero.vehiculo" type="table"/>
+	<roles names="user_role"/>
+	<privileges select="true" delete="true" insert="true" update="true"/>
+</permission>
+<permission>
+	<object name="parqueadero.vehiculo" type="table"/>
+	<roles names="operador_role"/>
+	<privileges select="true"/>
+</permission>
+<permission>
+	<object name="parqueadero.vehiculo" type="table"/>
+	<roles names="admin_role"/>
+	<privileges select="true" insert="true" update="true"/>
+</permission>
+<permission>
+	<object name="parqueadero.vehiculo" type="table"/>
+	<roles names="super_admin_role"/>
+	<privileges select="true" delete="true" insert="true" update="true"/>
+</permission>
+<permission>
+	<object name="parqueadero.cliente" type="table"/>
+	<roles names="operador_role"/>
+	<privileges select="true"/>
+</permission>
+<permission revoke="true">
+	<object name="tipo_identificacion_cliente" parent="parqueadero.cliente" type="column"/>
+	<roles names="operador_role"/>
+	<privileges select="true"/>
+</permission>
+<permission revoke="true">
+	<object name="numero_identificacion_cliente" parent="parqueadero.cliente" type="column"/>
+	<roles names="operador_role"/>
+	<privileges select="true"/>
 </permission>
 </dbmodel>
