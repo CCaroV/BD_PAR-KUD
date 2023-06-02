@@ -196,47 +196,20 @@ CREATE OR REPLACE TRIGGER AUDIT_RESERVAS
 -- Se requiere registrar la dirección IP de los clientes que entran a la aplicación.
 -- El siguiente procedimiento audita los inicios de sesión y las direcciones IP de los clientes.
 CREATE OR REPLACE PROCEDURE AUDITORIA.AUDIT_INGRESO_USUARIO_PR(
+    IN ROL_USUARIO_P TEXT,
     INOUT CODIGO_ERROR_P TEXT DEFAULT NULL,
     INOUT RESUMEN_ERROR_P TEXT DEFAULT NULL,
     INOUT MENSAJE_ERROR_P TEXT DEFAULT NULL
 )
 LANGUAGE PLPGSQL
 AS $$
-DECLARE
-    -- Declaración de variables locales
-    ROL_USUARIO_L VARCHAR;
 BEGIN
-    -- Selecciona el rol del usuario que ingresó
-    SELECT LOWER(TRIM(G.ROLNAME)) INTO STRICT ROL_USUARIO_L
-    FROM PG_ROLES R
-        JOIN PG_AUTH_MEMBERS M ON R.OID = M.MEMBER
-        JOIN PG_ROLES G ON M.ROLEID = G.OID
-    WHERE R.ROLNAME = CURRENT_USER;
-
     -- Si es un cliente
-    IF ROL_USUARIO_L = LOWER(TRIM('USER_ROLE')) THEN
-        INSERT INTO AUDITORIA.AUDIT_USUARIO (
-            K_EMPLEADO,
-            K_CLIENTE,
-            NOMBRE_USUARIO,
-            DIRECCION_IP,
-            FECHA_AUDIT_USUARIO,
-            TIPO_TRANSACCION_CLIENTE
-        )
-        VALUES (
-            NULL,
-            (SELECT K_CLIENTE FROM PARQUEADERO.CLIENTE WHERE PARQUEADERO.PGP_SYM_DECRYPT(CORREO_CLIENTE, 'AES_KEY') = CURRENT_USER),
-            (SELECT USER),
-            (SELECT INET_CLIENT_ADDR()),
-            (SELECT CURRENT_TIMESTAMP AT TIME ZONE 'America/Bogota'),
-            'Ingreso'
-        );
+    IF ROL_USUARIO_P = LOWER(TRIM('USER_ROLE')) THEN
+        -- Crea la tabla temporal de la llave primaria del cliente
         CALL PARQUEADERO.INSERTAR_LLAVE_CLIENTE_PR(CODIGO_ERROR_P, RESUMEN_ERROR_P, MENSAJE_ERROR_P);
 
-    -- Si es un operador, administrador o súper administrador
-    ELSIF ROL_USUARIO_L = LOWER(TRIM('OPERADOR_ROLE'))
-            OR ROL_USUARIO_L = LOWER(TRIM('ADMIN_ROLE'))
-            OR ROL_USUARIO_L = LOWER(TRIM('SUPER_ADMIN_ROLE')) THEN
+        -- Inserta los valores en la tabla de auditoría
         INSERT INTO AUDITORIA.AUDIT_USUARIO (
             K_EMPLEADO,
             K_CLIENTE,
@@ -246,14 +219,39 @@ BEGIN
             TIPO_TRANSACCION_CLIENTE
         )
         VALUES (
-            (SELECT K_EMPLEADO FROM PARQUEADERO.EMPLEADO WHERE PARQUEADERO.PGP_SYM_DECRYPT(CORREO_EMPLEADO, 'AES_KEY') = CURRENT_USER),
+            NULL,
+            (SELECT PARQUEADERO.RETORNAR_LLAVE_TEMPORAL_FU()),
+            (SELECT USER),
+            (SELECT INET_CLIENT_ADDR()),
+            (SELECT CURRENT_TIMESTAMP AT TIME ZONE 'America/Bogota'),
+            'Ingreso'
+        );
+
+    -- Si es un operador, administrador o súper administrador
+    ELSIF ROL_USUARIO_P = LOWER(TRIM('OPERADOR_ROLE'))
+            OR ROL_USUARIO_P = LOWER(TRIM('ADMIN_ROLE'))
+            OR ROL_USUARIO_P = LOWER(TRIM('SUPER_ADMIN_ROLE')) THEN
+        
+        -- Crea la tabla temporal de la llave primaria del empleado
+        CALL PARQUEADERO.INSERTAR_LLAVE_EMPLEADO_PR(CODIGO_ERROR_P, RESUMEN_ERROR_P, MENSAJE_ERROR_P);
+        
+        -- Inserta los valores en la tabla de auditoría
+        INSERT INTO AUDITORIA.AUDIT_USUARIO (
+            K_EMPLEADO,
+            K_CLIENTE,
+            NOMBRE_USUARIO,
+            DIRECCION_IP,
+            FECHA_AUDIT_USUARIO,
+            TIPO_TRANSACCION_CLIENTE
+        )
+        VALUES (
+            (SELECT PARQUEADERO.RETORNAR_LLAVE_TEMPORAL_FU()),
             NULL,
             (SELECT USER),
             (SELECT INET_CLIENT_ADDR()),
             (SELECT CURRENT_TIMESTAMP AT TIME ZONE 'America/Bogota'),
             'Ingreso'
         );
-        CALL PARQUEADERO.INSERTAR_LLAVE_EMPLEADO_PR(CODIGO_ERROR_P, RESUMEN_ERROR_P, MENSAJE_ERROR_P);
     END IF;
 EXCEPTION
     -- Excepciones
