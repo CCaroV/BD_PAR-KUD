@@ -105,7 +105,7 @@ EXCEPTION
             CODIGO_ERROR_L := RETURNED_SQLSTATE,
             RESUMEN_ERROR_L := MESSAGE_TEXT,
             MENSAJE_ERROR_L := PG_EXCEPTION_CONTEXT;
-            RAISE EXCEPTION 'Código de error: %\nResumen del error: %\nMensaje de error: %', CODIGO_ERROR_L, RESUMEN_ERROR_L, MENSAJE_ERROR_L;
+        RAISE EXCEPTION 'Código de error: % / Resumen del error: % / Mensaje de error: %', CODIGO_ERROR_L, RESUMEN_ERROR_L, MENSAJE_ERROR_L;
 END;
 $$;
 
@@ -146,7 +146,7 @@ EXCEPTION
             CODIGO_ERROR_L := RETURNED_SQLSTATE,
             RESUMEN_ERROR_L := MESSAGE_TEXT,
             MENSAJE_ERROR_L := PG_EXCEPTION_CONTEXT;
-            RAISE EXCEPTION 'Código de error: % / Resumen del error: % / Mensaje de error: %', CODIGO_ERROR_L, RESUMEN_ERROR_L, MENSAJE_ERROR_L;
+        RAISE EXCEPTION 'Código de error: % / Resumen del error: % / Mensaje de error: %', CODIGO_ERROR_L, RESUMEN_ERROR_L, MENSAJE_ERROR_L;
 END;
 $$;
 

@@ -193,7 +193,7 @@ DECLARE
     K_CLIENTE_L PARQUEADERO.CLIENTE.K_CLIENTE%TYPE;
 BEGIN
     -- Selecciona la clave primaria del cliente conectado a la BD
-    K_CLIENTE_L := PARQUEADERO.RETORNAR_LLAVE_TEMPORAL_FU();
+    K_CLIENTE_L := PARQUEADERO.RECUPERAR_LLAVE_CLIENTE_FU();
 
     -- Si la placa no está registrada en los vehículos del cliente
     IF NOT EXISTS (

@@ -18,7 +18,7 @@ DECLARE
     MENSAJE_ERROR_L TEXT;
 BEGIN
     -- Recupera la clave primaria del cliente conectado a la BD
-    K_CLIENTE_L := PARQUEADERO.RETORNAR_LLAVE_TEMPORAL_FU();
+    K_CLIENTE_L := PARQUEADERO.RECUPERAR_LLAVE_CLIENTE_FU();
 
     -- Inserta en un JSON el resultado de la consulta
     SELECT JSON_AGG(ROW_TO_JSON(T)) INTO RESULTADO_L 
@@ -41,10 +41,10 @@ EXCEPTION
     -- Excepciones
     WHEN OTHERS THEN
         GET STACKED DIAGNOSTICS 
-            CODIGO_ERROR_L = RETURNED_SQLSTATE,
-            RESUMEN_ERROR_L = MESSAGE_TEXT,
-            MENSAJE_ERROR_L = PG_EXCEPTION_CONTEXT;
-        RETURN TO_JSON(CONCAT(CODIGO_ERROR_L, ' ', RESUMEN_ERROR_L, ' ',MENSAJE_ERROR_L));
+            CODIGO_ERROR_L := RETURNED_SQLSTATE,
+            RESUMEN_ERROR_L := MESSAGE_TEXT,
+            MENSAJE_ERROR_L := PG_EXCEPTION_CONTEXT;
+        RAISE EXCEPTION 'Código de error: % / Resumen del error: % / Mensaje de error: %', CODIGO_ERROR_L, RESUMEN_ERROR_L, MENSAJE_ERROR_L;
 END;
 $$;
 

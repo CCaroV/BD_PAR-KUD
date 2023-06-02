@@ -32,10 +32,10 @@ EXCEPTION
         RAISE EXCEPTION 'Inconsistencias en la BD: Hay más de un rol asociado a este usuario.';
     WHEN OTHERS THEN
         GET STACKED DIAGNOSTICS 
-            CODIGO_ERROR_L = RETURNED_SQLSTATE,
-            RESUMEN_ERROR_L = MESSAGE_TEXT,
-            MENSAJE_ERROR_L = PG_EXCEPTION_CONTEXT;
-        RETURN CONCAT(CODIGO_ERROR_L, ' ', RESUMEN_ERROR_L, ' ',MENSAJE_ERROR_L);
+            CODIGO_ERROR_L := RETURNED_SQLSTATE,
+            RESUMEN_ERROR_L := MESSAGE_TEXT,
+            MENSAJE_ERROR_L := PG_EXCEPTION_CONTEXT;
+        RAISE EXCEPTION 'Código de error: % / Resumen del error: % / Mensaje de error: %', CODIGO_ERROR_L, RESUMEN_ERROR_L, MENSAJE_ERROR_L;
 END;
 $$;
 
