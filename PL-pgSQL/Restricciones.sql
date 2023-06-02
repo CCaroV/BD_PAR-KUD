@@ -5,14 +5,12 @@ Estas restricciones pueden ser modeladas mediante triggers.*/
 -- Trigger que verifica que la tabla de auditoría de usuarios tenga una llave foránea de empleado o cliente (excluyentes).
 CREATE OR REPLACE FUNCTION AUDITORIA.VERIFICAR_AUDIT_USUARIO_TR()
 RETURNS TRIGGER
+PARALLEL SAFE
 LANGUAGE PLPGSQL
 AS $$
 BEGIN
-    -- Si no hay ninguna llave foránea no se está auditando a nadie.
     -- Si hay dos llaves foráneas se está auditando a un empleado y a un cliente a la vez.
-    IF NEW.K_EMPLEADO IS NULL AND NEW.K_CLIENTE IS NULL THEN
-        RAISE EXCEPTION 'No se ha ingresado la llave foránea de ningún usuario.';
-    ELSIF NEW.K_EMPLEADO IS NOT NULL AND NEW.K_CLIENTE IS NOT NULL THEN
+    IF NEW.K_EMPLEADO IS NOT NULL AND NEW.K_CLIENTE IS NOT NULL THEN
         RAISE EXCEPTION 'Se está tratano de auditar a un cliente y un empleado a la vez.';
     END IF;
     -- Continúa con la inserción o actualización
@@ -34,6 +32,7 @@ CREATE OR REPLACE TRIGGER VERIFICAR_AUDIT_USUARIO_TR
 CREATE OR REPLACE FUNCTION PARQUEADERO.VERIFICAR_NOMBRE_SUCURSAL_TR()
 RETURNS TRIGGER
 LANGUAGE PLPGSQL
+PARALLEL RESTRICTED
 AS $$
 DECLARE
     -- Declaración de variables locales
@@ -81,6 +80,7 @@ CREATE OR REPLACE TRIGGER VERIFICAR_NOMBRE_SUCURSAL_TR
 CREATE OR REPLACE FUNCTION PARQUEADERO.ACTUALIZACION_TARIFA_TR()
 RETURNS TRIGGER
 LANGUAGE PLPGSQL
+PARALLEL UNSAFE
 AS $$
 DECLARE
     -- Declaración de variables locales
@@ -151,6 +151,7 @@ CREATE OR REPLACE TRIGGER ACTUALIZACION_TARIFA_TR
 CREATE OR REPLACE FUNCTION PARQUEADERO.VERIFICAR_TIPO_SUCURSAL_SLOT_TR()
 RETURNS TRIGGER
 LANGUAGE PLPGSQL
+PARALLEL RESTRICTED
 AS $$
 DECLARE
     -- Declaración de variables locales

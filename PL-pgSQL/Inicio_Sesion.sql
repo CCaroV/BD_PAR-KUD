@@ -7,10 +7,15 @@ CREATE OR REPLACE FUNCTION PARQUEADERO.MOSTRAR_ROL_USUARIO_FU(
 )
 RETURNS TEXT
 LANGUAGE PLPGSQL
+PARALLEL RESTRICTED
 AS $$
 DECLARE
     -- Declaración de variables
     ROL_USUARIO_L VARCHAR;
+    -- Códigos de error
+    CODIGO_ERROR_L TEXT;
+    RESUMEN_ERROR_L TEXT;
+    MENSAJE_ERROR_L TEXT;
 BEGIN
     -- Selecciona el rol del nombre de usuario ingresado
     SELECT LOWER(TRIM(G.ROLNAME)) INTO STRICT ROL_USUARIO_L
@@ -24,14 +29,15 @@ BEGIN
 EXCEPTION
     -- Excepciones
     WHEN NO_DATA_FOUND THEN
-        ROLLBACK;
-        RAISE EXCEPTION 'El usuario no tiene ningún rol asociado en la BD, %/%', SQLSTATE, SQLERRM;
+        RAISE EXCEPTION 'El usuario no tiene ningún rol asociado en la BD.';
     WHEN TOO_MANY_ROWS THEN
-        ROLLBACK;
-        RAISE EXCEPTION 'Inconsistencias en la BD: Hay más de un rol asociado a este usuario, %/%', SQLSTATE, SQLERRM;
+        RAISE EXCEPTION 'Inconsistencias en la BD: Hay más de un rol asociado a este usuario.';
     WHEN OTHERS THEN
-        ROLLBACK;
-        RAISE EXCEPTION 'MOSTRAR_ROL_USUARIO ha ocurrido un error: %/%', SQLSTATE, SQLERRM;   
+        GET STACKED DIAGNOSTICS 
+            CODIGO_ERROR_L = RETURNED_SQLSTATE,
+            RESUMEN_ERROR_L = MESSAGE_TEXT,
+            MENSAJE_ERROR_L = PG_EXCEPTION_CONTEXT;
+        RETURN CONCAT(CODIGO_ERROR_L, ' ', RESUMEN_ERROR_L, ' ',MENSAJE_ERROR_L);
 END;
 $$;
 

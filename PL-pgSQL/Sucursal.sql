@@ -7,6 +7,7 @@ La información registrada de las sucursales puede ser consultada por cualquier 
 CREATE OR REPLACE FUNCTION PARQUEADERO.MOSTRAR_SUCURSALES_FU()
 RETURNS JSON
 LANGUAGE PLPGSQL
+PARALLEL RESTRICTED
 AS $$
 DECLARE
     -- Declaración de variables locales

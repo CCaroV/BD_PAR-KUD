@@ -6,8 +6,20 @@ SELECT
 SELECT
     PARQUEADERO.CREAR_CLIENTE_FU('CC', '1045698521', 'Christian', NULL, 'Caro', 'Vargas', 3005050527, 'chcarov@udistrital.edu.co');
 
+SELECT
+    PARQUEADERO.CREAR_CLIENTE_FU('CC', '1234567891', 'Andrés', NULL, 'Beltrán', NULL, 3002012598, 'andres5354317@gmail.com');
+
+SELECT
+    PARQUEADERO.CREAR_CLIENTE_FU('CE', '1234562342', 'Laura', 'Tatiana', 'Ramirez', 'Rodriguez', 3198764234, 'ltrr20101@gmail.com');
+
+SELECT * FROM pg_policies WHERE schemaname = 'parqueadero' AND tablename = 'empleado';
+SELECT
+    PARQUEADERO.CREAR_CLIENTE_FU('CE', '1234567898', 'Laura', 'Tatiana', 'Ramírez', 'Rodríguez', 3198764, 'ltrr2001@gmail.com');
 -- Para cambiar su clave y que esta se vuelva válida:
 CALL PARQUEADERO.PRIMER_CAMBIO_CLAVE_PR('chcarov@udistrital.edu.co', '1234');
+
+CALL PARQUEADERO.PRIMER_CAMBIO_CLAVE_PR('ltrr2001', 'pass');
+
 
 CALL AUDITORIA.AUDIT_INGRESO_USUARIO_PR();
 
@@ -15,6 +27,7 @@ CALL AUDITORIA.AUDIT_INGRESO_USUARIO_PR();
 CALL PARQUEADERO.AGREGAR_VEHICULO_PR('Automóvil', 'CFD256', 'Christian', NULL, 'Caro', 'Vargas', 'Audi', 'Negro');
 CALL PARQUEADERO.AGREGAR_VEHICULO_PR('SUV', 'BWD456', 'Christian', NULL, 'Caro', 'Vargas', 'Skoda', 'Negro');
 CALL PARQUEADERO.AGREGAR_VEHICULO_PR('SUV', 'FDS123', 'Christian', NULL, 'Caro', 'Vargas', 'BMW', 'Blanco');
+CALL PARQUEADERO.AGREGAR_VEHICULO_PR('SUV', 'HTB236', 'Christian', NULL, 'Caro', 'Vargas', 'Fiat', 'Verde');
 
 -- Para insertar una sucursa;:
 -- CALL PARQUEADERO.CREAR_SUCURSAL_PR('Bogotá, D.C.', 'Bogotá, D.C.', 'Carrera 72B # 89 - 42', 'Edificio Av.Boyacá', '111196', 'Sucursal Av. Boyacá', 'Descubierta', 10, 15);

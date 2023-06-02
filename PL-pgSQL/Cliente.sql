@@ -6,11 +6,16 @@ Los clientes registrados deben poder ver la información que tienen registrada e
 CREATE OR REPLACE FUNCTION PARQUEADERO.MOSTRAR_VEHICULOS_CLIENTE_FU()
 RETURNS JSON
 LANGUAGE PLPGSQL
+PARALLEL UNSAFE
 AS $$
 DECLARE 
     -- Declaración de variables locales
     RESULTADO_L JSON;
     K_CLIENTE_L PARQUEADERO.CLIENTE.K_CLIENTE%TYPE;
+    -- Códigos de error
+    CODIGO_ERROR_L TEXT;
+    RESUMEN_ERROR_L TEXT;
+    MENSAJE_ERROR_L TEXT;
 BEGIN
     -- Recupera la clave primaria del cliente conectado a la BD
     K_CLIENTE_L := PARQUEADERO.RETORNAR_LLAVE_TEMPORAL_FU();
@@ -35,8 +40,11 @@ BEGIN
 EXCEPTION
     -- Excepciones
     WHEN OTHERS THEN
-        ROLLBACK;
-        RAISE EXCEPTION 'MOSTRAR_VEHICULOS_CLIENTE_FU ha ocurrido un error: %/%', SQLSTATE, SQLERRM;
+        GET STACKED DIAGNOSTICS 
+            CODIGO_ERROR_L = RETURNED_SQLSTATE,
+            RESUMEN_ERROR_L = MESSAGE_TEXT,
+            MENSAJE_ERROR_L = PG_EXCEPTION_CONTEXT;
+        RETURN CONCAT(CODIGO_ERROR_L, ' ', RESUMEN_ERROR_L, ' ',MENSAJE_ERROR_L);
 END;
 $$;
 
