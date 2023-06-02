@@ -2737,60 +2737,6 @@ GRANT USAGE
    TO super_admin_role;
 -- ddl-end --
 
--- object: revoke_rwx_e369c9da65 | type: PERMISSION --
-REVOKE SELECT(numero_tarjeta),UPDATE(numero_tarjeta),REFERENCES(numero_tarjeta)
-   ON TABLE parqueadero.tarjeta_pago
-   FROM user_role;
--- ddl-end --
-
--- object: revoke_rawx_6332f16e0d | type: PERMISSION --
-REVOKE SELECT(numero_tarjeta),INSERT(numero_tarjeta),UPDATE(numero_tarjeta),REFERENCES(numero_tarjeta)
-   ON TABLE parqueadero.tarjeta_pago
-   FROM super_admin_role;
--- ddl-end --
-
--- object: revoke_rwx_f78106da68 | type: PERMISSION --
-REVOKE SELECT(mes_vencimiento),UPDATE(mes_vencimiento),REFERENCES(mes_vencimiento)
-   ON TABLE parqueadero.tarjeta_pago
-   FROM operador_role;
--- ddl-end --
-
--- object: revoke_rawx_ad847dfda6 | type: PERMISSION --
-REVOKE SELECT(mes_vencimiento),INSERT(mes_vencimiento),UPDATE(mes_vencimiento),REFERENCES(mes_vencimiento)
-   ON TABLE parqueadero.tarjeta_pago
-   FROM super_admin_role;
--- ddl-end --
-
--- object: revoke_rwx_18c4d3d6ed | type: PERMISSION --
-REVOKE SELECT(anio_vencimiento),UPDATE(anio_vencimiento),REFERENCES(anio_vencimiento)
-   ON TABLE parqueadero.tarjeta_pago
-   FROM user_role;
--- ddl-end --
-
--- object: revoke_rawx_5b3277dcb7 | type: PERMISSION --
-REVOKE SELECT(anio_vencimiento),INSERT(anio_vencimiento),UPDATE(anio_vencimiento),REFERENCES(anio_vencimiento)
-   ON TABLE parqueadero.tarjeta_pago
-   FROM super_admin_role;
--- ddl-end --
-
--- object: revoke_rawx_7e3bc53a83 | type: PERMISSION --
-REVOKE SELECT(apellido_duenio_tarjeta),INSERT(apellido_duenio_tarjeta),UPDATE(apellido_duenio_tarjeta),REFERENCES(apellido_duenio_tarjeta)
-   ON TABLE parqueadero.tarjeta_pago
-   FROM super_admin_role;
--- ddl-end --
-
--- object: revoke_rawx_53615802c1 | type: PERMISSION --
-REVOKE SELECT(nombre_duenio_tarjeta),INSERT(nombre_duenio_tarjeta),UPDATE(nombre_duenio_tarjeta),REFERENCES(nombre_duenio_tarjeta)
-   ON TABLE parqueadero.tarjeta_pago
-   FROM super_admin_role;
--- ddl-end --
-
--- object: revoke_rawx_334e594a21 | type: PERMISSION --
-REVOKE SELECT(ultimos_cuatro_digitos),INSERT(ultimos_cuatro_digitos),UPDATE(ultimos_cuatro_digitos),REFERENCES(ultimos_cuatro_digitos)
-   ON TABLE parqueadero.tarjeta_pago
-   FROM super_admin_role;
--- ddl-end --
-
 -- object: grant_r_cd5524e76e | type: PERMISSION --
 GRANT SELECT
    ON TABLE parqueadero.tarjeta_pago
@@ -2851,6 +2797,60 @@ GRANT SELECT
    TO operador_role;
 -- ddl-end --
 
+-- object: revoke_rwx_e369c9da65 | type: PERMISSION --
+REVOKE SELECT(numero_tarjeta),UPDATE(numero_tarjeta),REFERENCES(numero_tarjeta)
+   ON TABLE parqueadero.tarjeta_pago
+   FROM user_role;
+-- ddl-end --
+
+-- object: revoke_rawx_6332f16e0d | type: PERMISSION --
+REVOKE SELECT(numero_tarjeta),INSERT(numero_tarjeta),UPDATE(numero_tarjeta),REFERENCES(numero_tarjeta)
+   ON TABLE parqueadero.tarjeta_pago
+   FROM super_admin_role;
+-- ddl-end --
+
+-- object: revoke_rwx_f78106da68 | type: PERMISSION --
+REVOKE SELECT(mes_vencimiento),UPDATE(mes_vencimiento),REFERENCES(mes_vencimiento)
+   ON TABLE parqueadero.tarjeta_pago
+   FROM operador_role;
+-- ddl-end --
+
+-- object: revoke_rawx_ad847dfda6 | type: PERMISSION --
+REVOKE SELECT(mes_vencimiento),INSERT(mes_vencimiento),UPDATE(mes_vencimiento),REFERENCES(mes_vencimiento)
+   ON TABLE parqueadero.tarjeta_pago
+   FROM super_admin_role;
+-- ddl-end --
+
+-- object: revoke_rwx_18c4d3d6ed | type: PERMISSION --
+REVOKE SELECT(anio_vencimiento),UPDATE(anio_vencimiento),REFERENCES(anio_vencimiento)
+   ON TABLE parqueadero.tarjeta_pago
+   FROM user_role;
+-- ddl-end --
+
+-- object: revoke_rawx_5b3277dcb7 | type: PERMISSION --
+REVOKE SELECT(anio_vencimiento),INSERT(anio_vencimiento),UPDATE(anio_vencimiento),REFERENCES(anio_vencimiento)
+   ON TABLE parqueadero.tarjeta_pago
+   FROM super_admin_role;
+-- ddl-end --
+
+-- object: revoke_rawx_7e3bc53a83 | type: PERMISSION --
+REVOKE SELECT(apellido_duenio_tarjeta),INSERT(apellido_duenio_tarjeta),UPDATE(apellido_duenio_tarjeta),REFERENCES(apellido_duenio_tarjeta)
+   ON TABLE parqueadero.tarjeta_pago
+   FROM super_admin_role;
+-- ddl-end --
+
+-- object: revoke_rawx_53615802c1 | type: PERMISSION --
+REVOKE SELECT(nombre_duenio_tarjeta),INSERT(nombre_duenio_tarjeta),UPDATE(nombre_duenio_tarjeta),REFERENCES(nombre_duenio_tarjeta)
+   ON TABLE parqueadero.tarjeta_pago
+   FROM super_admin_role;
+-- ddl-end --
+
+-- object: revoke_rawx_334e594a21 | type: PERMISSION --
+REVOKE SELECT(ultimos_cuatro_digitos),INSERT(ultimos_cuatro_digitos),UPDATE(ultimos_cuatro_digitos),REFERENCES(ultimos_cuatro_digitos)
+   ON TABLE parqueadero.tarjeta_pago
+   FROM super_admin_role;
+-- ddl-end --
+
 -- object: revoke_r_96809283d1 | type: PERMISSION --
 REVOKE SELECT(tipo_identificacion_cliente)
    ON TABLE parqueadero.cliente
@@ -2861,6 +2861,24 @@ REVOKE SELECT(tipo_identificacion_cliente)
 REVOKE SELECT(numero_identificacion_cliente)
    ON TABLE parqueadero.cliente
    FROM operador_role;
+-- ddl-end --
+
+-- object: "grant_U_4da3bf0fd0" | type: PERMISSION --
+GRANT USAGE
+   ON SCHEMA auditoria
+   TO manage_account_user;
+-- ddl-end --
+
+-- object: grant_a_cab836193d | type: PERMISSION --
+GRANT INSERT
+   ON TABLE auditoria.audit_usuario
+   TO manage_account_user;
+-- ddl-end --
+
+-- object: "grant_U_442a08b980" | type: PERMISSION --
+GRANT USAGE
+   ON SEQUENCE auditoria.usuario_sq
+   TO manage_account_user;
 -- ddl-end --
 
 

@@ -3,7 +3,7 @@
 CAUTION: Do not modify this file unless you know what you are doing.
  Unexpected results may occur if the code is changed deliberately.
 -->
-<dbmodel pgmodeler-ver="1.0.2" use-changelog="false" last-position="0,434" last-zoom="0.75" max-obj-count="189"
+<dbmodel pgmodeler-ver="1.0.2" use-changelog="false" last-position="0,607" last-zoom="0.75" max-obj-count="193"
 	 default-schema="parqueadero" default-owner="parkud_db_admin"
 	 layers="Default layer"
 	 active-layers="0"
@@ -2534,51 +2534,6 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<roles names="super_admin_role"/>
 	<privileges usage="true"/>
 </permission>
-<permission revoke="true">
-	<object name="numero_tarjeta" parent="parqueadero.tarjeta_pago" type="column"/>
-	<roles names="user_role"/>
-	<privileges select="true" update="true" references="true"/>
-</permission>
-<permission revoke="true">
-	<object name="numero_tarjeta" parent="parqueadero.tarjeta_pago" type="column"/>
-	<roles names="super_admin_role"/>
-	<privileges select="true" insert="true" update="true" references="true"/>
-</permission>
-<permission revoke="true">
-	<object name="mes_vencimiento" parent="parqueadero.tarjeta_pago" type="column"/>
-	<roles names="operador_role"/>
-	<privileges select="true" update="true" references="true"/>
-</permission>
-<permission revoke="true">
-	<object name="mes_vencimiento" parent="parqueadero.tarjeta_pago" type="column"/>
-	<roles names="super_admin_role"/>
-	<privileges select="true" insert="true" update="true" references="true"/>
-</permission>
-<permission revoke="true">
-	<object name="anio_vencimiento" parent="parqueadero.tarjeta_pago" type="column"/>
-	<roles names="user_role"/>
-	<privileges select="true" update="true" references="true"/>
-</permission>
-<permission revoke="true">
-	<object name="anio_vencimiento" parent="parqueadero.tarjeta_pago" type="column"/>
-	<roles names="super_admin_role"/>
-	<privileges select="true" insert="true" update="true" references="true"/>
-</permission>
-<permission revoke="true">
-	<object name="apellido_duenio_tarjeta" parent="parqueadero.tarjeta_pago" type="column"/>
-	<roles names="super_admin_role"/>
-	<privileges select="true" insert="true" update="true" references="true"/>
-</permission>
-<permission revoke="true">
-	<object name="nombre_duenio_tarjeta" parent="parqueadero.tarjeta_pago" type="column"/>
-	<roles names="super_admin_role"/>
-	<privileges select="true" insert="true" update="true" references="true"/>
-</permission>
-<permission revoke="true">
-	<object name="ultimos_cuatro_digitos" parent="parqueadero.tarjeta_pago" type="column"/>
-	<roles names="super_admin_role"/>
-	<privileges select="true" insert="true" update="true" references="true"/>
-</permission>
 <permission>
 	<object name="parqueadero.tarjeta_pago" type="table"/>
 	<roles names="super_admin_role"/>
@@ -2630,6 +2585,51 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<privileges select="true"/>
 </permission>
 <permission revoke="true">
+	<object name="numero_tarjeta" parent="parqueadero.tarjeta_pago" type="column"/>
+	<roles names="user_role"/>
+	<privileges select="true" update="true" references="true"/>
+</permission>
+<permission revoke="true">
+	<object name="numero_tarjeta" parent="parqueadero.tarjeta_pago" type="column"/>
+	<roles names="super_admin_role"/>
+	<privileges select="true" insert="true" update="true" references="true"/>
+</permission>
+<permission revoke="true">
+	<object name="mes_vencimiento" parent="parqueadero.tarjeta_pago" type="column"/>
+	<roles names="operador_role"/>
+	<privileges select="true" update="true" references="true"/>
+</permission>
+<permission revoke="true">
+	<object name="mes_vencimiento" parent="parqueadero.tarjeta_pago" type="column"/>
+	<roles names="super_admin_role"/>
+	<privileges select="true" insert="true" update="true" references="true"/>
+</permission>
+<permission revoke="true">
+	<object name="anio_vencimiento" parent="parqueadero.tarjeta_pago" type="column"/>
+	<roles names="user_role"/>
+	<privileges select="true" update="true" references="true"/>
+</permission>
+<permission revoke="true">
+	<object name="anio_vencimiento" parent="parqueadero.tarjeta_pago" type="column"/>
+	<roles names="super_admin_role"/>
+	<privileges select="true" insert="true" update="true" references="true"/>
+</permission>
+<permission revoke="true">
+	<object name="apellido_duenio_tarjeta" parent="parqueadero.tarjeta_pago" type="column"/>
+	<roles names="super_admin_role"/>
+	<privileges select="true" insert="true" update="true" references="true"/>
+</permission>
+<permission revoke="true">
+	<object name="nombre_duenio_tarjeta" parent="parqueadero.tarjeta_pago" type="column"/>
+	<roles names="super_admin_role"/>
+	<privileges select="true" insert="true" update="true" references="true"/>
+</permission>
+<permission revoke="true">
+	<object name="ultimos_cuatro_digitos" parent="parqueadero.tarjeta_pago" type="column"/>
+	<roles names="super_admin_role"/>
+	<privileges select="true" insert="true" update="true" references="true"/>
+</permission>
+<permission revoke="true">
 	<object name="tipo_identificacion_cliente" parent="parqueadero.cliente" type="column"/>
 	<roles names="operador_role"/>
 	<privileges select="true"/>
@@ -2638,5 +2638,20 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<object name="numero_identificacion_cliente" parent="parqueadero.cliente" type="column"/>
 	<roles names="operador_role"/>
 	<privileges select="true"/>
+</permission>
+<permission>
+	<object name="auditoria" type="schema"/>
+	<roles names="manage_account_user"/>
+	<privileges usage="true"/>
+</permission>
+<permission>
+	<object name="auditoria.audit_usuario" type="table"/>
+	<roles names="manage_account_user"/>
+	<privileges insert="true"/>
+</permission>
+<permission>
+	<object name="auditoria.usuario_sq" type="sequence"/>
+	<roles names="manage_account_user"/>
+	<privileges usage="true"/>
 </permission>
 </dbmodel>

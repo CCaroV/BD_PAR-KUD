@@ -88,9 +88,6 @@ BEGIN
     
     -- Devuelve un JSON con la información de la consulta
     RETURN RESULTADO_L;
-EXCEPTION
-    WHEN OTHERS THEN
-        RAISE EXCEPTION 'MOSTRAR_SUCURSALES_FU ha ocurrido un error: %/%', SQLSTATE, SQLERRM;
 END;
 $$;
 
