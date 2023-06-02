@@ -20,7 +20,7 @@ DECLARE
     MENSAJE_ERROR_L TEXT;
 BEGIN
     -- Recupera la clave primaria del cliente conectado a la BD
-    K_CLIENTE_L := PARQUEADERO.RETORNAR_LLAVE_TEMPORAL_FU();
+    K_CLIENTE_L := PARQUEADERO.RECUPERAR_LLAVE_CLIENTE_FU();
 
     -- Inserta en un JSON el resultado de la consukta
     SELECT JSON_AGG(ROW_TO_JSON(T)) INTO RESULTADO_L 
@@ -199,7 +199,7 @@ DECLARE
     MENSAJE_ERROR_L TEXT;
 BEGIN
     -- Recupera la clave primaria del cliente conectado a la BD
-    K_CLIENTE_L := PARQUEADERO.RETORNAR_LLAVE_TEMPORAL_FU();
+    K_CLIENTE_L := PARQUEADERO.RECUPERAR_LLAVE_CLIENTE_FU();
 
     -- Inserta en un JSON el resultado de la consukta
     SELECT JSON_AGG(ROW_TO_JSON(T)) INTO RESULTADO_L 
@@ -267,7 +267,7 @@ DECLARE
     K_RESERVA_L PARQUEADERO.RESERVA.K_RESERVA%TYPE;
 BEGIN
     -- Selecciona la clave primaria del cliente conectado a la BD
-    K_CLIENTE_L := PARQUEADERO.RETORNAR_LLAVE_TEMPORAL_FU();
+    K_CLIENTE_L := PARQUEADERO.RECUPERAR_LLAVE_CLIENTE_FU();
 
     -- Selecciona el día de la semana en que se hará la reserva
     SELECT PARQUEADERO.OBTENER_DIA_FECHA_FU(FECHA_RESERVA_P) INTO DIA_RESERVA_L;

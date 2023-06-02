@@ -73,139 +73,84 @@ COMMENT ON FUNCTION PARQUEADERO.OBTENER_DIA_FECHA_FU IS E'Función que devuelve 
 
 ALTER FUNCTION PARQUEADERO.OBTENER_DIA_FECHA_FU OWNER TO PARKUD_DB_ADMIN;
 
-
--- Procedimiento que crea una tabla temporal para ingresar la clave primaria del usuario conectado.
-CREATE OR REPLACE PROCEDURE PARQUEADERO.CREAR_TABLA_TEMP_USUARIO_PR()
-LANGUAGE PLPGSQL
-AS $$
-BEGIN
-    -- Crea la tabla temporal
-    CREATE TEMPORARY TABLE PG_TEMP.PK_USUARIO(
-        K_USUARIO_G INTEGER PRIMARY KEY
-    );
-END;
-$$;
-
-COMMENT ON PROCEDURE PARQUEADERO.CREAR_TABLA_TEMP_USUARIO_PR IS E'Procedimiento que crea una tabla temporal para ingresar la clave primaria del usuario conectado.';
-
-ALTER PROCEDURE PARQUEADERO.CREAR_TABLA_TEMP_USUARIO_PR OWNER TO PARKUD_DB_ADMIN;
-
-
--- Procedimiento para insertar la llave primaria de un cliente conectado en la BD en la tabla temporal de llave primaria.
-CREATE OR REPLACE PROCEDURE PARQUEADERO.INSERTAR_LLAVE_CLIENTE_PR(
-    INOUT CODIGO_ERROR_P TEXT DEFAULT NULL,
-    INOUT RESUMEN_ERROR_P TEXT DEFAULT NULL,
-    INOUT MENSAJE_ERROR_P TEXT DEFAULT NULL
-)
-LANGUAGE PLPGSQL
-AS $$
-DECLARE
-    -- Declaración de variables locales
-    K_CLIENTE_L PARQUEADERO.CLIENTE.K_CLIENTE%TYPE;
-BEGIN
-    -- Recupera la clave primaria del cliente conectado a la BD
-    SELECT K_CLIENTE INTO STRICT K_CLIENTE_L
-    FROM PARQUEADERO.CLIENTE
-    WHERE PARQUEADERO.PGP_SYM_DECRYPT(CORREO_CLIENTE, 'AES_KEY') = CURRENT_USER;
-
-    -- Crea la tabla temporal del cliente
-    CALL PARQUEADERO.CREAR_TABLA_TEMP_USUARIO_PR();
-
-    -- Inserta la clave primaria en la tabla temporal del cliente
-    INSERT INTO PG_TEMP.PK_USUARIO VALUES(K_CLIENTE_L);
-EXCEPTION
-    -- Excepciones
-    WHEN NO_DATA_FOUND THEN
-        RAISE EXCEPTION 'El usuario actual no tiene ningún rol en la aplicación.';
-    WHEN TOO_MANY_ROWS THEN
-        RAISE EXCEPTION 'Hay inconsistencias en la BD: hay un correo repetido.';
-    WHEN OTHERS THEN
-        GET STACKED DIAGNOSTICS 
-            CODIGO_ERROR_P = RETURNED_SQLSTATE,
-            RESUMEN_ERROR_P = MESSAGE_TEXT,
-            MENSAJE_ERROR_P = PG_EXCEPTION_CONTEXT;
-END;
-$$;
-
-COMMENT ON PROCEDURE PARQUEADERO.INSERTAR_LLAVE_CLIENTE_PR IS E'Procedimiento para insertar la llave primaria de un cliente conectado en la BD en la tabla temporal de llave primaria.';
-
-ALTER PROCEDURE PARQUEADERO.INSERTAR_LLAVE_CLIENTE_PR OWNER TO PARKUD_DB_ADMIN;
-
-
--- Procedimiento para insertar la llave primaria de un empleado conectado en la BD en la tabla temporal de llave primaria.
-CREATE OR REPLACE PROCEDURE PARQUEADERO.INSERTAR_LLAVE_EMPLEADO_PR(
-    INOUT CODIGO_ERROR_P TEXT DEFAULT NULL,
-    INOUT RESUMEN_ERROR_P TEXT DEFAULT NULL,
-    INOUT MENSAJE_ERROR_P TEXT DEFAULT NULL
-)
-LANGUAGE PLPGSQL
-AS $$
-DECLARE
-    -- Declaración de variables locales
-    K_EMPLEADO_L PARQUEADERO.EMPLEADO.K_EMPLEADO%TYPE;
-BEGIN
-    -- Recupera la clave primaria del empleado conectado a la BD
-    SELECT K_EMPLEADO INTO STRICT K_EMPLEADO_L
-    FROM PARQUEADERO.EMPLEADO
-    WHERE PARQUEADERO.PGP_SYM_DECRYPT(CORREO_EMPLEADO, 'AES_KEY') = CURRENT_USER;
-
-    -- Crea la tabla temporal del empleado
-    CALL PARQUEADERO.CREAR_TABLA_TEMP_USUARIO_PR();
-
-    -- Inserta la clave primaria en la tabla temporal del empleado
-    INSERT INTO PG_TEMP.PK_USUARIO VALUES(K_EMPLEADO_L);
-EXCEPTION
-    -- Excepciones
-    WHEN NO_DATA_FOUND THEN
-        RAISE EXCEPTION 'El usuario actual no tiene ningún rol en la aplicación.';
-    WHEN TOO_MANY_ROWS THEN
-        RAISE EXCEPTION 'Hay inconsistencias en la BD: hay un correo repetido.';
-    WHEN OTHERS THEN
-        GET STACKED DIAGNOSTICS 
-            CODIGO_ERROR_P = RETURNED_SQLSTATE,
-            RESUMEN_ERROR_P = MESSAGE_TEXT,
-            MENSAJE_ERROR_P = PG_EXCEPTION_CONTEXT;
-END;
-$$;
-
-COMMENT ON PROCEDURE PARQUEADERO.INSERTAR_LLAVE_EMPLEADO_PR IS E'Procedimiento para insertar la llave primaria de un empleado conectado en la BD en la tabla temporal de llave primaria.';
-
-ALTER PROCEDURE PARQUEADERO.INSERTAR_LLAVE_EMPLEADO_PR OWNER TO PARKUD_DB_ADMIN;
-
-CREATE OR REPLACE FUNCTION PARQUEADERO.RETORNAR_LLAVE_TEMPORAL_FU()
+-- Función para recuperar la clave primaria del empleado conectado a la BD.
+CREATE OR REPLACE FUNCTION PARQUEADERO.RECUPERAR_LLAVE_EMPLEADO_FU()
 RETURNS INTEGER
 LANGUAGE PLPGSQL
 PARALLEL RESTRICTED
 AS $$
 DECLARE
     -- Declaración de variables locales
-    K_USUARIO_L INTEGER;
+    K_EMPLEADO_L PARQUEADERO.EMPLEADO.K_EMPLEADO%TYPE;
     -- Códigos de error
     CODIGO_ERROR_L TEXT;
     RESUMEN_ERROR_L TEXT;
     MENSAJE_ERROR_L TEXT;
 BEGIN
-    -- Selecciona la clave primaria del usuario conectado
-    SELECT K_USUARIO_G INTO STRICT K_USUARIO_L
-    FROM PG_TEMP.PK_USUARIO;
+    -- Recupera la clave primaria del empleado conectado a la BD
+    SELECT K_EMPLEADO INTO STRICT K_EMPLEADO_L
+    FROM PARQUEADERO.EMPLEADO
+    WHERE PARQUEADERO.PGP_SYM_DECRYPT(CORREO_EMPLEADO, 'AES_KEY') = CURRENT_USER;
 
-    -- Retorna la clave primaria
-    RETURN K_USUARIO_L;
+    -- Devuelve la clave    
+    RETURN K_EMPLEADO_L;
 EXCEPTION
     -- Excepciones
     WHEN NO_DATA_FOUND THEN
-        RAISE EXCEPTION 'El usuario actual no tiene ningún rol en la aplicación.';
+        RAISE EXCEPTION 'El usuario actual no está registrado como empleado.';
     WHEN TOO_MANY_ROWS THEN
         RAISE EXCEPTION 'Hay inconsistencias en la BD: hay un correo repetido.';
     WHEN OTHERS THEN
         GET STACKED DIAGNOSTICS 
-            CODIGO_ERROR_L = RETURNED_SQLSTATE,
-            RESUMEN_ERROR_L = MESSAGE_TEXT,
-            MENSAJE_ERROR_L = PG_EXCEPTION_CONTEXT;
-        RAISE EXCEPTION '% / % / %', CODIGO_ERROR_L, RESUMEN_ERROR_L, MENSAJE_ERROR_L;
+            CODIGO_ERROR_L := RETURNED_SQLSTATE,
+            RESUMEN_ERROR_L := MESSAGE_TEXT,
+            MENSAJE_ERROR_L := PG_EXCEPTION_CONTEXT;
+            RAISE EXCEPTION 'Código de error: %\nResumen del error: %\nMensaje de error: %', CODIGO_ERROR_L, RESUMEN_ERROR_L, MENSAJE_ERROR_L;
 END;
 $$;
 
-COMMENT ON FUNCTION PARQUEADERO.RETORNAR_LLAVE_TEMPORAL_FU IS E'Función que retorna la clave primaria del usuario conectado a la BD.';
+COMMENT ON FUNCTION PARQUEADERO.RECUPERAR_LLAVE_EMPLEADO_FU IS E'Función para recuperar la clave primaria del empleado conectado a la BD.';
 
-ALTER FUNCTION PARQUEADERO.RETORNAR_LLAVE_TEMPORAL_FU OWNER TO PARKUD_DB_ADMIN;
+ALTER FUNCTION PARQUEADERO.RECUPERAR_LLAVE_EMPLEADO_FU OWNER TO PARKUD_DB_ADMIN;
+
+
+-- Función para recuperar la clave primaria del cliente conectado a la BD.
+CREATE OR REPLACE FUNCTION PARQUEADERO.RECUPERAR_LLAVE_CLIENTE_FU()
+RETURNS INTEGER
+LANGUAGE PLPGSQL
+PARALLEL RESTRICTED
+AS $$
+DECLARE
+    -- Declaración de variables locales
+    K_CLIENTE_L PARQUEADERO.CLIENTE.K_CLIENTE%TYPE;
+    -- Códigos de error
+    CODIGO_ERROR_L TEXT;
+    RESUMEN_ERROR_L TEXT;
+    MENSAJE_ERROR_L TEXT;
+BEGIN
+    -- Recupera la clave primaria del cliente conectado a la BD
+    SELECT K_CLIENTE INTO STRICT K_CLIENTE_L
+    FROM PARQUEADERO.CLIENTE
+    WHERE PARQUEADERO.PGP_SYM_DECRYPT(CORREO_CLIENTE, 'AES_KEY') = CURRENT_USER;
+
+    -- Devuelve la clave
+    RETURN K_CLIENTE_L;
+EXCEPTION
+    -- Excepciones
+    WHEN NO_DATA_FOUND THEN
+        RAISE EXCEPTION 'El usuario actual no está registrado como cliente.';
+    WHEN TOO_MANY_ROWS THEN
+        RAISE EXCEPTION 'Hay inconsistencias en la BD: hay un correo repetido.';
+    WHEN OTHERS THEN
+        GET STACKED DIAGNOSTICS 
+            CODIGO_ERROR_L := RETURNED_SQLSTATE,
+            RESUMEN_ERROR_L := MESSAGE_TEXT,
+            MENSAJE_ERROR_L := PG_EXCEPTION_CONTEXT;
+            RAISE EXCEPTION 'Código de error: % / Resumen del error: % / Mensaje de error: %', CODIGO_ERROR_L, RESUMEN_ERROR_L, MENSAJE_ERROR_L;
+END;
+$$;
+
+COMMENT ON FUNCTION PARQUEADERO.RECUPERAR_LLAVE_CLIENTE_FU IS E'Función para recuperar la clave primaria del cliente conectado a la BD.';
+
+ALTER FUNCTION PARQUEADERO.RECUPERAR_LLAVE_CLIENTE_FU OWNER TO PARKUD_DB_ADMIN;
+

@@ -54,3 +54,8 @@ SELECT PARQUEADERO.MOSTRAR_VEHICULOS_CLIENTE_FU();
 /* ---------------------------------------------------------------------------------------------------------------------
 Pruebas: Mostrar la información auditada de la BD: */
 SELECT AUDITORIA.MOSTRAR_AUDITORIA_FU();
+
+
+SELECT count(*) AS cantidad_conexiones
+FROM pg_stat_activity
+WHERE usename = 'soyahi7449@onlcool.com';
