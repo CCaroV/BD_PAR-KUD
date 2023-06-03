@@ -35,7 +35,7 @@ Pruebas: Pasos para hacer una reserva: */
 SELECT PARQUEADERO.MOSTRAR_VEHICULOS_RESERVA_FU('Automóvil');
 SELECT PARQUEADERO.MOSTRAR_VEHICULOS_RESERVA_FU('SUV');
 -- 2. Segundo paso
-SELECT PARQUEADERO.MOSTRAR_INFO_BASICA_SUCURSAL('SUV', NULL, 'Cubierta', NULL);
+SELECT PARQUEADERO.MOSTRAR_INFO_BASICA_SUCURSAL_FU('SUV', NULL, TRUE, NULL);
 SELECT PARQUEADERO.MOSTRAR_INFO_BASICA_SUCURSAL_FU('Automóvil', NULL, NULL, NULL);
 -- 3. Tercer paso
 SELECT PARQUEADERO.MOSTRAR_INFO_SUCURSAL_RESERVA_FU('Bogotá, D.C.', TRUE, 'SUV', 'Sucursal Chapinero');
@@ -55,7 +55,8 @@ SELECT PARQUEADERO.MOSTRAR_VEHICULOS_CLIENTE_FU();
 Pruebas: Mostrar la información auditada de la BD: */
 SELECT AUDITORIA.MOSTRAR_AUDITORIA_FU();
 
-
-SELECT count(*) AS cantidad_conexiones
-FROM pg_stat_activity
-WHERE usename = 'soyahi7449@onlcool.com';
+/* ---------------------------------------------------------------------------------------------------------------------
+Pruebas: Modificar la tarifa de una sucursal: */
+CALL PARQUEADERO.MODIFICAR_TARIFA_SUCURSAL_PR('Sucursal Chapinero', 'Bogotá, D.C.', 'Semicubierta', 'Carrera 7B # 45A - 23', 'Moto', '75');
+CALL PARQUEADERO.MODIFICAR_TARIFA_SUCURSAL_PR('Sucursal Chapinero', 'Bogotá, D.C.', 'Semicubierta', 'Carrera 7B # 45A - 23', 'SUV', '200');
+CALL PARQUEADERO.MODIFICAR_TARIFA_SUCURSAL_PR('Sucursal Chapinero', 'Bogotá, D.C.', 'Semicubierta', 'Carrera 7B # 45A - 23', 'Moto', '100');
