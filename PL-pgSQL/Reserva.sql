@@ -4,7 +4,8 @@ Los procedimientos y funciones requeridos se muestran en ese orden.*/
 
 -- 1. El cliente selecciona el tipo de vehículo. La función retorna los vehículos del cliente registrados de ese tipo.
 CREATE OR REPLACE FUNCTION PARQUEADERO.MOSTRAR_VEHICULOS_RESERVA_FU(
-    IN TIPO_VEHICULO_P PARQUEADERO.VEHICULO.TIPO_VEHICULO%TYPE
+    IN TIPO_VEHICULO_P PARQUEADERO.VEHICULO.TIPO_VEHICULO%TYPE,
+    IN PARAM_VACIO_P TEXT DEFAULT NULL
 )
 RETURNS JSON
 LANGUAGE PLPGSQL
