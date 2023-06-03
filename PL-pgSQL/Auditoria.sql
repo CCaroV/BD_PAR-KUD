@@ -282,6 +282,7 @@ COMMENT ON PROCEDURE AUDITORIA.AUDIT_INGRESO_USUARIO_PR IS E'Procedimiento de au
 
 ALTER PROCEDURE AUDITORIA.AUDIT_INGRESO_USUARIO_PR OWNER TO PARKUD_DB_ADMIN;
 
+
 -- Se requiere registrar los usuarios que se registran en la aplicación.
 -- El siguiente trigger audita los registros hechos por clientes nuevos.
 CREATE OR REPLACE FUNCTION AUDITORIA.AUDIT_REGISTRO_CLIENTE_TR()
