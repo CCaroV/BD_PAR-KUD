@@ -60,3 +60,7 @@ Pruebas: Modificar la tarifa de una sucursal: */
 CALL PARQUEADERO.MODIFICAR_TARIFA_SUCURSAL_PR('Sucursal Chapinero', 'Bogotá, D.C.', 'Semicubierta', 'Carrera 7B # 45A - 23', 'Moto', '75');
 CALL PARQUEADERO.MODIFICAR_TARIFA_SUCURSAL_PR('Sucursal Chapinero', 'Bogotá, D.C.', 'Semicubierta', 'Carrera 7B # 45A - 23', 'SUV', '200');
 CALL PARQUEADERO.MODIFICAR_TARIFA_SUCURSAL_PR('Sucursal Chapinero', 'Bogotá, D.C.', 'Semicubierta', 'Carrera 7B # 45A - 23', 'Moto', '100');
+
+/* ---------------------------------------------------------------------------------------------------------------------
+Pruebas: Modificar el horario de una sucursal: */
+CALL PARQUEADERO.MODIFICAR_HORARIO_SUCURSAL_PR('Sucursal Chapinero', 'Bogotá, D.C.', 'Semicubierta', 'Carrera 7B # 45A - 23', 'Viernes', '06:00', '23:00', FALSE, FALSE);
