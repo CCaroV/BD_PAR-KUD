@@ -20,6 +20,10 @@ DECLARE
     RESUMEN_ERROR_L TEXT;
     MENSAJE_ERROR_L TEXT;
 BEGIN
+    -- Habilita la concurrencia de las tablas en filas diferentes pero solo permite que puedan ser proyectadas
+    LOCK PARQUEADERO.VEHICULO IN ROW SHARE MODE;
+    LOCK PARQUEADERO.CLIENTE IN ROW SHARE MODE;
+
     -- Recupera la clave primaria del cliente conectado a la BD
     K_CLIENTE_L := PARQUEADERO.RECUPERAR_LLAVE_CLIENTE_FU();
 
@@ -67,6 +71,17 @@ DECLARE
     -- Declaración de variables locales
     RESULTADO_L JSON;
 BEGIN
+    -- Habilita la concurrencia de las tablas pero solo permite que puedan ser proyectadas
+    LOCK PARQUEADERO.PAIS IN SHARE MODE;
+    LOCK PARQUEADERO.CIUDAD IN SHARE MODE;
+    LOCK PARQUEADERO.DIRECCION IN SHARE MODE;
+    LOCK PARQUEADERO.SUCURSAL IN SHARE MODE;
+    LOCK PARQUEADERO.TARIFA_MINUTO IN SHARE MODE;
+    LOCK PARQUEADERO.HORARIO_SUCURSAL IN SHARE MODE;
+    LOCK PARQUEADERO.SLOT_PARQUEADERO IN SHARE MODE;
+    LOCK PARQUEADERO.DIA_SEMANA IN SHARE MODE;
+    LOCK PARQUEADERO.RESERVA IN SHARE MODE;
+
     -- Inserta en un JSON el resultado de la consukta
     SELECT JSON_AGG(ROW_TO_JSON(T)) INTO RESULTADO_L 
     FROM(
@@ -130,6 +145,17 @@ DECLARE
     -- Declaración de variables locales
     RESULTADO_L JSON;
 BEGIN
+    -- Habilita la concurrencia de las tablas pero solo permite que puedan ser proyectadas
+    LOCK PARQUEADERO.PAIS IN SHARE MODE;
+    LOCK PARQUEADERO.CIUDAD IN SHARE MODE;
+    LOCK PARQUEADERO.DIRECCION IN SHARE MODE;
+    LOCK PARQUEADERO.SUCURSAL IN SHARE MODE;
+    LOCK PARQUEADERO.TARIFA_MINUTO IN SHARE MODE;
+    LOCK PARQUEADERO.HORARIO_SUCURSAL IN SHARE MODE;
+    LOCK PARQUEADERO.SLOT_PARQUEADERO IN SHARE MODE;
+    LOCK PARQUEADERO.DIA_SEMANA IN SHARE MODE;
+    LOCK PARQUEADERO.RESERVA IN SHARE MODE;
+
     -- Inserta en un JSON el resultado de la consukta
     SELECT JSON_AGG(ROW_TO_JSON(T)) INTO RESULTADO_L 
     FROM(
@@ -197,6 +223,10 @@ DECLARE
     RESUMEN_ERROR_L TEXT;
     MENSAJE_ERROR_L TEXT;
 BEGIN
+    -- Habilita la concurrencia de las tablas en distintas filas pero solo permite que puedan ser proyectadas
+    LOCK TABLE PARQUEADERO.CLIENTE IN ROW SHARE MODE;
+    LOCK TABLE PARQUEADERO.TARJETA_PAGO IN ROW SHARE MODE;
+
     -- Recupera la clave primaria del cliente conectado a la BD
     K_CLIENTE_L := PARQUEADERO.RECUPERAR_LLAVE_CLIENTE_FU();
 
@@ -264,6 +294,20 @@ DECLARE
     RESUMEN_ERROR_L TEXT;
     MENSAJE_ERROR_L TEXT;
 BEGIN
+    -- Habilita la concurrencia de las tablas pero solo permite que puedan ser proyectadas
+    LOCK PARQUEADERO.PAIS IN SHARE MODE;
+    LOCK PARQUEADERO.CIUDAD IN SHARE MODE;
+    LOCK PARQUEADERO.DIRECCION IN SHARE MODE;
+    LOCK PARQUEADERO.SUCURSAL IN SHARE MODE;
+    LOCK PARQUEADERO.TARIFA_MINUTO IN SHARE MODE;
+    LOCK PARQUEADERO.HORARIO_SUCURSAL IN SHARE MODE;
+    LOCK PARQUEADERO.SLOT_PARQUEADERO IN SHARE MODE;
+    LOCK PARQUEADERO.DIA_SEMANA IN SHARE MODE;
+
+    -- Habilita la concurrencia de las tablas en distintas filas pero solo permite que puedan ser proyectadas
+    LOCK TABLE PARQUEADERO.CLIENTE IN ROW SHARE MODE;
+    LOCK TABLE PARQUEADERO.TARJETA_PAGO IN ROW SHARE MODE;
+    
     -- Selecciona la clave primaria del cliente conectado a la BD
     K_CLIENTE_L := PARQUEADERO.RECUPERAR_LLAVE_CLIENTE_FU();
 
@@ -329,6 +373,9 @@ BEGIN
             AND F.FECHA_FIN_PUNTAJE IS NULL
             AND F.ES_ACTUAL = TRUE;
     END IF;
+
+    -- Bloquea temporalmente las filas que se van a modificar en la tabla
+    LOCK PARQUEADERO.RESERVA IN ROW EXCLUSIVE MODE;
 
     -- Inserta los valores de la reserva
     INSERT INTO PARQUEADERO.RESERVA (

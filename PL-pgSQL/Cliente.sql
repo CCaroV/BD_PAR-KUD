@@ -17,6 +17,13 @@ DECLARE
     RESUMEN_ERROR_L TEXT;
     MENSAJE_ERROR_L TEXT;
 BEGIN
+    -- Habilita la concurrencia de las tablas pero solo permite que puedan ser proyectadas
+    LOCK TABLE PARQUEADERO.MARCA_VEHICULO IN SHARE MODE;
+
+    -- Habilita la concurrencia de las tablas en distintas filas pero solo permite que puedan ser proyectadas
+    LOCK TABLE PARQUEADERO.CLIENTE IN ROW SHARE MODE;
+    LOCK TABLE PARQUEADERO.VEHICULO IN ROW SHARE MODE;
+
     -- Recupera la clave primaria del cliente conectado a la BD
     K_CLIENTE_L := PARQUEADERO.RECUPERAR_LLAVE_CLIENTE_FU();
 
@@ -33,6 +40,7 @@ BEGIN
             INNER JOIN PARQUEADERO.VEHICULO V ON C.K_CLIENTE = V.K_CLIENTE
             INNER JOIN PARQUEADERO.MARCA_VEHICULO MV ON V.K_MARCA_VEHICULO = MV.K_MARCA_VEHICULO
         WHERE C.K_CLIENTE = K_CLIENTE_L
+        FOR UPDATE
     ) T;
 
     -- Devuelve un JSON con la información de la consulta

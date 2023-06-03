@@ -87,6 +87,9 @@ DECLARE
     RESUMEN_ERROR_L TEXT;
     MENSAJE_ERROR_L TEXT;
 BEGIN
+    -- Habilita la concurrencia de las tablas en distintas filas pero solo permite que puedan ser proyectadas
+    LOCK TABLE PARQUEADERO.EMPLEADO IN ROW SHARE MODE;
+
     -- Recupera la clave primaria del empleado conectado a la BD
     SELECT K_EMPLEADO INTO STRICT K_EMPLEADO_L
     FROM PARQUEADERO.EMPLEADO
@@ -128,6 +131,9 @@ DECLARE
     RESUMEN_ERROR_L TEXT;
     MENSAJE_ERROR_L TEXT;
 BEGIN
+    -- Habilita la concurrencia de las tablas en distintas filas pero solo permite que puedan ser proyectadas
+    LOCK TABLE PARQUEADERO.CLIENTE IN ROW SHARE MODE;
+
     -- Recupera la clave primaria del cliente conectado a la BD
     SELECT K_CLIENTE INTO STRICT K_CLIENTE_L
     FROM PARQUEADERO.CLIENTE

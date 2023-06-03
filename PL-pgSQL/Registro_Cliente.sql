@@ -35,6 +35,9 @@ BEGIN
     -- Crea el usuario en la base de datos con su rol correspondiente
     EXECUTE FORMAT('CREATE ROLE %I WITH LOGIN PASSWORD %L VALID UNTIL %L IN ROLE USER_ROLE', CORREO_CLIENTE_P, CLAVE_ALEATORIA_L, FECHA_CLAVE_L);
 
+    -- Bloquea temporalmente las filas que se van a modificar en la tabla
+    LOCK PARQUEADERO.CLIENTE IN ROW EXCLUSIVE MODE;
+
     -- Inserta los datos del cliente en la tabla Cliente de la BD
     INSERT INTO PARQUEADERO.CLIENTE(
         TIPO_IDENTIFICACION_CLIENTE,
@@ -83,10 +86,7 @@ GRANT EXECUTE ON FUNCTION PARQUEADERO.CREAR_CLIENTE_FU TO MANAGE_ACCOUNT_USER;
 -- El siguiente procedimiento cambia la clave del usuario.
 CREATE OR REPLACE PROCEDURE PARQUEADERO.PRIMER_CAMBIO_CLAVE_PR(
     IN NOMBRE_USUARIO_P TEXT, 
-    IN CLAVE_NUEVA_P TEXT,
-    INOUT CODIGO_ERROR_P TEXT DEFAULT NULL,
-    INOUT RESUMEN_ERROR_P TEXT DEFAULT NULL,
-    INOUT MENSAJE_ERROR_P TEXT DEFAULT NULL
+    IN CLAVE_NUEVA_P TEXT
 )
 LANGUAGE PLPGSQL
 AS $$
@@ -94,6 +94,10 @@ DECLARE
     -- Declaración de variables locales
     FECHA_VALIDEZ_L CONSTANT DATE := '2050-01-01';
     FECHA_ACTUAL_L PG_USER.VALUNTIL%TYPE;
+    -- Códigos de error
+    CODIGO_ERROR_L TEXT;
+    RESUMEN_ERROR_L TEXT;
+    MENSAJE_ERROR_L TEXT;
 BEGIN
     -- Toma la fecha de validación de la clave actual del usuario de la BD.
     SELECT VALUNTIL INTO FECHA_ACTUAL_L
@@ -113,11 +117,11 @@ BEGIN
 EXCEPTION
     -- Excepciones
     WHEN OTHERS THEN
-        ROLLBACK;
         GET STACKED DIAGNOSTICS 
-            CODIGO_ERROR_P = RETURNED_SQLSTATE,
-            RESUMEN_ERROR_P = MESSAGE_TEXT,
-            MENSAJE_ERROR_P = PG_EXCEPTION_CONTEXT;
+            CODIGO_ERROR_L := RETURNED_SQLSTATE,
+            RESUMEN_ERROR_L := MESSAGE_TEXT,
+            MENSAJE_ERROR_L := PG_EXCEPTION_CONTEXT;
+        RAISE EXCEPTION 'Código de error: % / Resumen del error: % / Mensaje de error: %', CODIGO_ERROR_L, RESUMEN_ERROR_L, MENSAJE_ERROR_L;
 END;
 $$;
 
@@ -151,6 +155,9 @@ DECLARE
 BEGIN
     -- Recupera la clave primaria del cliente conectado a la BD
     K_CLIENTE_L := PARQUEADERO.RECUPERAR_LLAVE_CLIENTE_FU();
+
+    -- Bloquea temporalmente las filas que se van a modificar en la tabla
+    LOCK PARQUEADERO.VEHICULO IN ROW EXCLUSIVE MODE;
     
     -- Inserta el vehículo en la tabla de vehículos de la BD
     INSERT INTO PARQUEADERO.VEHICULO(
@@ -224,6 +231,9 @@ DECLARE
 BEGIN
     -- Recupera la clave primaria del cliente conectado a la BD
     K_CLIENTE_L := PARQUEADERO.RECUPERAR_LLAVE_CLIENTE_FU();
+
+    -- Bloquea temporalmente las filas que se van a modificar en la tabla
+    LOCK PARQUEADERO.TARJETA_PAGO IN ROW EXCLUSIVE MODE;
 
     -- Inserta la información de método de pago
     INSERT INTO PARQUEADERO.TARJETA_PAGO (

@@ -108,6 +108,9 @@ BEGIN
 
         -- Si han habido cambios recientes en la tarifa
         IF (SELECT CURRENT_TIMESTAMP AT TIME ZONE 'America/Bogota') - FECHA_INICIO_TARIFA_L <= '0 YEARS 0 MONTHS 0 DAYS 0 HOURS 10 MINUTES'::INTERVAL THEN
+            -- Bloquea temporalmente las filas que se van a modificar en la tabla
+            LOCK TABLE PARQUEADERO.TARIFA_MINUTO IN ROW EXCLUSIVE MODE;
+            
             -- Actualiza la tarifa actual sin crear una nueva
             UPDATE PARQUEADERO.TARIFA_MINUTO
             SET VALOR_MINUTO_SUV = NEW.VALOR_MINUTO_SUV,
@@ -120,6 +123,9 @@ BEGIN
             -- Aborta la inserción ya que no es necesaria
             RETURN NULL;
         ELSE
+            -- Bloquea temporalmente las filas que se van a modificar en la tabla
+            LOCK TABLE PARQUEADERO.TARIFA_MINUTO IN ROW EXCLUSIVE MODE;
+            
             -- Actualiza la tarifa antigua, la deja inactiva y crea una nueva tarifa
             UPDATE PARQUEADERO.TARIFA_MINUTO 
             SET FECHA_FIN_TARIFA = (SELECT CURRENT_TIMESTAMP AT TIME ZONE 'America/Bogota'),

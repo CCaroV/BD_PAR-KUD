@@ -9,6 +9,9 @@ LANGUAGE PLPGSQL
 PARALLEL UNSAFE
 AS $$
 BEGIN
+    -- Bloquea temporalmente las filas que se van a modificar en la tabla
+    LOCK AUDITORIA.AUDIT_VEHICULO IN ROW EXCLUSIVE MODE;
+
     CASE TG_OP
         -- En caso de que se esté insertando un vehículo
         WHEN 'INSERT' THEN
@@ -104,6 +107,9 @@ DECLARE
     RESUMEN_ERROR_L TEXT;
     MENSAJE_ERROR_L TEXT;
 BEGIN
+    -- Bloquea temporalmente las filas que se van a modificar en la tabla
+    LOCK AUDITORIA.AUDIT_RESERVA IN ROW EXCLUSIVE MODE;
+
     CASE TG_OP
         -- En caso de que se esté insertando una reserva
         WHEN 'INSERT' THEN
@@ -221,6 +227,9 @@ DECLARE
     RESUMEN_ERROR_L TEXT;
     MENSAJE_ERROR_L TEXT;
 BEGIN
+    -- Bloquea temporalmente las filas que se van a modificar en la tabla
+    LOCK AUDITORIA.AUDIT_USUARIO IN ROW EXCLUSIVE MODE;
+
     -- Si es un cliente
     IF ROL_USUARIO_P = LOWER(TRIM('USER_ROLE')) THEN
         -- Inserta los valores en la tabla de auditoría
@@ -245,9 +254,6 @@ BEGIN
     ELSIF ROL_USUARIO_P = LOWER(TRIM('OPERADOR_ROLE'))
             OR ROL_USUARIO_P = LOWER(TRIM('ADMIN_ROLE'))
             OR ROL_USUARIO_P = LOWER(TRIM('SUPER_ADMIN_ROLE')) THEN
-        
-        -- Crea la tabla temporal de la llave primaria del empleado
-        CALL PARQUEADERO.INSERTAR_LLAVE_EMPLEADO_PR(CODIGO_ERROR_P, RESUMEN_ERROR_P, MENSAJE_ERROR_P);
         
         -- Inserta los valores en la tabla de auditoría
         INSERT INTO AUDITORIA.AUDIT_USUARIO (
@@ -296,6 +302,9 @@ DECLARE
     RESUMEN_ERROR_L TEXT;
     MENSAJE_ERROR_L TEXT;
 BEGIN
+    -- Bloquea temporalmente las filas que se van a modificar en la tabla
+    LOCK AUDITORIA.AUDIT_USUARIO IN ROW EXCLUSIVE MODE;
+
     -- Audita el registro del usuario
     INSERT INTO AUDITORIA.AUDIT_USUARIO (
         K_EMPLEADO,
@@ -347,9 +356,19 @@ AS $$
 DECLARE 
     RESULTADO_L JSON;
 BEGIN
+    -- Habilita la concurrencia de las tablas pero solo permite que puedan ser proyectadas
+    LOCK PARQUEADERO.PAIS IN SHARE MODE;
+    LOCK PARQUEADERO.CIUDAD IN SHARE MODE;
+    LOCK PARQUEADERO.DIRECCION IN SHARE MODE;
+    LOCK PARQUEADERO.SUCURSAL IN SHARE MODE;
+    LOCK AUDITORIA.AUDIT_RESERVA IN SHARE MODE;
+    LOCK AUDITORIA.AUDIT_VEHICULO IN SHARE MODE;
+    LOCK AUDITORIA.AUDIT_USUARIO IN SHARE MODE;
 
+    -- Inserta en un JSON el resultado de la consulta
     SELECT JSON_AGG(ROW_TO_JSON(T)) INTO RESULTADO_L
     FROM (
+        -- Consulta que devuelve toda la información auditada en la BD
         SELECT AR.NOMBRE_USUARIO_RESERVA "Usuario",
             AR.FECHA_AUDIT_RESERVA "Fecha",
             'Reserva:' || ' ' || TIPO_TRANSACCION_RESERVA "Transacción",
