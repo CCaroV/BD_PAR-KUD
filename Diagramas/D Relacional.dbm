@@ -3,7 +3,7 @@
 CAUTION: Do not modify this file unless you know what you are doing.
  Unexpected results may occur if the code is changed deliberately.
 -->
-<dbmodel pgmodeler-ver="1.0.2" use-changelog="false" last-position="0,648" last-zoom="1.1" max-obj-count="193"
+<dbmodel pgmodeler-ver="1.0.2" use-changelog="false" last-position="590,607" last-zoom="1.1" max-obj-count="193"
 	 default-schema="parqueadero" default-owner="parkud_db_admin"
 	 layers="Default layer"
 	 active-layers="0"
@@ -528,7 +528,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<schema name="parqueadero"/>
 	<role name="parkud_db_admin"/>
 	<comment> <![CDATA[Determina el horario de una sucursal. El horario puede variar todos los días.]]> </comment>
-	<position x="1560" y="820"/>
+	<position x="1580" y="760"/>
 	<column name="k_horario_sucursal" not-null="true">
 		<type name="integer" length="0"/>
 		<comment> <![CDATA[Residuo de la tabla Horario Sucursal.]]> </comment>
@@ -551,6 +551,10 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</column>
 	<constraint name="horario_sucursal_pk" type="pk-constr" table="parqueadero.horario_sucursal">
 		<columns names="k_horario_sucursal" ref-type="src-columns"/>
+	</constraint>
+	<constraint name="horario_sucursal_ck" type="ck-constr" table="parqueadero.horario_sucursal">
+			<expression> <![CDATA[hora_abierto_sucursal < hora_cerrado_sucursal]]> </expression>
+		<comment> <![CDATA[Verifica que la hora de apertura sea siempre menor que la de cerrado.]]> </comment>
 	</constraint>
 
 	<customidxs object-type="column">
