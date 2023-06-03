@@ -21,8 +21,6 @@ BEGIN
     -- Selecciona el día de la semana en que se consulta la función.
     SELECT PARQUEADERO.OBTENER_DIA_FECHA_FU((SELECT DATE(TIMESTAMP_LOCAL_T))) INTO DIA_ACTUAL_L;
 
-    RAISE NOTICE 'DÍA EXTRAÍDO: %',DIA_ACTUAL_L;
-
     -- Inserta en un JSON el resultado de la consulta
     SELECT JSON_AGG(ROW_TO_JSON(T)) INTO RESULTADO_L 
     FROM(
@@ -281,8 +279,6 @@ BEGIN
         ES_CERRADO_COMPLETO = ES_CERRADO_COMPLETO_P
     WHERE K_SUCURSAL = K_SUCURSAL_L
         AND K_DIA_SEMANA = DIA_SEMANA_P;
-
-    RAISE NOTICE 'HICE UN UPDATE';
     
 EXCEPTION 
     -- Excepciones
