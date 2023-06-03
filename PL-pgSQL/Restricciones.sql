@@ -86,6 +86,10 @@ DECLARE
     -- Declaración de variables locales
     K_TARIFA_MINUTO_L PARQUEADERO.TARIFA_MINUTO.K_TARIFA_MINUTO%TYPE;
     FECHA_INICIO_TARIFA_L PARQUEADERO.TARIFA_MINUTO.FECHA_INICIO_TARIFA%TYPE;
+    -- Códigos de error
+    CODIGO_ERROR_L TEXT;
+    RESUMEN_ERROR_L TEXT;
+    MENSAJE_ERROR_L TEXT;
 BEGIN
     -- Verifica que la PK de la tarifa anterior exista
     -- Si no existe, esta es la primera tarifa que una sucursal va a insertar
@@ -129,11 +133,13 @@ BEGIN
 EXCEPTION 
     -- Excepciones
     WHEN TOO_MANY_ROWS THEN
-        ROLLBACK;
-        RAISE EXCEPTION 'Inconsistencias en la BD: Hay más de una tarifa activa para la sucursal de PK %, %/%',NEW.K_SUCURSAL, SQLSTATE, SQLERRM;
+        RAISE EXCEPTION 'Inconsistencias en la BD: Hay más de una tarifa activa para la sucursal de PK: %', NEW.K_SUCURSAL;
     WHEN OTHERS THEN
-        ROLLBACK;
-        RAISE EXCEPTION 'MODIFICAR_TARIFA_SUCURSAL_PR ha ocurrido un error: %/%', SQLSTATE, SQLERRM;
+        GET STACKED DIAGNOSTICS 
+            CODIGO_ERROR_L := RETURNED_SQLSTATE,
+            RESUMEN_ERROR_L := MESSAGE_TEXT,
+            MENSAJE_ERROR_L := PG_EXCEPTION_CONTEXT;
+        RAISE EXCEPTION 'Código de error: % / Resumen del error: % / Mensaje de error: %', CODIGO_ERROR_L, RESUMEN_ERROR_L, MENSAJE_ERROR_L;
 END;
 $$;
 
