@@ -98,6 +98,11 @@ RETURNS TRIGGER
 LANGUAGE PLPGSQL
 PARALLEL UNSAFE
 AS $$
+DECLARE
+    -- Códigos de error
+    CODIGO_ERROR_L TEXT;
+    RESUMEN_ERROR_L TEXT;
+    MENSAJE_ERROR_L TEXT;
 BEGIN
     CASE TG_OP
         -- En caso de que se esté insertando una reserva
@@ -139,6 +144,8 @@ BEGIN
                 'Creación',
                 (SELECT USER)
             );
+        
+        -- En caso de que se esté actualizando una reserva
         WHEN 'UPDATE' THEN
             INSERT INTO AUDITORIA.AUDIT_RESERVA (
                 K_RESERVA,
@@ -181,6 +188,14 @@ BEGIN
 
     -- Continúa con la transacción.
     RETURN NEW;
+EXCEPTION
+    -- Excepciones
+    WHEN OTHERS THEN
+        GET STACKED DIAGNOSTICS 
+            CODIGO_ERROR_L := RETURNED_SQLSTATE,
+            RESUMEN_ERROR_L := MESSAGE_TEXT,
+            MENSAJE_ERROR_L := PG_EXCEPTION_CONTEXT;
+        RAISE EXCEPTION 'Código de error: % / Resumen del error: % / Mensaje de error: %', CODIGO_ERROR_L, RESUMEN_ERROR_L, MENSAJE_ERROR_L;
 END;
 $$;
 
@@ -196,19 +211,18 @@ CREATE OR REPLACE TRIGGER AUDIT_RESERVAS
 -- Se requiere registrar la dirección IP de los clientes que entran a la aplicación.
 -- El siguiente procedimiento audita los inicios de sesión y las direcciones IP de los clientes.
 CREATE OR REPLACE PROCEDURE AUDITORIA.AUDIT_INGRESO_USUARIO_PR(
-    IN ROL_USUARIO_P TEXT,
-    INOUT CODIGO_ERROR_P TEXT DEFAULT NULL,
-    INOUT RESUMEN_ERROR_P TEXT DEFAULT NULL,
-    INOUT MENSAJE_ERROR_P TEXT DEFAULT NULL
+    IN ROL_USUARIO_P TEXT
 )
 LANGUAGE PLPGSQL
 AS $$
+DECLARE
+    -- Códigos de error
+    CODIGO_ERROR_L TEXT;
+    RESUMEN_ERROR_L TEXT;
+    MENSAJE_ERROR_L TEXT;
 BEGIN
     -- Si es un cliente
     IF ROL_USUARIO_P = LOWER(TRIM('USER_ROLE')) THEN
-        -- Crea la tabla temporal de la llave primaria del cliente
-        CALL PARQUEADERO.INSERTAR_LLAVE_CLIENTE_PR(CODIGO_ERROR_P, RESUMEN_ERROR_P, MENSAJE_ERROR_P);
-
         -- Inserta los valores en la tabla de auditoría
         INSERT INTO AUDITORIA.AUDIT_USUARIO (
             K_EMPLEADO,
@@ -220,7 +234,7 @@ BEGIN
         )
         VALUES (
             NULL,
-            (SELECT PARQUEADERO.RETORNAR_LLAVE_TEMPORAL_FU()),
+            (SELECT PARQUEADERO.RECUPERAR_LLAVE_CLIENTE_FU()),
             (SELECT USER),
             (SELECT INET_CLIENT_ADDR()),
             (SELECT CURRENT_TIMESTAMP AT TIME ZONE 'America/Bogota'),
@@ -245,7 +259,7 @@ BEGIN
             TIPO_TRANSACCION_CLIENTE
         )
         VALUES (
-            (SELECT PARQUEADERO.RETORNAR_LLAVE_TEMPORAL_FU()),
+            (SELECT PARQUEADERO.RECUPERAR_LLAVE_EMPLEADO_FU()),
             NULL,
             (SELECT USER),
             (SELECT INET_CLIENT_ADDR()),
@@ -256,11 +270,11 @@ BEGIN
 EXCEPTION
     -- Excepciones
     WHEN OTHERS THEN
-        ROLLBACK;
         GET STACKED DIAGNOSTICS 
-            CODIGO_ERROR_P = RETURNED_SQLSTATE,
-            RESUMEN_ERROR_P = MESSAGE_TEXT,
-            MENSAJE_ERROR_P = PG_EXCEPTION_CONTEXT;
+            CODIGO_ERROR_L := RETURNED_SQLSTATE,
+            RESUMEN_ERROR_L := MESSAGE_TEXT,
+            MENSAJE_ERROR_L := PG_EXCEPTION_CONTEXT;
+        RAISE EXCEPTION 'Código de error: % / Resumen del error: % / Mensaje de error: %', CODIGO_ERROR_L, RESUMEN_ERROR_L, MENSAJE_ERROR_L;
 END;
 $$;
 
@@ -275,6 +289,11 @@ RETURNS TRIGGER
 LANGUAGE PLPGSQL
 PARALLEL UNSAFE
 AS $$
+DECLARE
+    -- Códigos de error
+    CODIGO_ERROR_L TEXT;
+    RESUMEN_ERROR_L TEXT;
+    MENSAJE_ERROR_L TEXT;
 BEGIN
     -- Audita el registro del usuario
     INSERT INTO AUDITORIA.AUDIT_USUARIO (
@@ -299,8 +318,11 @@ BEGIN
 EXCEPTION
     -- Excepciones
     WHEN OTHERS THEN
-        RAISE EXCEPTION 'AUDIT_REGISTRO_CLIENTE_TR ha ocurrido un error: %/%', SQLSTATE, SQLERRM;
-        ROLLBACK;
+        GET STACKED DIAGNOSTICS 
+            CODIGO_ERROR_L := RETURNED_SQLSTATE,
+            RESUMEN_ERROR_L := MESSAGE_TEXT,
+            MENSAJE_ERROR_L := PG_EXCEPTION_CONTEXT;
+        RAISE EXCEPTION 'Código de error: % / Resumen del error: % / Mensaje de error: %', CODIGO_ERROR_L, RESUMEN_ERROR_L, MENSAJE_ERROR_L;
 END;
 $$;
 
