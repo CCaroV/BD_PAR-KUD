@@ -239,7 +239,7 @@ BEGIN
     LOCK AUDITORIA.AUDIT_USUARIO IN ROW EXCLUSIVE MODE;
 
     -- Si es un cliente
-    IF ROL_USUARIO_P = UPPER(TRIM('USER_ROLE')) THEN
+    IF UPPER(TRIM(ROL_USUARIO_P)) = 'USER_ROLE' THEN
         -- Inserta los valores en la tabla de auditoría
         INSERT INTO AUDITORIA.AUDIT_USUARIO (
             K_EMPLEADO,
@@ -259,9 +259,9 @@ BEGIN
         );
 
     -- Si es un operador, administrador o súper administrador
-    ELSIF ROL_USUARIO_P = UPPER(TRIM('OPERADOR_ROLE'))
-            OR ROL_USUARIO_P = LOWER(TRIM('ADMIN_ROLE'))
-            OR ROL_USUARIO_P = LOWER(TRIM('SUPER_ADMIN_ROLE')) THEN
+    ELSIF UPPER(TRIM(ROL_USUARIO_P)) = 'OPERADOR_ROLE'
+            OR UPPER(TRIM(ROL_USUARIO_P)) = 'ADMIN_ROLE'
+            OR UPPER(TRIM(ROL_USUARIO_P)) = 'SUPER_ADMIN_ROLE' THEN
         
         -- Inserta los valores en la tabla de auditoría
         INSERT INTO AUDITORIA.AUDIT_USUARIO (
