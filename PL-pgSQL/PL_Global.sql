@@ -177,6 +177,7 @@ LANGUAGE PLPGSQL
 PARALLEL RESTRICTED
 AS $$
 DECLARE
+    -- Declaración de variables locales
     K_TARJETA_PAGO_L PARQUEADERO.TARJETA_PAGO.K_TARJETA_PAGO%TYPE;
     -- Códigos de error
     CODIGO_ERROR_L TEXT;
@@ -250,7 +251,7 @@ BEGIN
 EXCEPTION
     -- Excepciones
     WHEN NO_DATA_FOUND THEN
-        RAISE EXCEPTION 'El cliente no cuenta con un plan de fidelización.';
+        RAISE EXCEPTION 'El cliente no cuenta con un plan de fidelización activo.';
     WHEN TOO_MANY_ROWS THEN
         RAISE EXCEPTION 'Hay más de un plan de fidelización activo para el cliente.';
     WHEN OTHERS THEN
