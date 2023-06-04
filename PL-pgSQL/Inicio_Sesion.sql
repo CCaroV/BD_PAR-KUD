@@ -15,8 +15,8 @@ DECLARE
     RESUMEN_ERROR_L TEXT;
     MENSAJE_ERROR_L TEXT;
 BEGIN
-    -- Selecciona el rol del nombre de usuario ingresado
-    SELECT LOWER(TRIM(G.ROLNAME)) INTO STRICT ROL_USUARIO_L
+    -- Selecciona el rol usuario que intenta hacer la conexión
+    SELECT UPPER(TRIM(G.ROLNAME)) INTO STRICT ROL_USUARIO_L
     FROM PG_ROLES R
         JOIN PG_AUTH_MEMBERS M ON R.OID = M.MEMBER
         JOIN PG_ROLES G ON M.ROLEID = G.OID
