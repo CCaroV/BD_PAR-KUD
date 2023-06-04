@@ -3,7 +3,7 @@
 CAUTION: Do not modify this file unless you know what you are doing.
  Unexpected results may occur if the code is changed deliberately.
 -->
-<dbmodel pgmodeler-ver="1.0.2" use-changelog="false" last-position="590,607" last-zoom="1.1" max-obj-count="193"
+<dbmodel pgmodeler-ver="1.0.2" use-changelog="false" last-position="10,1672" last-zoom="1.1" max-obj-count="193"
 	 default-schema="parqueadero" default-owner="parkud_db_admin"
 	 layers="Default layer"
 	 active-layers="0"
