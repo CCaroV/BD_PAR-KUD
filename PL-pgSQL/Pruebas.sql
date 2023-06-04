@@ -7,7 +7,7 @@ SELECT PARQUEADERO.CREAR_CLIENTE_FU('CE', '1234562342', 'Laura', 'Tatiana', 'Ram
 
 /* ---------------------------------------------------------------------------------------------------------------------
 Pruebas: Primer cambio de clave de usuarios: */
-CALL PARQUEADERO.PRIMER_CAMBIO_CLAVE_PR('chcarov@udistrital.edu.co', '1234');
+CALL PARQUEADERO.PRIMER_CAMBIO_CLAVE_PR('chcarov@udistrital.edu.co', 'ClaveMinimo');
 CALL PARQUEADERO.PRIMER_CAMBIO_CLAVE_PR('ltrr2001', 'pass');
 CALL PARQUEADERO.PRIMER_CAMBIO_CLAVE_PR('sdfrancoc@udistrital.edu.co', '1234');
 
@@ -76,3 +76,5 @@ CREATE ROLE "hhramireza@udistrital.edu.co" WITH INHERIT LOGIN PASSWORD 'HelioRam
 Pruebas: Administradores creados: */
 CREATE ROLE "ltramirezr@udistrital.edu.co" WITH INHERIT LOGIN PASSWORD '20182020098' IN ROLE ADMIN_ROLE;
 CREATE ROLE "adbeltranr@udistrital.edu.co" WITH INHERIT LOGIN PASSWORD '20182020090' IN ROLE ADMIN_ROLE;
+
+-- SELECT PARQUEADERO.CREAR_EMPLEADO_FU('CC', '1025847963', 'Laura', 'Tatiana', 'Ramírez', 'Rodríguez', '3658942530', 'ltramirezr@udistrital.edu.co', 'Administrador');
