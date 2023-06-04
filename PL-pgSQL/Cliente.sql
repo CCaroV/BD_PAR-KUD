@@ -20,7 +20,7 @@ BEGIN
     -- Habilita la concurrencia de las tablas pero solo permite que puedan ser proyectadas
     LOCK TABLE PARQUEADERO.MARCA_VEHICULO IN ACCESS SHARE MODE;
 
-    -- Habilita la concurrencia de las tablas en distintas filas pero solo permite que puedan ser proyectadas en una misma sesión
+    -- Habilita la concurrencia de las tablas mientras que no exista ninguna modificación en curso
     LOCK TABLE PARQUEADERO.CLIENTE IN SHARE UPDATE EXCLUSIVE MODE;
     LOCK TABLE PARQUEADERO.VEHICULO IN SHARE UPDATE EXCLUSIVE MODE;
 
@@ -40,6 +40,7 @@ BEGIN
             INNER JOIN PARQUEADERO.VEHICULO V ON C.K_CLIENTE = V.K_CLIENTE
             INNER JOIN PARQUEADERO.MARCA_VEHICULO MV ON V.K_MARCA_VEHICULO = MV.K_MARCA_VEHICULO
         WHERE C.K_CLIENTE = K_CLIENTE_L
+        FOR UPDATE OF V, C
     ) T;
 
     -- Devuelve un JSON con la información de la consulta
@@ -85,7 +86,9 @@ BEGIN
     LOCK PARQUEADERO.HORARIO_SUCURSAL IN ACCESS SHARE MODE;
     LOCK PARQUEADERO.SLOT_PARQUEADERO IN ACCESS SHARE MODE;
     LOCK PARQUEADERO.DIA_SEMANA IN ACCESS SHARE MODE;
-    LOCK PARQUEADERO.RESERVA IN ACCESS SHARE MODE;
+
+    -- Habilita la concurrencia de las tablas mientras que no exista ninguna modificación en curso
+    LOCK PARQUEADERO.RESERVA IN SHARE UPDATE EXCLUSIVE MODE;
 
     -- Recupera la clave primaria del cliente conectado a la BD
     K_CLIENTE_L := PARQUEADERO.RECUPERAR_LLAVE_CLIENTE_FU();
@@ -100,7 +103,12 @@ BEGIN
             SP.K_SLOT_PARQUEADERO "Slot",
             R.FECHA_INICIO_RESERVA "Fecha reserva",
             R.PLACA_VEHICULO "Placa",
-            R.VALOR_RESERVA "Total reserva"
+            CASE 
+                WHEN R.VALOR_RESERVA IS NULL 
+                THEN 'Reserva en curso'
+                WHEN R.VALOR_RESERVA IS NOT NULL 
+                THEN R.VALOR_RESERVA::VARCHAR
+            END AS "Total reserva"
         FROM PARQUEADERO.PAIS P 
             INNER JOIN PARQUEADERO.DEPARTAMENTO DP ON P.K_PAIS = DP.K_PAIS
             INNER JOIN PARQUEADERO.CIUDAD C ON DP.K_DEPARTAMENTO = C.K_DEPARTAMENTO
