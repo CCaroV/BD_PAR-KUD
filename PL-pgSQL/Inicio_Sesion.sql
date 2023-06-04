@@ -8,7 +8,7 @@ LANGUAGE PLPGSQL
 PARALLEL UNSAFE
 AS $$
 DECLARE
-    -- Declaración de variables
+    -- Declaración de variables locales
     ROL_USUARIO_L VARCHAR;
     -- Códigos de error
     CODIGO_ERROR_L TEXT;
