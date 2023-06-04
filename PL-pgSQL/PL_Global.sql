@@ -1,5 +1,6 @@
 /* Existen algunas funciones y procedimientos que son utilizadas por otras transacciones en la BD.
-Estas funciones son utilizadas para hacer alguna transacción específica y hacen parte de transacciones más grandes en otras funciones.*/
+Estas funciones son utilizadas para hacer alguna transacción específica y hacen parte de transacciones más grandes en otras funciones.
+Esto significa que un usuario nunca llamará directamente alguna de estas funciones.*/
 
 -- Función que crea una cadena de carácteres aleatoria dado un tamaño.
 CREATE OR REPLACE FUNCTION PARQUEADERO.CLAVE_ALEATORIA_FU(
@@ -93,7 +94,8 @@ BEGIN
     -- Recupera la clave primaria del empleado conectado a la BD
     SELECT K_EMPLEADO INTO STRICT K_EMPLEADO_L
     FROM PARQUEADERO.EMPLEADO
-    WHERE PARQUEADERO.PGP_SYM_DECRYPT(CORREO_EMPLEADO, 'AES_KEY') = CURRENT_USER;
+    WHERE PARQUEADERO.PGP_SYM_DECRYPT(CORREO_EMPLEADO, 'AES_KEY') = CURRENT_USER
+    FOR UPDATE;
 
     -- Devuelve la clave    
     RETURN K_EMPLEADO_L;
@@ -137,7 +139,8 @@ BEGIN
     -- Recupera la clave primaria del cliente conectado a la BD
     SELECT K_CLIENTE INTO STRICT K_CLIENTE_L
     FROM PARQUEADERO.CLIENTE
-    WHERE PARQUEADERO.PGP_SYM_DECRYPT(CORREO_CLIENTE, 'AES_KEY') = CURRENT_USER;
+    WHERE PARQUEADERO.PGP_SYM_DECRYPT(CORREO_CLIENTE, 'AES_KEY') = CURRENT_USER
+    FOR UPDATE;
 
     -- Devuelve la clave
     RETURN K_CLIENTE_L;
@@ -160,3 +163,105 @@ COMMENT ON FUNCTION PARQUEADERO.RECUPERAR_LLAVE_CLIENTE_FU IS E'Función para re
 
 ALTER FUNCTION PARQUEADERO.RECUPERAR_LLAVE_CLIENTE_FU OWNER TO PARKUD_DB_ADMIN;
 
+
+-- Función que devuelve la llave primaria de una tarjeta de pago
+CREATE OR REPLACE FUNCTION PARQUEADERO.RECUPERAR_LLAVE_TARJETA_FU(
+    IN ULTIMOS_CUATRO_DIGITOS_P VARCHAR(4),
+    IN TIPO_TARJETA_P VARCHAR,
+    IN NOMBRE_DUENIO_TARJETA_P VARCHAR,
+    IN APELLIDO_DUENIO_TARJETA_P VARCHAR,
+    IN K_CLIENTE_P PARQUEADERO.CLIENTE.K_CLIENTE%TYPE
+)
+RETURNS INTEGER
+LANGUAGE PLPGSQL
+PARALLEL RESTRICTED
+AS $$
+DECLARE
+    K_TARJETA_PAGO_L PARQUEADERO.TARJETA_PAGO.K_TARJETA_PAGO%TYPE;
+    -- Códigos de error
+    CODIGO_ERROR_L TEXT;
+    RESUMEN_ERROR_L TEXT;
+    MENSAJE_ERROR_L TEXT;
+BEGIN
+    -- Habilita la concurrencia de las tablas en distintas filas pero solo permite que puedan ser proyectadas
+    LOCK TABLE PARQUEADERO.CLIENTE IN ROW SHARE MODE;
+    LOCK TABLE PARQUEADERO.TARJETA_PAGO IN ROW SHARE MODE;
+
+    -- Selecciona la PK de la tarjeta que va a usar para pagar
+    SELECT T.K_TARJETA_PAGO INTO STRICT K_TARJETA_PAGO_L
+    FROM PARQUEADERO.CLIENTE C 
+        INNER JOIN PARQUEADERO.TARJETA_PAGO T ON C.K_CLIENTE = T.K_CLIENTE
+    WHERE C.K_CLIENTE = K_CLIENTE_P
+        AND PARQUEADERO.PGP_SYM_DECRYPT(T.NOMBRE_DUENIO_TARJETA, 'AES_KEY') = NOMBRE_DUENIO_TARJETA_P
+        AND PARQUEADERO.PGP_SYM_DECRYPT(T.APELLIDO_DUENIO_TARJETA, 'AES_KEY') = APELLIDO_DUENIO_TARJETA_P
+        AND PARQUEADERO.PGP_SYM_DECRYPT(T.ULTIMOS_CUATRO_DIGITOS, 'AES_KEY') = ULTIMOS_CUATRO_DIGITOS_P
+        AND PARQUEADERO.PGP_SYM_DECRYPT(T.TIPO_TARJETA, 'AES_KEY') = TIPO_TARJETA_P
+    FOR UPDATE;
+
+    -- Devuelve la clave
+    RETURN K_TARJETA_PAGO_L;
+EXCEPTION
+    -- Excepciones
+    WHEN NO_DATA_FOUND THEN
+        RAISE EXCEPTION 'Método de pago no encontrado.';
+    WHEN TOO_MANY_ROWS THEN
+        RAISE EXCEPTION 'Se encontró más de un método de pago para la información ingresada.';
+    WHEN OTHERS THEN
+        GET STACKED DIAGNOSTICS 
+            CODIGO_ERROR_L := RETURNED_SQLSTATE,
+            RESUMEN_ERROR_L := MESSAGE_TEXT,
+            MENSAJE_ERROR_L := PG_EXCEPTION_CONTEXT;
+        RAISE EXCEPTION 'Código de error: % / Resumen del error: % / Mensaje de error: %', CODIGO_ERROR_L, RESUMEN_ERROR_L, MENSAJE_ERROR_L;
+END;
+$$;
+
+COMMENT ON FUNCTION PARQUEADERO.RECUPERAR_LLAVE_TARJETA_FU IS E'Función para recuperar la clave primaria de una tarjeta de pago dados unos parámetros de entrada.';
+
+ALTER FUNCTION PARQUEADERO.RECUPERAR_LLAVE_TARJETA_FU OWNER TO PARKUD_DB_ADMIN;
+
+-- Función para retornar la llave primaria del plan de fidelización del cliente
+CREATE OR REPLACE FUNCTION PARQUEADERO.RECUPERAR_LLAVE_FIDELIZACION_FU(
+    IN K_CLIENTE_P PARQUEADERO.CLIENTE.K_CLIENTE%TYPE
+)
+RETURNS INTEGER
+LANGUAGE PLPGSQL
+PARALLEL RESTRICTED
+AS $$
+DECLARE
+    -- Declaración de variables locales
+    K_FIDELIZACION_L PARQUEADERO.FIDELIZACION_CLIENTE.K_FIDELIZACION%TYPE;
+    -- Códigos de error
+    CODIGO_ERROR_L TEXT;
+    RESUMEN_ERROR_L TEXT;
+    MENSAJE_ERROR_L TEXT;
+BEGIN
+    -- Habilita la concurrencia de las tablas en distintas filas pero solo permite que puedan ser proyectadas
+    LOCK TABLE PARQUEADERO.CLIENTE IN ROW SHARE MODE;
+    LOCK TABLE PARQUEADERO.FIDELIZACION_CLIENTE IN ROW SHARE MODE;
+
+    -- Selecciona la PK del plan de fidelización del cliente
+    SELECT F.K_FIDELIZACION INTO STRICT K_FIDELIZACION_L
+    FROM PARQUEADERO.CLIENTE C
+        INNER JOIN PARQUEADERO.FIDELIZACION_CLIENTE F ON C.K_CLIENTE = F.K_CLIENTE
+    WHERE F.K_CLIENTE = K_CLIENTE_P
+        AND F.FECHA_FIN_PUNTAJE IS NULL
+        AND F.ES_ACTUAL = TRUE
+    FOR UPDATE;
+EXCEPTION
+    -- Excepciones
+    WHEN NO_DATA_FOUND THEN
+        RAISE EXCEPTION 'El cliente no cuenta con un plan de fidelización.';
+    WHEN TOO_MANY_ROWS THEN
+        RAISE EXCEPTION 'Hay más de un plan de fidelización activo para el cliente.';
+    WHEN OTHERS THEN
+        GET STACKED DIAGNOSTICS 
+            CODIGO_ERROR_L := RETURNED_SQLSTATE,
+            RESUMEN_ERROR_L := MESSAGE_TEXT,
+            MENSAJE_ERROR_L := PG_EXCEPTION_CONTEXT;
+        RAISE EXCEPTION 'Código de error: % / Resumen del error: % / Mensaje de error: %', CODIGO_ERROR_L, RESUMEN_ERROR_L, MENSAJE_ERROR_L;
+END;
+$$;
+
+COMMENT ON FUNCTION PARQUEADERO.RECUPERAR_LLAVE_FIDELIZACION_FU IS E'Función para recuperar la clave primaria del plan de fidelización de un cliente.';
+
+ALTER FUNCTION PARQUEADERO.RECUPERAR_LLAVE_FIDELIZACION_FU OWNER TO PARKUD_DB_ADMIN;
