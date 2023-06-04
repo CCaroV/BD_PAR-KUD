@@ -104,13 +104,22 @@ BEGIN
     WHERE VALUNTIL IS NOT NULL 
         AND PG_USER.USENAME = NOMBRE_USUARIO_P;
 
+    IF LENGTH(CLAVE_NUEVA_P) < 8 THEN
+        RAISE EXCEPTION 'La clave debe ser de mínimo 8 carácteres.';
+    ELSIF REGEXP_MATCHES(CLAVE_NUEVA_P, '\d') = FALSE THEN 
+        RAISE EXCEPTION 'La clave debe contener al menos un número.';
+    ELSIF REGEXP_MATCHES(CLAVE_NUEVA_P, '[a-z]') = FALSE THEN 
+        RAISE EXCEPTION 'La clave debe contener al menos una letra minúscula.';
+    ELSIF REGEXP_MATCHES(CLAVE_NUEVA_P, '[A-Z]') = FALSE THEN 
+        RAISE EXCEPTION 'La clave debe contener al menos una letra mayúscula.';
+    END IF;
+
     -- Si la fecha de validación no ha sido modificada, hace el cambio de clave.
     -- Si la fecha de validación ha sido modificada, este no es el primer cambio de clave del usuario.
     -- IF FECHA_ACTUAL_L::TIMESTAMP != FECHA_VALIDEZ_L::TIMESTAMP THEN
         EXECUTE FORMAT('ALTER USER %I WITH PASSWORD %L ', NOMBRE_USUARIO_P, CLAVE_NUEVA_P);
         EXECUTE FORMAT('ALTER USER %I VALID UNTIL %L', NOMBRE_USUARIO_P, FECHA_VALIDEZ_L);
     -- ELSE 
-    --     ROLLBACK;
     --     RAISE EXCEPTION 'El usuario ingresado ya ha hecho su primer cambio de clave.';
     -- END IF;
 EXCEPTION
