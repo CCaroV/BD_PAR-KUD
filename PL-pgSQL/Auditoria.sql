@@ -378,7 +378,8 @@ BEGIN
     FROM (
         -- Consulta que devuelve toda la información auditada en la BD
         SELECT AR.NOMBRE_USUARIO_RESERVA "Usuario",
-            AR.FECHA_AUDIT_RESERVA "Fecha",
+            AR.FECHA_AUDIT_RESERVA::DATE "Fecha",
+            TO_CHAR(AR.FECHA_AUDIT_RESERVA:: TIME, 'HH:MI') "Hora",
             'Reserva:' || ' ' || TIPO_TRANSACCION_RESERVA "Transacción",
             C.NOMBRE_CIUDAD "Ciudad",
             S.NOMBRE_SUCURSAL "Sucursal"
@@ -390,14 +391,16 @@ BEGIN
             INNER JOIN AUDITORIA.AUDIT_RESERVA AR ON S.K_SUCURSAL = AR.K_SUCURSAL
         UNION ALL
         SELECT NOMBRE_USUARIO_VEHICULO "Usuario",
-            FECHA_AUDIT_VEHICULO "Fecha",
+            FECHA_AUDIT_VEHICULO::DATE "Fecha",
+            TO_CHAR(FECHA_AUDIT_VEHICULO::TIME, 'HH:MI') "Hora",
             'Vehículo' || ' ' || PLACA_VEHICULO || ': ' || TIPO_TRANSACCION_VEHICULO "Transacción",
             'N/A' "Ciudad",
             'N/A' "Sucursal"
         FROM AUDITORIA.AUDIT_VEHICULO
         UNION ALL
         SELECT NOMBRE_USUARIO "Usuario",
-            FECHA_AUDIT_USUARIO "Fecha",
+            FECHA_AUDIT_USUARIO::DATE "Fecha",
+            TO_CHAR(FECHA_AUDIT_USUARIO::TIME, 'HH:MI') "Hora",
             TIPO_TRANSACCION_CLIENTE || ': ' || DIRECCION_IP "Transacción",
             'N/A' "Ciudad",
             'N/A' "Sucursal"
