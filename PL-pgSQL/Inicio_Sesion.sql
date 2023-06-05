@@ -45,3 +45,38 @@ $$;
 COMMENT ON FUNCTION PARQUEADERO.INICIO_SESION_USUARIO_FU IS E'Función que devuelve el rol asociado a un usuario.';
 
 ALTER FUNCTION PARQUEADERO.INICIO_SESION_USUARIO_FU OWNER TO PARKUD_DB_ADMIN;
+
+
+-- Un cliente puede registrarse pero nunca completar el registro.
+-- Esto significa que la BD tendrá información no necesaria almacenada.
+-- El siguiente procedimiento elimina la info de los usuarios que no completaron el registro.
+CREATE OR REPLACE PROCEDURE AUDITORIA.ELIMINAR_USUARIOS_NO_REGISTRADOS_PR()
+LANGUAGE PLPGSQL
+AS $$
+DECLARE
+    -- Declaración de variables locales
+    NOMBRE_USUARIO_L TEXT;
+    USUARIO_REC_L RECORD;
+    CURSOR_USUARIO_L CURSOR FOR SELECT USENAME FROM PG_USER WHERE VALUNTIL IS NOT NULL AND VALUNTIL < '2050-01-01';
+    -- Códigos de error
+    CODIGO_ERROR_L TEXT;
+    RESUMEN_ERROR_L TEXT;
+    MENSAJE_ERROR_L TEXT;
+BEGIN
+    -- Ejecuta la sentencia por cada registro encontrado
+    FOR USUARIO_REC_L IN CURSOR_USUARIO_L LOOP
+        DELETE FROM PARQUEADERO.CLIENTE WHERE CORREO_CLIENTE = PGP_SYM_DECRYPT(USUARIO_REC_L.USENAME, 'AES_KEY');
+        EXECUTE FORMAT('DROP USER %I', USUARIO_REC_L.USENAME);
+    END LOOP;
+EXCEPTION
+    -- Excepciones
+    WHEN OTHERS THEN
+        GET STACKED DIAGNOSTICS 
+            CODIGO_ERROR_L := RETURNED_SQLSTATE,
+            RESUMEN_ERROR_L := MESSAGE_TEXT,
+            MENSAJE_ERROR_L := PG_EXCEPTION_CONTEXT;
+        RAISE EXCEPTION 'Código de error: % / Resumen del error: % / Mensaje de error: %', CODIGO_ERROR_L, RESUMEN_ERROR_L, MENSAJE_ERROR_L;
+END;
+$$;
+
+COMMENT ON PROCEDURE AUDITORIA.ELIMINAR_USUARIOS_NO_REGISTRADOS_PR IS E'Procedimiento que elimina los usuarios que no han completado el registro de la BD.';
