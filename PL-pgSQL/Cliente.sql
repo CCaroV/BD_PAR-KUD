@@ -101,7 +101,7 @@ BEGIN
             S.NOMBRE_SUCURSAL "Nombre sucursal",
             D.NOMBRE_DIRECCION "Dirección",
             SP.K_SLOT_PARQUEADERO "Slot",
-            R.FECHA_INICIO_RESERVA "Fecha reserva",
+            R.FECHA_INICIO_RESERVA::DATE ||' '|| TO_CHAR(R.FECHA_INICIO_RESERVA::TIME, 'HH:MI') "Fecha reserva",
             R.PLACA_VEHICULO "Placa",
             CASE 
                 WHEN R.VALOR_RESERVA IS NULL 
