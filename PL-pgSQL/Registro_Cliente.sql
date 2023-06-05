@@ -106,22 +106,22 @@ BEGIN
 
     IF LENGTH(CLAVE_NUEVA_P) < 8 THEN
         RAISE EXCEPTION 'La clave debe ser de mínimo 8 carácteres.';
-    ELSIF REGEXP_MATCHES(CLAVE_NUEVA_P, '\d') = FALSE THEN 
+    ELSIF NOT EXISTS (SELECT 1 FROM REGEXP_MATCHES(CLAVE_NUEVA_P, '\d')) THEN 
         RAISE EXCEPTION 'La clave debe contener al menos un número.';
-    ELSIF REGEXP_MATCHES(CLAVE_NUEVA_P, '[a-z]') = FALSE THEN 
+    ELSIF NOT EXISTS (SELECT 1 FROM REGEXP_MATCHES(CLAVE_NUEVA_P, '[a-z]')) THEN 
         RAISE EXCEPTION 'La clave debe contener al menos una letra minúscula.';
-    ELSIF REGEXP_MATCHES(CLAVE_NUEVA_P, '[A-Z]') = FALSE THEN 
+    ELSIF NOT EXISTS (SELECT 1 FROM REGEXP_MATCHES(CLAVE_NUEVA_P, '[A-Z]')) THEN 
         RAISE EXCEPTION 'La clave debe contener al menos una letra mayúscula.';
     END IF;
 
     -- Si la fecha de validación no ha sido modificada, hace el cambio de clave.
     -- Si la fecha de validación ha sido modificada, este no es el primer cambio de clave del usuario.
-    -- IF FECHA_ACTUAL_L::TIMESTAMP != FECHA_VALIDEZ_L::TIMESTAMP THEN
+    IF FECHA_ACTUAL_L::TIMESTAMP != FECHA_VALIDEZ_L::TIMESTAMP THEN
         EXECUTE FORMAT('ALTER USER %I WITH PASSWORD %L ', NOMBRE_USUARIO_P, CLAVE_NUEVA_P);
         EXECUTE FORMAT('ALTER USER %I VALID UNTIL %L', NOMBRE_USUARIO_P, FECHA_VALIDEZ_L);
-    -- ELSE 
-    --     RAISE EXCEPTION 'El usuario ingresado ya ha hecho su primer cambio de clave.';
-    -- END IF;
+    ELSE 
+        RAISE EXCEPTION 'El usuario ingresado ya ha hecho su primer cambio de clave.';
+    END IF;
 EXCEPTION
     -- Excepciones
     WHEN OTHERS THEN
@@ -222,10 +222,7 @@ CREATE OR REPLACE PROCEDURE PARQUEADERO.INSERTAR_METODO_PAGO_PR(
     IN ULTIMOS_CUATRO_DIGITOS_P VARCHAR,
     IN MES_VENCIMIENTO_P NUMERIC(2),
     IN ANIO_VENCIMIENTO_P NUMERIC(4),
-    IN TIPO_TARJETA_P VARCHAR,
-    INOUT CODIGO_ERROR_P TEXT DEFAULT NULL,
-    INOUT RESUMEN_ERROR_P TEXT DEFAULT NULL,
-    INOUT MENSAJE_ERROR_P TEXT DEFAULT NULL
+    IN TIPO_TARJETA_P VARCHAR
 )
 LANGUAGE PLPGSQL
 AS $$
